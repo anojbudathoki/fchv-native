@@ -1,0 +1,48 @@
+{
+  "login": {
+    "welcome": "Welcome",
+    "subtitle": "Health Data Collection App",
+    "health_id_label": "Health Worker ID",
+    "health_id_placeholder": "Enter ID",
+    "password_label": "Password",
+    "password_placeholder": "Enter Password",
+    "login_button": "Login",
+    "login_sub": "Enter your credentials",
+    "forgot_password": "Forgot Password?",
+    "help_text": "Need help? Contact local health post"
+  },
+  "common": {
+    "english": "English",
+    "nepali": "Nepali",
+    "version": "v2.5.0",
+    "namaste": "Namaste",
+    "welcome-back": "Welcome back",
+    "welcome": "Welcome"
+  },
+  "dashboard": {
+    "title": "FCHV Dashboard",
+    "quick_stats": "Quick Statistics",
+    "operational": "Primary Tasks",
+    "support": "Support & References",
+    "stats": {
+      "households": "Households",
+      "pregnant": "Pregnant",
+      "children": "Children",
+      "followups": "Follow-ups"
+    },
+    "actions": {
+      "add_household": "Add Household",
+      "pregnant_women": "Pregnant Women",
+      "children_05": "Children (0-5)",
+      "family_planning": "Family Planning",
+      "follow_ups": "Follow-ups"
+    },
+    "drawer": {
+      "profile": "My Profile",
+      "language": "Change Language",
+      "logout": "Sign Out",
+      "health_id": "Health ID",
+      "sync_data": "Sync Data Now"
+    }
+  }
+}

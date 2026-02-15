@@ -1,0 +1,96 @@
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Modal, Pressable } from "react-native";
+import { Globe, ChevronDown, Check } from "lucide-react-native";
+import { useLanguage } from "../context/LanguageContext";
+import { twMerge } from "tailwind-merge";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+export default function LanguageSwitcher() {
+  const { language, setLanguage } = useLanguage();
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const insets = useSafeAreaInsets();
+
+  const toggleLanguage = async (lang: "en" | "np") => {
+    await setLanguage(lang);
+    setShowLangDropdown(false);
+  };
+
+  return (
+    <View
+      className="absolute right-0 z-[1000]"
+      style={{ top: Math.max(insets.top, 10) }}
+    >
+      <TouchableOpacity
+        onPress={() => setShowLangDropdown(!showLangDropdown)}
+        activeOpacity={0.8}
+        className="flex-row items-center bg-white px-4 py-2.5 rounded-full border border-gray-100 shadow-sm"
+      >
+        <Globe size={18} color="#10b981" />
+        <Text className="text-gray-700 font-semibold ml-2 text-sm">
+          {language === "en" ? "En" : "Np"}
+        </Text>
+        <ChevronDown size={16} color="#9CA3AF" className="ml-1" />
+      </TouchableOpacity>
+
+      {showLangDropdown && (
+        <>
+          {/* Backdrop to close dropdown */}
+          <Pressable
+            style={{
+              position: "absolute",
+              top: -100,
+              left: -500,
+              right: -100,
+              bottom: -1000,
+              zIndex: -1,
+            }}
+            onPress={() => setShowLangDropdown(false)}
+          />
+          <View className="absolute top-12 right-0 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 min-w-[150px]">
+            <TouchableOpacity
+              onPress={() => toggleLanguage("en")}
+              className={twMerge(
+                "flex-row items-center justify-between px-4 py-3 rounded-xl",
+                language === "en" ? "bg-emerald-50" : "",
+              )}
+            >
+              <Text
+                className={twMerge(
+                  "text-sm",
+                  language === "en"
+                    ? "text-emerald-700 font-bold"
+                    : "text-gray-600 font-medium",
+                )}
+              >
+                English
+              </Text>
+              {language === "en" && <Check size={16} color="#10b981" />}
+            </TouchableOpacity>
+
+            <View className="h-[1px] bg-gray-50 mx-2 my-1" />
+
+            <TouchableOpacity
+              onPress={() => toggleLanguage("np")}
+              className={twMerge(
+                "flex-row items-center justify-between px-4 py-3 rounded-xl",
+                language === "np" ? "bg-emerald-50" : "",
+              )}
+            >
+              <Text
+                className={twMerge(
+                  "text-sm",
+                  language === "np"
+                    ? "text-emerald-700 font-bold"
+                    : "text-gray-600 font-medium",
+                )}
+              >
+                नेपाली
+              </Text>
+              {language === "np" && <Check size={16} color="#10b981" />}
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+    </View>
+  );
+}

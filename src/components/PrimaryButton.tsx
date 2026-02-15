@@ -25,17 +25,20 @@ export default function PrimaryButton({
       disabled={isLoading}
       className={twMerge(
         "w-full bg-[#34d399] rounded-2xl h-14 flex-row items-center justify-center shadow-md",
-        className
+        className,
       )}
     >
       {isLoading ? (
         <ActivityIndicator color="white" />
       ) : (
         <View className="flex-row items-center">
-          <Text className="text-black font-bold text-lg">
-            {title} {subTitle && <Text className="font-medium">/ {subTitle}</Text>}
-          </Text>
-          <ArrowRight size={20} color="black" className="ml-2" strokeWidth={2.5} />
+          <Text className="text-black font-bold text-lg">{title}</Text>
+          <ArrowRight
+            size={20}
+            color="black"
+            className="ml-2"
+            strokeWidth={2.5}
+          />
         </View>
       )}
     </TouchableOpacity>

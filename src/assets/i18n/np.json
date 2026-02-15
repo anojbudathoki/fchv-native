@@ -1,0 +1,48 @@
+{
+  "login": {
+    "welcome": "स्वागत छ",
+    "subtitle": "स्वास्थ्य डेटा सङ्कलन एप",
+    "health_id_label": "स्वास्थ्य कार्यकर्ता आईडी",
+    "health_id_placeholder": "आईडी राख्नुहोस्",
+    "password_label": "पासवर्ड",
+    "password_placeholder": "पासवर्ड राख्नुहोस्",
+    "login_button": "लगइन गर्नुहोस्",
+    "login_sub": "तपाईंको विवरणहरू प्रविष्ट गर्नुहोस्",
+    "forgot_password": "पासवर्ड बिर्सनुभयो?",
+    "help_text": "मद्दत चाहिन्छ? स्थानीय स्वास्थ्य चौकीमा सम्पर्क गर्नुहोस्"
+  },
+  "common": {
+    "english": "English",
+    "nepali": "नेपाली",
+    "version": "v2.5.0",
+    "namaste": "नमस्ते",
+    "welcome-back": "स्वागत छ",
+    "welcome": "स्वागत छ"
+  },
+  "dashboard": {
+    "title": "FCHV डैशबोर्ड",
+    "quick_stats": "द्रुत तथ्याङ्क",
+    "operational": "मुख्य कार्यहरू",
+    "support": "सहयोग र सन्दर्भ",
+    "stats": {
+      "households": "घरधुरी",
+      "pregnant": "गर्भवती",
+      "children": "बालबालिका",
+      "followups": "फलो-अप"
+    },
+    "actions": {
+      "add_household": "घरधुरी थप्नुहोस्",
+      "pregnant_women": "गर्भवती महिला",
+      "children_05": "बालबालिका (०-५)",
+      "family_planning": "परिवार नियोजन",
+      "follow_ups": "फलो-अप"
+    },
+    "drawer": {
+      "profile": "मेरो प्रोफाइल",
+      "language": "भाषा परिवर्तन गर्नुहोस्",
+      "logout": "बाहिर निस्कनुहोस्",
+      "health_id": "स्वास्थ्य आईडी",
+      "sync_data": "डाटा सिङ्क गर्नुहोस्"
+    }
+  }
+}

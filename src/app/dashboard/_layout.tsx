@@ -1,43 +1,68 @@
-import { Stack } from "expo-router";
+import { Drawer } from "expo-router/drawer";
 import React from "react";
 import "../../global.css";
+import CustomDrawer from "@/components/navigation/CustomDrawer";
 
 export default function DashboardLayout() {
   return (
-    <Stack
+    <Drawer
+      drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: false,
-        headerStyle: {
-          backgroundColor: "#F9FAFB",
+        drawerStyle: {
+          width: "75%",
         },
-        headerShadowVisible: false,
-        headerTintColor: "#1F2937",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
+        drawerPosition: "right",
+        swipeEdgeWidth: 0,
       }}
     >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen
+      <Drawer.Screen
+        name="index"
+        options={{
+          drawerItemStyle: { display: "none" },
+          title: "Dashboard",
+        }}
+      />
+      <Drawer.Screen
         name="household"
-        options={{ title: "Add Household", headerShown: true }}
+        options={{
+          title: "Add Household",
+          headerShown: true,
+          drawerItemStyle: { display: "none" },
+        }}
       />
-      <Stack.Screen
+      <Drawer.Screen
         name="pregnant-women"
-        options={{ title: "Pregnant Women", headerShown: true }}
+        options={{
+          title: "Pregnant Women",
+          headerShown: true,
+          drawerItemStyle: { display: "none" },
+        }}
       />
-      <Stack.Screen
+      <Drawer.Screen
         name="children"
-        options={{ title: "Children (0-5)", headerShown: true }}
+        options={{
+          title: "Children (0-5)",
+          headerShown: true,
+          drawerItemStyle: { display: "none" },
+        }}
       />
-      <Stack.Screen
+      <Drawer.Screen
         name="family-planning"
-        options={{ title: "Family Planning", headerShown: true }}
+        options={{
+          title: "Family Planning",
+          headerShown: true,
+          drawerItemStyle: { display: "none" },
+        }}
       />
-      <Stack.Screen
+      <Drawer.Screen
         name="follow-up"
-        options={{ title: "Follow Up", headerShown: true }}
+        options={{
+          title: "Follow Up",
+          headerShown: true,
+          drawerItemStyle: { display: "none" },
+        }}
       />
-    </Stack>
+    </Drawer>
   );
 }
