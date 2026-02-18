@@ -59,7 +59,7 @@ export default function LoginScreen() {
               />
             </View>
             <Text className="text-3xl font-bold text-gray-900 text-center mb-1">
-              {t("login.welcome-back")}
+              {t("common.welcome-back")}
             </Text>
             <Text className="text-gray-500 text-lg font-medium">
               {t("login.subtitle")}

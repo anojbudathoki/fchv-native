@@ -2,7 +2,8 @@ import { View, Text, ScrollView, SafeAreaView } from "react-native";
 import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import PrimaryButton from "../../components/PrimaryButton";
-import { User, Activity } from "lucide-react-native";
+import { User, Activity, Users } from "lucide-react-native";
+import FormHeader from "../../components/layout/FormHeader";
 
 export default function FamilyPlanningForm() {
   const [name, setName] = useState("");
@@ -19,10 +20,15 @@ export default function FamilyPlanningForm() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="p-6">
-        <Text className="text-xl font-bold text-gray-800 mb-6">
-          परिवार नियोजन (Family Planning)
-        </Text>
+      <ScrollView className="">
+        <FormHeader
+          title="परिवार नियोजन"
+          subTitle="Family Planning"
+          rightIcon={Users}
+          rightIconBgColor="bg-purple-100"
+          rightIconColor="#A855F7"
+        />
+        <View className="p-6 pt-0">
 
         <InputField
           label="सेवाग्राहीको नाम"
@@ -49,6 +55,7 @@ export default function FamilyPlanningForm() {
           isLoading={isLoading}
           className="mt-6"
         />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

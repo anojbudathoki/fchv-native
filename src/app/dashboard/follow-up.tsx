@@ -2,7 +2,8 @@ import { View, Text, ScrollView, SafeAreaView } from "react-native";
 import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import PrimaryButton from "../../components/PrimaryButton";
-import { User, Calendar, FileText } from "lucide-react-native";
+import { User, Calendar, FileText, ClipboardList } from "lucide-react-native";
+import FormHeader from "../../components/layout/FormHeader";
 
 export default function FollowUpForm() {
   const [name, setName] = useState("");
@@ -20,10 +21,15 @@ export default function FollowUpForm() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="p-6">
-        <Text className="text-xl font-bold text-gray-800 mb-6">
-          फलो-अप (Follow-up Visit)
-        </Text>
+      <ScrollView className="">
+        <FormHeader
+          title="फलो-अप"
+          subTitle="Follow-up Visit"
+          rightIcon={ClipboardList}
+          rightIconBgColor="bg-emerald-100"
+          rightIconColor="#10B981"
+        />
+        <View className="p-6 pt-0">
 
         <InputField
           label="नाम"
@@ -60,6 +66,7 @@ export default function FollowUpForm() {
           isLoading={isLoading}
           className="mt-6"
         />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

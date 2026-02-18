@@ -43,6 +43,94 @@
       "logout": "बाहिर निस्कनुहोस्",
       "health_id": "स्वास्थ्य आईडी",
       "sync_data": "डाटा सिङ्क गर्नुहोस्"
+    },
+    "language_page": {
+      "title": "भाषा परिवर्तन गर्नुहोस्",
+      "subtitle": "आफ्नो मनपर्ने भाषा छान्नुहोस्",
+      "current": "हालको",
+      "save": "सुरक्षित गर्नुहोस्"
+    },
+    "profile_page": {
+      "title": "मेरो प्रोफाइल",
+      "name_label": "पुरा नाम",
+      "id_label": "स्वास्थ्य कार्यकर्ता आईडी",
+      "role_label": "भूमिका",
+      "post_label": "स्वास्थ्य चौकी",
+      "phone_label": "फोन नम्बर",
+      "email_label": "इमेल",
+      "role_value": "महिला सामुदायिक स्वास्थ्य स्वयंसेविका (FCHV)",
+      "post_value": "भैरहवा स्वास्थ्य चौकी"
+    }
+  },
+  "pregnant_form": {
+    "title": "गर्भवती महिला दर्ता",
+    "basic_info": {
+      "title": "व्यक्तिगत विवरण",
+      "subtitle": "व्यक्तिगत जानकारी",
+      "name_label": "पूरा नाम",
+      "name_placeholder": "उदा. माया देवी",
+      "age_label": "उमेर",
+      "age_placeholder": "उदा. २४"
+    },
+    "address": {
+      "title": "ठेगाना",
+      "subtitle": "स्थानको जानकारी",
+      "municipality_label": "नगरपालिका/गाउँपालिका",
+      "municipality_placeholder": "स्थानीय तह राख्नुहोस्",
+      "ward_label": "वडा नं.",
+      "ward_placeholder": "उदा. ५",
+      "village_label": "गाउँ",
+      "village_placeholder": "गाउँको नाम"
+    },
+    "pregnancy": {
+      "title": "गर्भावस्था विवरण",
+      "subtitle": "मातृ स्वास्थ्य जानकारी",
+      "gravida_label": "गर्भावस्था संख्या",
+      "gravida_placeholder": "उदा. १",
+      "lmp_label": "अन्तिम महिनावारी मिति",
+      "lmp_sub": "LMP",
+      "edd_label": "अपेक्षित सुत्केरी मिति",
+      "edd_sub": "EDD"
+    },
+    "healthcare": {
+      "title": "स्वास्थ्य जाँच",
+      "subtitle": "जाँच र खोपहरू",
+      "anc_label": "ए.एन.सी जाँच संख्या",
+      "anc_placeholder": "उदा. १",
+      "ifa_label": "आई.एफ.ए. चक्की प्राप्त",
+      "ifa_sub": "पोषणयुक्त आहार",
+      "tt_label": "टी.टी. खोप स्थिति",
+      "tt_sub": "रोग प्रतिरोधात्मक क्षमता"
+    },
+    "risk": {
+      "title": "जोखिमका लक्षण",
+      "subtitle": "जोखिमको मुल्यांकन",
+      "signs_label": "जोखिमका लक्षणहरू",
+      "signs_placeholder": "कुनै चिन्ता वा लक्षणहरू लेख्नुहोस्..."
+    },
+    "options": {
+      "yes": "हो",
+      "no": "होइन",
+      "done": "पूर्ण",
+      "pending": "बाँकी"
+    },
+    "submit": {
+      "title": "दर्ता सुरक्षित गर्नुहोस्",
+      "subtitle": "सफलतापूर्वक दर्ता गर्नुहोस्",
+      "success": "गर्भवती महिला सफलतापूर्वक दर्ता भयो!"
+    }
+  },
+  "household_form": {
+    "title": "नयाँ घरधुरी थप्नुहोस्",
+    "ward_label": "वडा नं.",
+    "ward_placeholder": "१",
+    "tole_label": "टोल",
+    "tole_placeholder": "टोलको नाम",
+    "phone_label": "फोन नम्बर",
+    "phone_placeholder": "९८XXXXXXXX",
+    "submit": {
+      "title": "सुरक्षित गर्नुहोस्",
+      "success": "घरधुरी सफलतापूर्वक थपियो!"
     }
   }
 }

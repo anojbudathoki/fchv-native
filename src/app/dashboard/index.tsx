@@ -106,7 +106,7 @@ export default function DashboardScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F9FAFB]">
+    <SafeAreaView className="flex-1">
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}

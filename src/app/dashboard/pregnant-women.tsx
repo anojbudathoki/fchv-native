@@ -1,11 +1,5 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState, useEffect } from "react";
+import { View, Text, ScrollView, Alert, Pressable } from "react-native";
+import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import PrimaryButton from "../../components/PrimaryButton";
 import SelectionGroup from "../../components/SelectionGroup";
@@ -17,13 +11,37 @@ import {
   Activity,
   Heart,
   Shield,
-  ClipboardList,
-  ChevronLeft,
 } from "lucide-react-native";
-import { useRouter } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import NavigationLayout from "@/components/NavigationLayout";
+import { useLanguage } from "../../context/LanguageContext";
+
+const SectionHeader = ({
+  icon: Icon,
+  title,
+  subTitle,
+  color = "bg-blue-500",
+}: {
+  icon: any;
+  title: string;
+  subTitle: string;
+  color?: string;
+}) => (
+  <View className="flex-row items-center mb-5">
+    <View
+      className={`w-10 h-10 ${color} rounded-2xl items-center justify-center mr-3 shadow-sm`}
+    >
+      <Icon size={20} color="white" />
+    </View>
+    <View>
+      <Text className="text-gray-800 font-bold text-lg">{title}</Text>
+      <Text className="text-gray-500 text-sm font-medium">{subTitle}</Text>
+    </View>
+  </View>
+);
 
 export default function PregnantWomenForm() {
-  const router = useRouter();
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [municipality, setMunicipality] = useState("");
@@ -38,97 +56,89 @@ export default function PregnantWomenForm() {
   const [riskSigns, setRiskSigns] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Auto-calculate EDD when LMP changes
-  useEffect(() => {
-    if (lmp && lmp.length === 10) {
-      const lmpDate = new Date(lmp);
-      if (!isNaN(lmpDate.getTime())) {
-        const eddDate = new Date(lmpDate);
-        eddDate.setDate(lmpDate.getDate() + 280);
-        setEdd(eddDate.toISOString().split("T")[0]);
-      }
+  const [showLmpPicker, setShowLmpPicker] = useState(false);
+  const [showEddPicker, setShowEddPicker] = useState(false);
+
+  const formatDate = (date: Date) => {
+    try {
+      return date.toISOString().split("T")[0];
+    } catch (e) {
+      return "";
     }
-  }, [lmp]);
+  };
+
+  const calculateEDD = (lmpDate: Date) => {
+    const eddDate = new Date(lmpDate);
+    eddDate.setDate(lmpDate.getDate() + 280);
+    return eddDate;
+  };
+
+  const calculateLMP = (eddDate: Date) => {
+    const lmpDate = new Date(eddDate);
+    lmpDate.setDate(eddDate.getDate() - 280);
+    return lmpDate;
+  };
+
+  const onLmpChange = (event: any, selectedDate?: Date) => {
+    setShowLmpPicker(false);
+    if (selectedDate) {
+      const formatted = formatDate(selectedDate);
+      setLmp(formatted);
+      const calculatedEdd = calculateEDD(selectedDate);
+      setEdd(formatDate(calculatedEdd));
+    }
+  };
+
+  const onEddChange = (event: any, selectedDate?: Date) => {
+    setShowEddPicker(false);
+    if (selectedDate) {
+      const formatted = formatDate(selectedDate);
+      setEdd(formatted);
+      const calculatedLmp = calculateLMP(selectedDate);
+      setLmp(formatDate(calculatedLmp));
+    }
+  };
 
   const handleSubmit = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      alert("Pregnant woman registered successfully!");
+      Alert.alert(
+        t("pregnant_form.submit.title"),
+        t("pregnant_form.submit.success"),
+      );
     }, 1500);
   };
 
-  const SectionHeader = ({
-    icon: Icon,
-    title,
-    subTitle,
-    color = "bg-blue-500",
-  }: {
-    icon: any;
-    title: string;
-    subTitle: string;
-    color?: string;
-  }) => (
-    <View className="flex-row items-center mb-5">
-      <View
-        className={`w-10 h-10 ${color} rounded-2xl items-center justify-center mr-3 shadow-sm`}
-      >
-        <Icon size={20} color="white" />
-      </View>
-      <View>
-        <Text className="text-gray-800 font-bold text-lg">{title}</Text>
-        <Text className="text-gray-500 text-sm font-medium">{subTitle}</Text>
-      </View>
-    </View>
-  );
-
   return (
-    <SafeAreaView className="flex-1 bg-slate-50 px-3">
+    <View className="flex-1 bg-slate-50">
+      <NavigationLayout title={t("pregnant_form.title")} />
       <ScrollView
-        className="flex-1"
+        className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        {/* Top Header */}
-        <View className="bg-white px-6 pt-6 pb-8 flex flex-row justify-between items-center rounded-b-[40px] mb-6">
-          <View>
-            <Text className="text-2xl font-extrabold text-slate-900 leading-tight">
-              गर्भवती महिला दर्ता
-            </Text>
-            <Text className="text-slate-500 text-md font-medium mt-1">
-              Pregnant Woman Registration
-            </Text>
-          </View>
-          <View className="flex-row items-center justify-between mb-6">
-            <View className="w-10 h-10 bg-pink-100 rounded-full items-center justify-center">
-              <Heart size={20} color="#EC4899" />
-            </View>
-          </View>
-        </View>
-
-        <View className="">
+        <View className="mt-4">
           {/* Card 1: Basic Information */}
           <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
             <SectionHeader
               icon={User}
-              title="व्यक्तिगत विवरण"
-              subTitle="Basic Information"
+              title={t("pregnant_form.basic_info.title")}
+              subTitle={t("pregnant_form.basic_info.subtitle")}
               color="bg-blue-500"
             />
 
             <InputField
-              label="पूरा नाम"
-              subLabel="Full Name"
-              placeholder="e.g. Maya Devi"
+              label={t("pregnant_form.basic_info.name_label")}
+              placeholder={t("pregnant_form.basic_info.name_placeholder")}
               value={name}
               onChangeText={setName}
               leftIcon={<User size={18} color="#64748B" />}
             />
 
             <InputField
-              label="उमेर"
-              subLabel="Age"
-              placeholder="e.g. 24"
+              label={t("pregnant_form.basic_info.age_label")}
+              placeholder={t("pregnant_form.basic_info.age_placeholder")}
               keyboardType="numeric"
               value={age}
               onChangeText={setAge}
@@ -140,15 +150,14 @@ export default function PregnantWomenForm() {
           <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
             <SectionHeader
               icon={MapPin}
-              title="ठेगाना"
-              subTitle="Address Details"
+              title={t("pregnant_form.address.title")}
+              subTitle={t("pregnant_form.address.subtitle")}
               color="bg-emerald-500"
             />
 
             <InputField
-              label="नगरपालिका/गाउँपालिका"
-              subLabel="Municipality"
-              placeholder="Enter local level"
+              label={t("pregnant_form.address.municipality_label")}
+              placeholder={t("pregnant_form.address.municipality_placeholder")}
               value={municipality}
               onChangeText={setMunicipality}
               leftIcon={<MapPin size={18} color="#64748B" />}
@@ -157,9 +166,8 @@ export default function PregnantWomenForm() {
             <View className="flex-row justify-between">
               <View className="w-[45%]">
                 <InputField
-                  label="वडा नं."
-                  subLabel="Ward"
-                  placeholder="e.g. 5"
+                  label={t("pregnant_form.address.ward_label")}
+                  placeholder={t("pregnant_form.address.ward_placeholder")}
                   keyboardType="numeric"
                   value={wardNo}
                   onChangeText={setWardNo}
@@ -167,9 +175,8 @@ export default function PregnantWomenForm() {
               </View>
               <View className="w-[50%]">
                 <InputField
-                  label="गाउँ"
-                  subLabel="Village"
-                  placeholder="Village name"
+                  label={t("pregnant_form.address.village_label")}
+                  placeholder={t("pregnant_form.address.village_placeholder")}
                   value={village}
                   onChangeText={setVillage}
                 />
@@ -181,79 +188,104 @@ export default function PregnantWomenForm() {
           <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
             <SectionHeader
               icon={Heart}
-              title="गर्भावस्था विवरण"
-              subTitle="Pregnancy Details"
+              title={t("pregnant_form.pregnancy.title")}
+              subTitle={t("pregnant_form.pregnancy.subtitle")}
               color="bg-pink-500"
             />
 
             <InputField
-              label="गर्भावस्था संख्या"
-              subLabel="Gravida"
-              placeholder="e.g. 1"
+              label={t("pregnant_form.pregnancy.gravida_label")}
+              placeholder={t("pregnant_form.pregnancy.gravida_placeholder")}
               keyboardType="numeric"
               value={gravida}
               onChangeText={setGravida}
             />
 
-            <InputField
-              label="अन्तिम महिनावारी मिति"
-              subLabel="LMP"
-              placeholder="YYYY-MM-DD"
-              value={lmp}
-              onChangeText={setLmp}
-              leftIcon={<Calendar size={18} color="#64748B" />}
-            />
+            <Pressable onPress={() => setShowLmpPicker(true)}>
+              <View pointerEvents="none">
+                <InputField
+                  label={t("pregnant_form.pregnancy.lmp_label")}
+                  subLabel={t("pregnant_form.pregnancy.lmp_sub")}
+                  placeholder="YYYY-MM-DD"
+                  value={lmp}
+                  leftIcon={<Calendar size={18} color="#64748B" />}
+                  editable={false}
+                />
+              </View>
+            </Pressable>
 
-            <InputField
-              label="अपेक्षित सुत्केरी मिति"
-              subLabel="EDD"
-              placeholder="YYYY-MM-DD"
-              value={edd}
-              onChangeText={setEdd}
-              leftIcon={<Calendar size={18} color="#64748B" />}
-              editable={false}
-              containerClassName="opacity-80"
-            />
+            {showLmpPicker && (
+              <DateTimePicker
+                value={lmp ? new Date(lmp) : new Date()}
+                mode="date"
+                display="spinner"
+                onChange={onLmpChange}
+              />
+            )}
+
+            <Pressable onPress={() => setShowEddPicker(true)}>
+              <View pointerEvents="none">
+                <InputField
+                  label={t("pregnant_form.pregnancy.edd_label")}
+                  subLabel={t("pregnant_form.pregnancy.edd_sub")}
+                  placeholder="YYYY-MM-DD"
+                  value={edd}
+                  leftIcon={<Calendar size={18} color="#64748B" />}
+                  editable={false}
+                />
+              </View>
+            </Pressable>
+
+            {showEddPicker && (
+              <DateTimePicker
+                value={edd ? new Date(edd) : new Date()}
+                mode="date"
+                display="spinner"
+                onChange={onEddChange}
+              />
+            )}
           </View>
 
           {/* Card 4: Healthcare */}
           <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
             <SectionHeader
               icon={Shield}
-              title="स्वास्थ्य जाँच"
-              subTitle="Healthcare Metrics"
+              title={t("pregnant_form.healthcare.title")}
+              subTitle={t("pregnant_form.healthcare.subtitle")}
               color="bg-purple-500"
             />
 
             <InputField
-              label="ए.एन.सी जाँच संख्या"
-              subLabel="ANC visit count"
-              placeholder="e.g. 1"
+              label={t("pregnant_form.healthcare.anc_label")}
+              placeholder={t("pregnant_form.healthcare.anc_placeholder")}
               keyboardType="numeric"
               value={ancVisitCount}
               onChangeText={setAncVisitCount}
             />
 
             <SelectionGroup
-              label="आई.एफ.ए. चक्की प्राप्त"
-              subLabel="IFA tablet received"
+              label={t("pregnant_form.healthcare.ifa_label")}
+              subLabel={t("pregnant_form.healthcare.ifa_sub")}
               options={[
-                { label: "हो (Yes)", value: "Yes" },
-                { label: "होइन (No)", value: "No" },
+                { label: t("pregnant_form.options.yes"), value: "Yes" },
+                { label: t("pregnant_form.options.no"), value: "No" },
               ]}
               selectedValue={ifaTabletReceived}
-              onSelect={setIfaTabletReceived}
+              onSelect={(val) => setIfaTabletReceived(val)}
             />
 
             <SelectionGroup
-              label="टी.टी. खोप स्थिति"
-              subLabel="TT vaccination status"
+              label={t("pregnant_form.healthcare.tt_label")}
+              subLabel={t("pregnant_form.healthcare.tt_sub")}
               options={[
-                { label: "पूर्णा (Done)", value: "Completed" },
-                { label: "बाँकी (Pending)", value: "Incomplete" },
+                { label: t("pregnant_form.options.done"), value: "Completed" },
+                {
+                  label: t("pregnant_form.options.pending"),
+                  value: "Incomplete",
+                },
               ]}
               selectedValue={ttVaccinationStatus}
-              onSelect={setTtVaccinationStatus}
+              onSelect={(val) => setTtVaccinationStatus(val)}
             />
           </View>
 
@@ -261,15 +293,14 @@ export default function PregnantWomenForm() {
           <View className="bg-white rounded-[32px] py-6 px-4 mb-8 border border-slate-100">
             <SectionHeader
               icon={Activity}
-              title="जोखिमका लक्षण"
-              subTitle="Risk Signs"
+              title={t("pregnant_form.risk.title")}
+              subTitle={t("pregnant_form.risk.subtitle")}
               color="bg-orange-500"
             />
 
             <InputField
-              label="जोखिमका लक्षणहरू"
-              subLabel="Risk signs (if any)"
-              placeholder="Type any concerns or symptoms..."
+              label={t("pregnant_form.risk.signs_label")}
+              placeholder={t("pregnant_form.risk.signs_placeholder")}
               multiline
               numberOfLines={4}
               value={riskSigns}
@@ -280,14 +311,14 @@ export default function PregnantWomenForm() {
           </View>
 
           <PrimaryButton
-            title="दर्ता सुरक्षित गर्नुहोस्"
-            subTitle="Save Registration"
+            title={t("pregnant_form.submit.title")}
+            subTitle={t("pregnant_form.submit.subtitle")}
             onPress={handleSubmit}
             isLoading={isLoading}
             className="mb-10 shadow-lg shadow-blue-200"
           />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

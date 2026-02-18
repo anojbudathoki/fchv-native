@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { User, Globe, LogOut, X } from "lucide-react-native";
 import { useLanguage } from "../../context/LanguageContext";
 import { useRouter } from "expo-router";
-import LanguageSwitcher from "../LanguageSwitcher";
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
@@ -24,7 +23,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
         {/* Close Button */}
         <TouchableOpacity
           onPress={() => props.navigation.closeDrawer()}
-          className="self-start p-2 bg-gray-50 rounded-full mb-8"
+          className="self-end p-2 bg-gray-50 rounded-full mb-5"
         >
           <X size={20} color="#666" />
         </TouchableOpacity>
@@ -39,7 +38,13 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
 
         {/* Drawer Items */}
         <View className="flex-1">
-          <TouchableOpacity className="flex-row items-center py-4 border-b border-gray-50">
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.closeDrawer();
+              router.push("/dashboard/profile");
+            }}
+            className="flex-row items-center py-4 border-b border-gray-50"
+          >
             <View className="w-10 h-10 bg-blue-50 rounded-xl items-center justify-center mr-4">
               <User size={20} color="#3B82F6" />
             </View>
@@ -48,16 +53,20 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
             </Text>
           </TouchableOpacity>
 
-          <View className="py-4 border-b border-gray-50">
-            <View className="flex-row items-center mb-4">
-              <View className="w-10 h-10 bg-indigo-50 rounded-xl items-center justify-center mr-4">
-                <Globe size={20} color="#6366F1" />
-              </View>
-              <Text className="text-gray-700 font-semibold">
-                {t("dashboard.drawer.language")}
-              </Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.closeDrawer();
+              router.push("/dashboard/change-language");
+            }}
+            className="flex-row items-center py-4 border-b border-gray-50"
+          >
+            <View className="w-10 h-10 bg-indigo-50 rounded-xl items-center justify-center mr-4">
+              <Globe size={20} color="#6366F1" />
             </View>
-          </View>
+            <Text className="text-gray-700 font-semibold">
+              {t("dashboard.drawer.language")}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Logout Button */}

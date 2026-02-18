@@ -12,7 +12,7 @@ export default function DashboardLayout() {
         drawerStyle: {
           width: "75%",
         },
-        drawerPosition: "right",
+        drawerPosition: "left",
         swipeEdgeWidth: 0,
       }}
     >
@@ -23,19 +23,11 @@ export default function DashboardLayout() {
           title: "Dashboard",
         }}
       />
-      <Drawer.Screen
-        name="household"
-        options={{
-          title: "Add Household",
-          headerShown: true,
-          drawerItemStyle: { display: "none" },
-        }}
-      />
+      <Drawer.Screen name="household" />
       <Drawer.Screen
         name="pregnant-women"
         options={{
           title: "Pregnant Women",
-          headerShown: true,
           drawerItemStyle: { display: "none" },
         }}
       />
@@ -43,7 +35,6 @@ export default function DashboardLayout() {
         name="children"
         options={{
           title: "Children (0-5)",
-          headerShown: true,
           drawerItemStyle: { display: "none" },
         }}
       />
@@ -51,7 +42,6 @@ export default function DashboardLayout() {
         name="family-planning"
         options={{
           title: "Family Planning",
-          headerShown: true,
           drawerItemStyle: { display: "none" },
         }}
       />
@@ -59,7 +49,20 @@ export default function DashboardLayout() {
         name="follow-up"
         options={{
           title: "Follow Up",
-          headerShown: true,
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="change-language"
+        options={{
+          title: "Change Language",
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="profile"
+        options={{
+          title: "My Profile",
           drawerItemStyle: { display: "none" },
         }}
       />

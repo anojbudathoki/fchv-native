@@ -43,6 +43,94 @@
       "logout": "Sign Out",
       "health_id": "Health ID",
       "sync_data": "Sync Data Now"
+    },
+    "language_page": {
+      "title": "Change Language",
+      "subtitle": "Select your preferred language",
+      "current": "Current",
+      "save": "Save & Apply"
+    },
+    "profile_page": {
+      "title": "My Profile",
+      "name_label": "Full Name",
+      "id_label": "Health Worker ID",
+      "role_label": "Role",
+      "post_label": "Health Post",
+      "phone_label": "Phone Number",
+      "email_label": "Email",
+      "role_value": "Female Community Health Volunteer (FCHV)",
+      "post_value": "Bhairahawa Health Post"
+    }
+  },
+  "pregnant_form": {
+    "title": "Add Pregnant Woman",
+    "basic_info": {
+      "title": "Basic Information",
+      "subtitle": "Personal details",
+      "name_label": "Full Name",
+      "name_placeholder": "e.g. Maya Devi",
+      "age_label": "Age",
+      "age_placeholder": "e.g. 24"
+    },
+    "address": {
+      "title": "Address Details",
+      "subtitle": "Location information",
+      "municipality_label": "Municipality",
+      "municipality_placeholder": "Enter local level",
+      "ward_label": "Ward",
+      "ward_placeholder": "e.g. 5",
+      "village_label": "Village",
+      "village_placeholder": "Village name"
+    },
+    "pregnancy": {
+      "title": "Pregnancy Details",
+      "subtitle": "Maternal health info",
+      "gravida_label": "Gravida",
+      "gravida_placeholder": "e.g. 1",
+      "lmp_label": "LMP",
+      "lmp_sub": "Last Menstrual Period",
+      "edd_label": "EDD",
+      "edd_sub": "Expected Due Date"
+    },
+    "healthcare": {
+      "title": "Healthcare Metrics",
+      "subtitle": "Checkups & vaccines",
+      "anc_label": "ANC Visit Count",
+      "anc_placeholder": "e.g. 1",
+      "ifa_label": "IFA Tablet Received",
+      "ifa_sub": "Nutritional intake",
+      "tt_label": "TT Vaccination Status",
+      "tt_sub": "Immunization"
+    },
+    "risk": {
+      "title": "Risk Signs",
+      "subtitle": "Vulnerability assessment",
+      "signs_label": "Risk Signs (if any)",
+      "signs_placeholder": "Type any concerns or symptoms..."
+    },
+    "options": {
+      "yes": "Yes",
+      "no": "No",
+      "done": "Done",
+      "pending": "Pending"
+    },
+    "submit": {
+      "title": "Save Registration",
+      "subtitle": "Register successfully",
+      "success": "Pregnant woman registered successfully!"
+    }
+  },
+  "household_form": {
+    "title": "Add New Household",
+    "ward_label": "Ward No.",
+    "ward_placeholder": "1",
+    "tole_label": "Tole",
+    "tole_placeholder": "Tole Name",
+    "phone_label": "Phone Number",
+    "phone_placeholder": "98XXXXXXXX",
+    "submit": {
+      "title": "Save Details",
+      "success": "Household added successfully!"
     }
   }
 }

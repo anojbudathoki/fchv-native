@@ -2,7 +2,8 @@ import { View, Text, ScrollView, SafeAreaView } from "react-native";
 import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import PrimaryButton from "../../components/PrimaryButton";
-import { User, Calendar } from "lucide-react-native";
+import { User, Calendar, Baby } from "lucide-react-native";
+import FormHeader from "../../components/layout/FormHeader";
 
 export default function ChildrenForm() {
   const [childName, setChildName] = useState("");
@@ -21,10 +22,15 @@ export default function ChildrenForm() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="p-6">
-        <Text className="text-xl font-bold text-gray-800 mb-6">
-          बालबालिका (0-5) दर्ता (Children Registration)
-        </Text>
+      <ScrollView className="">
+        <FormHeader
+          title="बालबालिका (0-5) दर्ता"
+          subTitle="Children Registration"
+          rightIcon={Baby}
+          rightIconBgColor="bg-orange-100"
+          rightIconColor="#F97316"
+        />
+        <View className="p-6 pt-0">
 
         <InputField
           label="बच्चाको नाम"
@@ -68,6 +74,7 @@ export default function ChildrenForm() {
           isLoading={isLoading}
           className="mt-6"
         />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
