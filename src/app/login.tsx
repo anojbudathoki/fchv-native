@@ -20,17 +20,35 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { t, language, setLanguage } = useLanguage();
+  const { t } = useLanguage();
   const [healthId, setHealthId] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState("");
   const handleLogin = () => {
+    if (!healthId.trim() && !password) {
+      setErrorMessage("User ID and Password are required.");
+      return;
+    }
+    if (!healthId.trim()) {
+      setErrorMessage("User ID is required.");
+      return;
+    }
+    if (!password) {
+      setErrorMessage("Password is required.");
+      return;
+    }
+
     setIsLoading(true);
-    // Simulate login
     setTimeout(() => {
-      setIsLoading(false); // Set to false before navigation
-      router.replace("/dashboard");
+      setIsLoading(false);
+      
+      if (healthId.trim() === "anojbudathoki@gmail.com" && password === "12345678") {
+        setErrorMessage("");
+        router.replace("/dashboard");
+      } else {
+        setErrorMessage("Invalid User ID or Password");
+      }
     }, 1500);
   };
 
@@ -72,7 +90,10 @@ export default function LoginScreen() {
               label={t("login.health_id_label")}
               placeholder={t("login.health_id_placeholder")}
               value={healthId}
-              onChangeText={setHealthId}
+              onChangeText={(text) => {
+                setHealthId(text);
+                setErrorMessage("");
+              }}
               leftIcon={<Briefcase size={20} color="#9CA3AF" />}
             />
 
@@ -81,10 +102,19 @@ export default function LoginScreen() {
               placeholder={t("login.password_placeholder")}
               secureTextEntry
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => {
+                setPassword(text);
+                setErrorMessage("");
+              }}
               leftIcon={<Lock size={20} color="#9CA3AF" />}
             />
           </View>
+
+          {errorMessage ? (
+            <Text className="text-red-500 font-medium text-sm mb-4 ml-1">
+              {errorMessage}
+            </Text>
+          ) : null}
 
           <PrimaryButton
             title={t("login.login_button")}
@@ -106,14 +136,6 @@ export default function LoginScreen() {
               <Text className="text-gray-500 ml-2 text-sm font-medium">
                 {t("login.help_text")}
               </Text>
-            </View>
-
-            <View className="w-full flex-row items-center justify-center opacity-30">
-              <View className="h-[1px] bg-gray-400 w-16 mr-4" />
-              <Text className="text-xs font-bold tracking-widest text-gray-500 uppercase">
-                Remote Nepal Health
-              </Text>
-              <View className="h-[1px] bg-gray-400 w-16 ml-4" />
             </View>
           </View>
         </ScrollView>

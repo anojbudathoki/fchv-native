@@ -2,7 +2,6 @@ import { View, Text, ScrollView, Alert } from "react-native";
 import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import PrimaryButton from "../../components/PrimaryButton";
-import { User, Home } from "lucide-react-native";
 import NavigationLayout from "@/components/NavigationLayout";
 import { useLanguage } from "../../context/LanguageContext";
 

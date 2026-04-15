@@ -1,63 +1,28 @@
-import { View, Text, ScrollView, Alert, Pressable } from "react-native";
+import { View, Text, ScrollView, Alert, Pressable, KeyboardAvoidingView, Platform } from "react-native";
 import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import PrimaryButton from "../../components/PrimaryButton";
-import SelectionGroup from "../../components/SelectionGroup";
-import {
-  User,
-  Calendar,
-  MapPin,
-  Hash,
-  Activity,
-  Heart,
-  Shield,
-} from "lucide-react-native";
+import { User, Calendar, Phone, PlusCircle } from "lucide-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import NavigationLayout from "@/components/NavigationLayout";
 import { useLanguage } from "../../context/LanguageContext";
-
-const SectionHeader = ({
-  icon: Icon,
-  title,
-  subTitle,
-  color = "bg-blue-500",
-}: {
-  icon: any;
-  title: string;
-  subTitle: string;
-  color?: string;
-}) => (
-  <View className="flex-row items-center mb-5">
-    <View
-      className={`w-10 h-10 ${color} rounded-2xl items-center justify-center mr-3 shadow-sm`}
-    >
-      <Icon size={20} color="white" />
-    </View>
-    <View>
-      <Text className="text-gray-800 font-bold text-lg">{title}</Text>
-      <Text className="text-gray-500 text-sm font-medium">{subTitle}</Text>
-    </View>
-  </View>
-);
+import { usePregnancy } from "../../hooks/usePregnancy";
+import { useToast } from "@/context/ToastContext";
 
 export default function PregnantWomenForm() {
   const { t } = useLanguage();
+  const { addPregnancy, isLoading } = usePregnancy();
   const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [municipality, setMunicipality] = useState("");
-  const [wardNo, setWardNo] = useState("");
-  const [village, setVillage] = useState("");
-  const [gravida, setGravida] = useState("");
+  const [parity, setParity] = useState("");
   const [lmp, setLmp] = useState("");
   const [edd, setEdd] = useState("");
-  const [ancVisitCount, setAncVisitCount] = useState("");
-  const [ifaTabletReceived, setIfaTabletReceived] = useState("");
-  const [ttVaccinationStatus, setTtVaccinationStatus] = useState("");
-  const [riskSigns, setRiskSigns] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
+  const [caretakersName, setCaretakersName] = useState("");
+  const [caretakersPhone, setCaretakersPhone] = useState("");
+  
+  const [errors, setErrors] = useState<{ name?: string; lmp?: string; edd?: string; caretakersPhone?: string }>({});
   const [showLmpPicker, setShowLmpPicker] = useState(false);
   const [showEddPicker, setShowEddPicker] = useState(false);
+   const { showToast } = useToast();
 
   const formatDate = (date: Date) => {
     try {
@@ -86,6 +51,7 @@ export default function PregnantWomenForm() {
       setLmp(formatted);
       const calculatedEdd = calculateEDD(selectedDate);
       setEdd(formatDate(calculatedEdd));
+      if (errors.lmp || errors.edd) setErrors({ ...errors, lmp: undefined, edd: undefined });
     }
   };
 
@@ -96,229 +62,181 @@ export default function PregnantWomenForm() {
       setEdd(formatted);
       const calculatedLmp = calculateLMP(selectedDate);
       setLmp(formatDate(calculatedLmp));
+      if (errors.edd || errors.lmp) setErrors({ ...errors, edd: undefined, lmp: undefined });
     }
   };
 
-  const handleSubmit = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert(
-        t("pregnant_form.submit.title"),
-        t("pregnant_form.submit.success"),
-      );
-    }, 1500);
+  const handleSubmit = async () => {
+    const newErrors: { name?: string; lmp?: string; edd?: string; caretakersPhone?: string } = {};
+    if (!name.trim()) newErrors.name = "Mother's name is required";
+    if (!lmp) newErrors.lmp = "LMP date is required";
+    if (!edd) newErrors.edd = "EDD date is required";
+    
+    if (caretakersPhone) {
+      if (caretakersPhone.length !== 10) {
+        newErrors.caretakersPhone = "Phone number must be 10 digits";
+      } else if (!caretakersPhone.startsWith("98") && !caretakersPhone.startsWith("97")) {
+        newErrors.caretakersPhone = "Phone number must start with 98 or 97";
+      }
+    }
+    
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    const parityVal = parseInt(parity, 10);
+    const payload = {
+      name,
+      lmp_date: lmp,
+      caretakers_name: caretakersName,
+      caretakers_phone: caretakersPhone,
+      expected_delivery_date: edd,
+      parity: isNaN(parityVal) ? 0 : parityVal,
+      selected: false,
+    }
+    const result = await addPregnancy(payload);
+
+    if (result.success) {
+      showToast("Pregnant mother added successfully.");
+      // Clear form
+      setName("");
+      setParity("");
+      setLmp("");
+      setEdd("");
+      setCaretakersName("");
+      setCaretakersPhone("");
+      setErrors({});
+    } else {
+      showToast("Could not save details.");
+    }
   };
 
   return (
-    <View className="flex-1 bg-slate-50">
-      <NavigationLayout title={t("pregnant_form.title")} />
-      <ScrollView
-        className="flex-1 px-4"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+    <View className="flex-1 bg-white">
+      <NavigationLayout title={t("pregnant_form.title") || "Register Pregnant Mother"} />
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
+        style={{ flex: 1 }}
       >
-        <View className="mt-4">
-          {/* Card 1: Basic Information */}
-          <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
-            <SectionHeader
-              icon={User}
-              title={t("pregnant_form.basic_info.title")}
-              subTitle={t("pregnant_form.basic_info.subtitle")}
-              color="bg-blue-500"
-            />
+        <ScrollView
+          className="flex-1 px-4"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40, paddingTop: 20 }}
+          keyboardShouldPersistTaps="handled"
+        >
+        <View>
+          <InputField
+            label={t("pregnant_form.basic_info.name_label") || "Mother's Name"}
+            placeholder="Enter full name"
+            value={name}
+            onChangeText={(txt) => {
+              setName(txt);
+              if (errors.name) setErrors({ ...errors, name: undefined });
+            }}
+            leftIcon={<User size={18} color="#64748B" />}
+            error={errors.name}
+          />
+          <InputField
+            label="Parity (Number of previous births)"
+            placeholder="0 for first child"
+            keyboardType="numeric"
+            value={parity}
+            onChangeText={setParity}
+            leftIcon={<PlusCircle size={18} color="#64748B" />}
+          />
 
-            <InputField
-              label={t("pregnant_form.basic_info.name_label")}
-              placeholder={t("pregnant_form.basic_info.name_placeholder")}
-              value={name}
-              onChangeText={setName}
-              leftIcon={<User size={18} color="#64748B" />}
-            />
-
-            <InputField
-              label={t("pregnant_form.basic_info.age_label")}
-              placeholder={t("pregnant_form.basic_info.age_placeholder")}
-              keyboardType="numeric"
-              value={age}
-              onChangeText={setAge}
-              leftIcon={<Hash size={18} color="#64748B" />}
-            />
-          </View>
-
-          {/* Card 2: Address */}
-          <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
-            <SectionHeader
-              icon={MapPin}
-              title={t("pregnant_form.address.title")}
-              subTitle={t("pregnant_form.address.subtitle")}
-              color="bg-emerald-500"
-            />
-
-            <InputField
-              label={t("pregnant_form.address.municipality_label")}
-              placeholder={t("pregnant_form.address.municipality_placeholder")}
-              value={municipality}
-              onChangeText={setMunicipality}
-              leftIcon={<MapPin size={18} color="#64748B" />}
-            />
-
-            <View className="flex-row justify-between">
-              <View className="w-[45%]">
-                <InputField
-                  label={t("pregnant_form.address.ward_label")}
-                  placeholder={t("pregnant_form.address.ward_placeholder")}
-                  keyboardType="numeric"
-                  value={wardNo}
-                  onChangeText={setWardNo}
-                />
-              </View>
-              <View className="w-[50%]">
-                <InputField
-                  label={t("pregnant_form.address.village_label")}
-                  placeholder={t("pregnant_form.address.village_placeholder")}
-                  value={village}
-                  onChangeText={setVillage}
-                />
-              </View>
+          <Pressable onPress={() => setShowLmpPicker(true)}>
+            <View pointerEvents="none">
+              <InputField
+                label="Last Menstrual Period (LMP)"
+                placeholder="YYYY-MM-DD"
+                value={lmp}
+                leftIcon={<Calendar size={18} color="#64748B" />}
+                editable={false}
+                error={errors.lmp}
+              />
             </View>
-          </View>
+          </Pressable>
+          {showLmpPicker && (() => {
+            const maxLmpDate = new Date();
+            maxLmpDate.setDate(maxLmpDate.getDate() - 28);
 
-          {/* Card 3: Pregnancy Details */}
-          <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
-            <SectionHeader
-              icon={Heart}
-              title={t("pregnant_form.pregnancy.title")}
-              subTitle={t("pregnant_form.pregnancy.subtitle")}
-              color="bg-pink-500"
-            />
-
-            <InputField
-              label={t("pregnant_form.pregnancy.gravida_label")}
-              placeholder={t("pregnant_form.pregnancy.gravida_placeholder")}
-              keyboardType="numeric"
-              value={gravida}
-              onChangeText={setGravida}
-            />
-
-            <Pressable onPress={() => setShowLmpPicker(true)}>
-              <View pointerEvents="none">
-                <InputField
-                  label={t("pregnant_form.pregnancy.lmp_label")}
-                  subLabel={t("pregnant_form.pregnancy.lmp_sub")}
-                  placeholder="YYYY-MM-DD"
-                  value={lmp}
-                  leftIcon={<Calendar size={18} color="#64748B" />}
-                  editable={false}
-                />
-              </View>
-            </Pressable>
-
-            {showLmpPicker && (
+            return (
               <DateTimePicker
-                value={lmp ? new Date(lmp) : new Date()}
+                value={lmp ? new Date(lmp) : maxLmpDate}
                 mode="date"
                 display="spinner"
+                maximumDate={maxLmpDate}
                 onChange={onLmpChange}
               />
-            )}
+            );
+          })()}
 
-            <Pressable onPress={() => setShowEddPicker(true)}>
-              <View pointerEvents="none">
-                <InputField
-                  label={t("pregnant_form.pregnancy.edd_label")}
-                  subLabel={t("pregnant_form.pregnancy.edd_sub")}
-                  placeholder="YYYY-MM-DD"
-                  value={edd}
-                  leftIcon={<Calendar size={18} color="#64748B" />}
-                  editable={false}
-                />
-              </View>
-            </Pressable>
+          <Pressable onPress={() => setShowEddPicker(true)}>
+            <View pointerEvents="none">
+              <InputField
+                label="Expected Delivery Date (EDD)"
+                placeholder="YYYY-MM-DD"
+                value={edd}
+                leftIcon={<Calendar size={18} color="#64748B" />}
+                editable={false}
+                error={errors.edd}
+              />
+            </View>
+          </Pressable>
+          {showEddPicker && (() => {
+            const minEddDate = new Date();
+            const maxEddDate = new Date();
+            maxEddDate.setMonth(maxEddDate.getMonth() + 9);
 
-            {showEddPicker && (
+            return (
               <DateTimePicker
-                value={edd ? new Date(edd) : new Date()}
+                value={edd ? new Date(edd) : minEddDate}
                 mode="date"
                 display="spinner"
+                minimumDate={minEddDate}
+                maximumDate={maxEddDate}
                 onChange={onEddChange}
               />
-            )}
-          </View>
+            );
+          })()}
 
-          {/* Card 4: Healthcare */}
-          <View className="bg-white rounded-[32px] py-6 px-4 mb-6 border border-slate-100">
-            <SectionHeader
-              icon={Shield}
-              title={t("pregnant_form.healthcare.title")}
-              subTitle={t("pregnant_form.healthcare.subtitle")}
-              color="bg-purple-500"
-            />
-
-            <InputField
-              label={t("pregnant_form.healthcare.anc_label")}
-              placeholder={t("pregnant_form.healthcare.anc_placeholder")}
-              keyboardType="numeric"
-              value={ancVisitCount}
-              onChangeText={setAncVisitCount}
-            />
-
-            <SelectionGroup
-              label={t("pregnant_form.healthcare.ifa_label")}
-              subLabel={t("pregnant_form.healthcare.ifa_sub")}
-              options={[
-                { label: t("pregnant_form.options.yes"), value: "Yes" },
-                { label: t("pregnant_form.options.no"), value: "No" },
-              ]}
-              selectedValue={ifaTabletReceived}
-              onSelect={(val) => setIfaTabletReceived(val)}
-            />
-
-            <SelectionGroup
-              label={t("pregnant_form.healthcare.tt_label")}
-              subLabel={t("pregnant_form.healthcare.tt_sub")}
-              options={[
-                { label: t("pregnant_form.options.done"), value: "Completed" },
-                {
-                  label: t("pregnant_form.options.pending"),
-                  value: "Incomplete",
-                },
-              ]}
-              selectedValue={ttVaccinationStatus}
-              onSelect={(val) => setTtVaccinationStatus(val)}
-            />
-          </View>
-
-          {/* Card 5: Risk Signs */}
-          <View className="bg-white rounded-[32px] py-6 px-4 mb-8 border border-slate-100">
-            <SectionHeader
-              icon={Activity}
-              title={t("pregnant_form.risk.title")}
-              subTitle={t("pregnant_form.risk.subtitle")}
-              color="bg-orange-500"
-            />
-
-            <InputField
-              label={t("pregnant_form.risk.signs_label")}
-              placeholder={t("pregnant_form.risk.signs_placeholder")}
-              multiline
-              numberOfLines={4}
-              value={riskSigns}
-              onChangeText={setRiskSigns}
-              leftIcon={<Activity size={18} color="#64748B" />}
-              containerClassName="mb-0"
-            />
-          </View>
-
-          <PrimaryButton
-            title={t("pregnant_form.submit.title")}
-            subTitle={t("pregnant_form.submit.subtitle")}
-            onPress={handleSubmit}
-            isLoading={isLoading}
-            className="mb-10 shadow-lg shadow-blue-200"
+          <InputField
+            label="Caretaker Name"
+            placeholder="Enter caretaker's full name"
+            value={caretakersName}
+            onChangeText={setCaretakersName}
+            leftIcon={<User size={18} color="#64748B" />}
           />
+          <InputField
+            label="Caretaker Phone"
+            placeholder="Enter 10-digit mobile number"
+            keyboardType="phone-pad"
+            value={caretakersPhone}
+            onChangeText={(txt) => {
+              const cleaned = txt.replace(/[^0-9]/g, '');
+              setCaretakersPhone(cleaned);
+              if (errors.caretakersPhone) setErrors({ ...errors, caretakersPhone: undefined });
+            }}
+            leftIcon={<Phone size={18} color="#64748B" />}
+            maxLength={10}
+            error={errors.caretakersPhone}
+          />
+
+          <View className="mt-8">
+            <PrimaryButton
+              title={t("pregnant_form.submit.title") || "Save"}
+              subTitle="Save pregnant mother data"
+              onPress={handleSubmit}
+              isLoading={isLoading}
+              className="mb-10 shadow-lg shadow-blue-200"
+            />
+          </View>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

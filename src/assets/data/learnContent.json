@@ -1,0 +1,472 @@
+{
+  "maternal_health": {
+    "en": {
+      "title": "",
+      "description": "",
+      "key_points": [
+        "Visit the health center for at least 8 checkups during your pregnancy.",
+        "Go to a health facility immediately if you experience severe headaches, heavy bleeding, or your baby moves less.",
+        "Plan where and how you will deliver your baby with a skilled nurse or doctor."
+      ],
+      "sections": [
+        {
+          "title": "First Trimester (1-3 Months)",
+          "points": [
+            "Go for your first pregnancy checkup right away.",
+            "Start taking your daily iron and folic acid tablets to help your baby grow strongly.",
+            "Eat healthy, balanced meals and rest when you feel tired."
+          ]
+        },
+        {
+          "title": "Second Trimester (4-6 Months)",
+          "points": [
+            "Continue taking your daily iron tablets and get your scheduled checkups.",
+            "Get your Tetanus (TT) vaccine at the clinic to protect you and your baby.",
+            "Go for an ultrasound so we can see how your baby is developing."
+          ]
+        },
+        {
+          "title": "Third Trimester (7-9 Months)",
+          "points": [
+            "Keep taking iron tablets and visit the clinic more often as your due date approaches.",
+            "Pack your hospital bag early and arrange for transport and money for your delivery.",
+            "Plan for someone to help at home and assist you while you are at the hospital."
+          ]
+        },
+        {
+          "title": "After Your Baby is Born",
+          "points": [
+            "Breastfeed your baby immediately after birth and give only breastmilk for the first 6 months.",
+            "Get checked by a health worker 24 hours after birth, then again on day 3, day 7, and at 6 weeks.",
+            "Keep your baby warm and the cord clean and dry. Make sure to get plenty of rest for yourself."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "",
+      "description": "",
+      "key_points": [
+        "गर्भावस्थामा कम्तिमा ८ पटक स्वास्थ्य संस्थामा गएर नियमित जाँच गराउनुहोस्।",
+        "कडा टाउको दुखेमा, धेरै रगत बगेमा वा गर्भको बच्चा कम चलेमा तुरुन्त स्वास्थ्य संस्था जानुहोस्।",
+        "दक्ष स्वास्थ्यकर्मीको मद्दतमा कुन स्वास्थ्य संस्थामा सुत्केरी हुने भनेर पहिल्यै योजना बनाउनुहोस्।"
+      ],
+      "sections": [
+        {
+          "title": "पहिलो त्रैमासिक (१-३ महिना)",
+          "points": [
+            "गएको महिनाबारी रोकिएको याद हुनासाथ आफ्नो पहिलो गर्भावस्था जाँच गराउनुहोस्।",
+            "बच्चाको राम्रो विकासको लागि दिनहुँ आइरन र फोलिक एसिड चक्की खान सुरु गर्नुहोस्।",
+            "स्वस्थ र पोषणयुक्त खानेकुरा खानुहोस् र थकाई लागेको बेला आराम गर्नुहोस्।"
+          ]
+        },
+        {
+          "title": "दोस्रो त्रैमासिक (४-६ महिना)",
+          "points": [
+            "दिनहुँ आइरन चक्की खान नछोड्नुहोस् र स्वास्थ्य संस्थाले बोलाएको समयमा जाँच गराउनुहोस्।",
+            "आफू र बच्चालाई सुरक्षित राख्न टिटानस (TT) खोप लिनुहोस्।",
+            "बच्चाको अवस्था हेर्न भिडियो एक्सरे (Ultrasound) गराउनुहोस्।"
+          ]
+        },
+        {
+          "title": "तेस्रो त्रैमासिक (७-९ महिना)",
+          "points": [
+            "आइरन चक्की निरन्तर खानुहोस् र सुत्केरी हुने दिन नजिकिदै गर्दा तोकिएकै समयमा जाँचमा जानुहोस्।",
+            "सुत्केरी हुन अस्पताल जानका लागि झोला, खर्च र यातायातको व्यवस्था पहिल्यै गर्नुहोस्।",
+            "तपाईं अस्पतालमा घरमा सहयोग गर्ने व्यक्तिको व्यवस्था गर्नुहोस्।"
+          ]
+        },
+        {
+          "title": "बच्चा जन्मेपछि (सुत्केरी स्याहार)",
+          "points": [
+            "बच्चा जन्मेको एक घण्टाभित्र स्तनपान गराउनुहोस् र ६ महिनासम्म आमाको दूध मात्र खुवाउनुहोस्।",
+            "सुत्केरी भएको २४ घण्टा, ३ दिन, ७ दिन र ६ हप्तामा स्वास्थ्यकर्मीबाट जाँच गराउनुहोस्।",
+            "बच्चालाई न्यानो राख्नुहोस्, नाइटो सफा र सुख्खा राख्नुहोस्। आफूले पनि प्रशस्त आराम गर्नुहोस्।"
+          ]
+        }
+      ]
+    }
+  },
+  "child_nutrition": {
+    "en": {
+      "title": "Child Nutrition",
+      "description": "Proper nutrition in the first 1,000 days of life is critical for physical and mental development. WHO recommends exclusive breastfeeding for the first 6 months, followed by safe and nutritious complementary feeding while continuing breastfeeding for up to 2 years and beyond.",
+      "key_points": [
+        "Exclusive breastfeeding for the first 6 months.",
+        "Introduce nutritionally adequate and safe complementary solid foods at 6 months.",
+        "Ensure the child receives essential vitamins (like Vitamin A) and minerals.",
+        "Monitor child's growth regularly to prevent stunting and wasting."
+      ]
+    },
+    "np": {
+      "title": "बाल पोषण",
+      "description": "जीवनको पहिलो १००० दिनमा उचित पोषण शारीरिक र मानसिक विकासको लागि महत्त्वपूर्ण हुन्छ। WHO ले पहिलो ६ महिनासम्म पूर्ण स्तनपान गराउन र त्यसपछि २ वर्ष वा सोभन्दा बढी समयसम्म स्तनपानको साथसाथै सुरक्षित र पौष्टिक पूरक आहार सुरु गर्न सिफारिस गर्दछ।",
+      "key_points": [
+        "पहिलो ६ महिनासम्म पूर्ण स्तनपान गराउनुहोस्।",
+        "६ महिना पुगेपछि पौष्टिक र सुरक्षित पूरक ठोस आहार सुरु गर्नुहोस्।",
+        "बच्चालाई आवश्यक भिटामिन (जस्तै भिटामिन ए) र खनिज प्राप्त भएको सुनिश्चित गर्नुहोस्।",
+        "पुड्कोपन वा ख्याउटेपन रोक्न बच्चाको वृद्धिको नियमित अनुगमन गर्नुहोस्।"
+      ]
+    }
+  },
+  "first_aid": {
+    "en": {
+      "title": "First Aid Basics",
+      "description": "First aid involves immediate care given to a person who has been injured or suddenly taken ill. Effective first aid can save lives and prevent the condition from worsening until formal medical help arrives, according to WHO guidelines on emergency care.",
+      "key_points": [
+        "For burns, cool the affected area with running water for at least 20 minutes.",
+        "Apply direct pressure to bleeding wounds using a clean cloth.",
+        "For choking, perform abdominal thrusts/back blows if the person cannot breathe.",
+        "Always ensure the scene is safe before providing help and call emergency services."
+      ]
+    },
+    "np": {
+      "title": "प्राथमिक उपचार आधारभूत कुराहरू",
+      "description": "प्राथमिक उपचार भनेको चोटपटक लागेको वा अचानक बिरामी परेको व्यक्तिलाई दिइने तत्काल हेरचाह हो। WHO का अनुसार, प्रभावकारी रूपमा गरिने प्राथमिक उपचारले ज्यान बचाउन र अस्पताल पुर्याउनु अघि अवस्था बिग्रनबाट रोक्न सक्छ।",
+      "key_points": [
+        "पोलेको ठाउँमा कम्तिमा २० मिनेटसम्म बगिरहेको चिसो पानी हाल्नुहोस्।",
+        "रगत बगिरहेको घाउमा सफा कपडाले सीधा दबाब दिनुहोस्।",
+        "कोही अड्किएमा वा श्वास फेर्न नसकेमा पछाडिबाट धक्का वा पेटमा दबाब (abdominal thrusts) दिनुहोस्।",
+        "मद्दत गर्नुअघि वातावरण सुरक्षित छ भनी सुनिश्चित गर्नुहोस् र आपतकालीन सेवालाई कल गर्नुहोस्।"
+      ]
+    }
+  },
+  "anc": {
+    "en": {
+      "title": "Antenatal Care (ANC)",
+      "description": "Antenatal care (ANC) allows health-care providers to identify and mitigate risk factors during pregnancy. WHO's comprehensive ANC model recommends a minimum of eight contacts to reduce perinatal mortality and improve women's experience of care.",
+      "key_points": [
+        "First contact should generally occur within the first 12 weeks of gestation.",
+        "Receive tetanus toxoid (TT) vaccination to prevent neonatal tetanus.",
+        "Get screened for infections and conditions like gestational diabetes and pre-eclampsia.",
+        "Regularly check blood pressure and fetal growth."
+      ]
+    },
+    "np": {
+      "title": "गर्भावस्था जाँच (ANC)",
+      "description": "एन्टिनेटल केयर (ANC) ले स्वास्थ्य सेवा प्रदायकहरूलाई गर्भावस्थामा हुन सक्ने जोखिम पहिचान गर्न र कम गर्न मद्दत गर्दछ। WHO को नयाँ मोडेलले आमा र बच्चाको मृत्युदर घटाउन कम्तिमा ८ पटक जाँच गर्न सिफारिस गर्दछ।",
+      "key_points": [
+        "पहिलो जाँच सामान्यतया गर्भावस्थाको पहिलो १२ हप्ता भित्र हुनुपर्छ।",
+        "नवजात शिशुमा हुने टिटानस रोक्न टिटानस टक्साइड (TT) खोप लिनुहोस्।",
+        "संक्रमण, डायविटिज र उच्च रक्तचाप (pre-eclampsia) को जाँच गराउनुहोस्।",
+        "रक्तचाप र गर्भको शिशुको वृद्धिको नियमित परीक्षण गर्नुहोस्।"
+      ]
+    }
+  },
+  "pnc": {
+    "en": {
+      "title": "Postnatal Care (PNC)",
+      "description": "The postnatal period is a critical phase in the lives of mothers and newborn babies. Most maternal and infant deaths occur in the first month after birth. WHO emphasizes delivering quality postnatal care to identify and treat complications promptly.",
+      "key_points": [
+        "Receive PNC checks at 24 hours, days 3, 7-14, and six weeks post-delivery.",
+        "Monitor for severe bleeding, fever, and signs of infection.",
+        "Support and encourage exclusive breastfeeding techniques.",
+        "Screen and provide support for postpartum depression or mood disorders."
+      ]
+    },
+    "np": {
+      "title": "सुत्केरी स्याहार (PNC)",
+      "description": "सुत्केरीपछिको समय आमा र नवजात शिशुको जीवनमा अत्यन्तै महत्त्वपूर्ण हुन्छ। अधिकांश मातृ र शिशु मृत्यु जन्मपछिको पहिलो महिनामा हुन्छ। WHO ले जटिलताहरू चाँडै पहिचान गरी उपचार गर्न गुणस्तरीय सुत्केरी स्याहारमा जोड दिन्छ।",
+      "key_points": [
+        "सुत्केरी भएको २४ घण्टा, तेस्रो दिन, ७ देखि १४ दिन, र छैटौं हप्तामा PNC जाँच गराउनुहोस्।",
+        "अत्यधिक रगत बग्ने, ज्वरो आउने र संक्रमणका लक्षणहरूको निगरानी राख्नुहोस्।",
+        "पूर्ण स्तनपान गराउन सहयोग र प्रोत्साहन गर्नुहोस्।",
+        "सुत्केरीपछिको डिप्रेसन (Postpartum depression) को जाँच गरी आवश्यक सहयोग प्रदान गर्नुहोस्।"
+      ]
+    }
+  },
+  "baby_care": {
+    "en": {
+      "title": "Newborn & Baby Care",
+      "description": "Newborns require specialized attention to thrive. WHO guidelines for neonatal care cover thermal protection, hygienic umbilical cord care, and initiation of breathing and feeding. Ensuring a clean and safe environment prevents neonatal mortality.",
+      "key_points": [
+        "Dry the baby immediately after birth and keep them warm (skin-to-skin contact).",
+        "Keep the umbilical cord clean and dry; do not apply unverified substances.",
+        "Ensure standard vaccinations are provided on schedule starting from birth.",
+        "Observe for danger signs like poor feeding, fast breathing, or severe jaundice."
+      ]
+    },
+    "np": {
+      "title": "नवजात शिशु र बच्चाको हेरचाह",
+      "description": "नवजात शिशुलाई हुर्कन विशेष ध्यान दिन आवश्यक छ। WHO का नियम अनुसार, नवजात शिशुको स्याहारमा न्यानो राख्ने, नाइटोको सरसफाइ, र राम्रोसँग सास फेर्ने तथा दूध खुवाउने कुराहरू समावेश छन्। सफा र सुरक्षित वातावरणले नवजात शिशुको मृत्युदर कम गर्न मद्दत गर्छ।",
+      "key_points": [
+        "जन्मिएपछि तुरुन्तै बच्चालाई पुछेर सुख्खा र न्यानो राख्नुहोस् (आमाको छातीमा टाँसेर राख्ने)।",
+        "नाइटोलाई सफा र सुख्खा राख्नुहोस्; जथाभावी मलम वा अन्य कुरा नलाउनुहोस्।",
+        "जन्मनेबित्तिकै सुरु गरी तोकिएको समयमै लगाउनुपर्ने खोपहरू लगाउनुहोस्।",
+        "दूध नचुस्ने, छिटोछिटो सास फेर्ने, वा कडा जन्डिस जस्ता खतराका लक्षणहरूमा ध्यान दिनुहोस्।"
+      ]
+    }
+  },
+  "first_trimester_detailed": {
+    "en": {
+      "title": "1st Trimester Detailed Guide (Months 1–3)",
+      "description": "The first three months are the foundation of a healthy pregnancy. Use these sections to guide the mother through her first steps.",
+      "sections": [
+        {
+          "title": "1. Registration & Health Visits",
+          "points": [
+            "**Confirm Pregnancy:** Advise her to take a pregnancy test as soon as she misses her period.",
+            "**Early Registration:** Encourage her to visit the health post immediately to register her pregnancy and get her **ANC Card**.",
+            "**First Checkup:** Explain that the first visit is the most important to check her weight, blood pressure, and general health."
+          ]
+        },
+        {
+          "title": "2. Nutrition & Supplements",
+          "points": [
+            "**Folic Acid/Iron:** Advise her to start her tablets daily. Explain that these help the baby's brain and body develop properly.",
+            "**Small Meals:** If she feels nauseous, advise her to eat small amounts of food frequently throughout the day rather than three large meals.",
+            "**Hydration:** Remind her to drink plenty of clean water and soups to stay hydrated."
+          ]
+        },
+        {
+          "title": "3. Lifestyle & Rest",
+          "points": [
+            "**Avoid Heavy Work:** Advise her to avoid lifting heavy loads or doing very strenuous labor during these early months.",
+            "**Rest:** Encourage her to sleep at least 8 hours at night and take a 2-hour nap during the day whenever possible.",
+            "**Tobacco & Alcohol:** Firmly advise the family that the mother must stay away from cigarettes, alcohol, and second-hand smoke."
+          ]
+        },
+        {
+          "title": "4. Managing Morning Sickness",
+          "points": [
+            "**Dry Foods:** Suggest eating a piece of dry bread or a biscuit immediately after waking up to help with morning nausea.",
+            "**Ginger Tea:** Advise her that ginger tea or chewing a small piece of ginger can help settle her stomach."
+          ]
+        },
+        {
+          "title": "5. Immediate Danger Signs",
+          "points": [
+            "**Bleeding:** Tell her that any amount of spotting or bleeding is a reason to go to the hospital **right away**.",
+            "**Severe Cramping:** If she has sharp pain in her lower stomach, advise her not to wait and seek medical help immediately.",
+            "**Excessive Vomiting:** If she cannot keep any food or water down, she must see a health worker to prevent weakness."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "पहिलो तीन महिनाको विस्तृत जानकारी (१–३ महिना)",
+      "description": "गर्भावस्थाको पहिलो तीन महिना बच्चाको जग बस्ने समय हो। आमालाई यी कुराहरू बुझाएर सहयोग गर्नुहोस्:",
+      "sections": [
+        {
+          "title": "१. नाम दर्ता र अस्पताल जाँच",
+          "points": [
+            "**गर्भावस्था पक्का गर्ने:** महिनावारी रोकिएपछि ढिलो नगरी गर्भ जाँच (Pregnancy Test) गर्न सल्लाह दिनुहोस्।",
+            "**कार्ड बनाउने:** स्वास्थ्य चौकीमा गएर नाम दर्ता गराउन र **गर्भवती जाँच कार्ड (ANC Card)** बनाउन प्रोत्साहित गर्नुहोस्।",
+            "**पहिलो जाँच:** पहिलो पटकको जाँचमा तौल लिने र रक्तचाप नाप्ने काम धेरै जरुरी हुन्छ भनेर बुझाउनुहोस्।"
+          ]
+        },
+        {
+          "title": "२. खानपान र चक्की",
+          "points": [
+            "**आइरन र फोलिक एसिड:** यी चक्कीहरू नियमित खान भन्नुहोस्। यसले बच्चाको दिमाग र शरीरको विकासमा मद्दत गर्छ भनेर बुझाउनुहोस्।",
+            "**थोरै-थोरै खाने:** वाकवाकी लाग्छ भने एकैपटक धेरै खानुको सट्टा थोरै-थोरै तर धेरै पटक खान सल्लाह दिनुहोस्।",
+            "**झोलिलो कुरा:** प्रशस्त सफा पानी, दालको रस वा गेडागुडीको झोल खान सम्झाउनुहोस्।"
+          ]
+        },
+        {
+          "title": "३. काम र आराम",
+          "points": [
+            "**गाह्रो काम नगर्ने:** सुरुका महिनाहरूमा भारी सामान उचाल्ने वा धेरै बल पर्ने काम नगर्न सल्लाह दिनुहोस्।",
+            "**आराम:** राति कम्तिमा ८ घण्टा सुत्न सल्लाह दिनुहोस्।",
+            "**धुम्रपान र रक्सी:** गर्भवती आमाले चुरोट, खैनी, जाँड-रक्सी र धुवाँबाट टाढै बस्नुपर्छ भनेर परिवारलाई समेत बुझाउनुहोस्।"
+          ]
+        },
+        {
+          "title": "४. वाकवाकी र वान्ताको समाधान",
+          "points": [
+            "**सुक्खा खानेकुरा:** बिहान उठ्ने बित्तिकै ओछ्यानमै सुक्खा रोटी वा बिस्कुट खानाले वाकवाकी कम हुन सक्छ भनेर सिकाउनुहोस्।",
+            "**अदुवाको प्रयोग:** अदुवा हालेको चिया पिउनाले वा अदुवाको सानो टुक्रा मुखमा राख्नाले पनि मन थामिन सक्छ।"
+          ]
+        },
+        {
+          "title": "५. तुरुन्तै अस्पताल जानुपर्ने लक्षणहरू",
+          "points": [
+            "**रगत बगेमा:** थोरै मात्र रगत देखिए पनि वा रगतका थोपाहरू देखिए पनि **तुरुन्तै** अस्पताल जान सल्लाह दिनुहोस्।",
+            "**पेट दुखेमा:** तल्लो पेट धेरै बटारिएर दुखेमा वा कडा भएमा स्वास्थ्यकर्मीको सल्लाह लिनुहोस्।",
+            "**धेरै वान्ता भएमा:** यदि खाएको कुरा केही पनि नपच्ने गरी वान्ता भइरह्यो भने आमा निकै कमजोर हुने हुँदा अस्पताल लैजानै पर्छ।"
+          ]
+        }
+      ]
+    }
+  },
+  "second_trimester_detailed": {
+    "en": {
+      "title": "2nd Trimester Detailed Guide (Months 4–6)",
+      "description": "This is a period of rapid growth. The mother usually feels better, but her nutritional needs increase significantly.",
+      "sections": [
+        {
+          "category": "### 1. Medical Protection & Vaccines",
+          "points": [
+            "**TT Vaccine:** Advise her to get her Tetanus (TT/Td) doses at the clinic to protect her and the baby from infections.",
+            "**Deworming:** Remind her to take the deworming tablet (Albendazole) after the 4th month, as advised by the health worker.",
+            "**Ultrasound:** Encourage her to get a mid-pregnancy ultrasound to check the baby’s growth and position."
+          ]
+        },
+        {
+          "category": "### 2. Enhanced Nutrition",
+          "points": [
+            "**The 'Extra Meal' Rule:** Advise her to eat **one additional nutritious meal** every day compared to what she ate before pregnancy.",
+            "**Diverse Diet:** Encourage her to include 'Four Food Groups' (grains, proteins/beans, fruits/vegetables, and dairy) in her daily meals.",
+            "**Continue Iron:** Check that she is taking her Iron and Folic Acid tablets daily without fail. Explain that her blood needs to increase for the baby."
+          ]
+        },
+        {
+          "category": "### 3. Monitoring the Baby",
+          "points": [
+            "**Baby Movement:** Tell her that she will likely start feeling the baby move (quickening) during the 5th month. Advise her to notice these movements.",
+            "**Belly Growth:** Explain that as her belly grows, she should wear loose, comfortable cotton clothes."
+          ]
+        },
+        {
+          "category": "### 4. Body Changes & Comfort",
+          "points": [
+            "**Sleep Position:** Advise her to try sleeping on her **left side**. Explain that this helps blood flow better to the baby.",
+            "**Leg Cramps:** If she has leg cramps, advise her to stretch gently and ensure she is eating enough calcium-rich foods like milk or curd."
+          ]
+        },
+        {
+          "category": "### 5. Warning Signs (Seek Help Immediately)",
+          "points": [
+            "**Severe Swelling:** If her hands or face look very puffy/swollen in the morning, advise her to check her blood pressure immediately.",
+            "**Blurry Vision:** Tell her that severe headaches or seeing 'spots' or blurry vision can be a sign of high blood pressure.",
+            "**Fever:** Any high fever during this time must be treated by a health worker to keep the baby safe."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "दोस्रो तीन महिनाको विस्तृत जानकारी (४–६ महिना)",
+      "description": "यो समयमा बच्चाको तौल र आकार छिटो बढ्छ। आमाले आफ्नो खानपान र सुईहरूमा विशेष ध्यान दिनुपर्छ:",
+      "sections": [
+        {
+          "category": "### १. सुई र स्वास्थ्य जाँच",
+          "points": [
+            "**टीटी (TT) सुई:** आमा र बच्चालाई धनुष्टंकारबाट जोगाउन स्वास्थ्य संस्थामा गएर टीटी वा टीडी सुई लगाउन सम्झाउनुहोस्।",
+            "**जुकाको औषधि:** चौथो महिना लागेपछि स्वास्थ्यकर्मीको सल्लाह अनुसार जुकाको औषधि (Albendazole) खान भन्नुहोस्।",
+            "**भिडियो एक्सरे:** बच्चाको अवस्था र विकास हेर्न बीचको महिनातिर भिडियो एक्सरे गराउन प्रोत्साहित गर्नुहोस्।"
+          ]
+        },
+        {
+          "category": "### २. थप पोषण र खाना",
+          "points": [
+            "**एक पटक थप खाना:** आमालाई पहिले खाइरहेको खानामा दिनको **एक पटक थप पोषिलो खाना** खान सल्लाह दिनुहोस्।",
+            "**चार समूहको खाना:** खानामा गेडागुडी, हरियो सागपात, फलफूल, र दूधजन्य पदार्थ मिलाएर खान प्रोत्साहन गर्नुहोस्।",
+            "**आइरन चक्की नछोड्ने:** उनले दिनहुँ आइरन खाइरहेकी छन् कि छैनन् सोध्नुहोस्। रगतको कमी हुन नदिन यो धेरै जरुरी छ।"
+          ]
+        },
+        {
+          "category": "### ३. बच्चाको चाल",
+          "points": [
+            "**बच्चा चलेको:** पाँचौ महिनातिर बच्चा चलेको थाहा पाउन सकिन्छ भनेर बताउनुहोस् र बच्चा चल्दा ध्यान दिन भन्नुहोस्।",
+            "**लुगाफाटा:** पेट बढ्दै जाने हुनाले शरीरलाई सजिलो हुने खुकुलो सुतीको लुगा लगाउन सल्लाह दिनुहोस्।"
+          ]
+        },
+        {
+          "category": "### ४. सुत्ने तरिका र शरीरको आराम",
+          "points": [
+            "**देब्रे कोल्टे सुत्ने:** सुत्दा खेरि **देब्रे पट्टि कोल्टे फेरेर** सुत्न भन्नुहोस्। यसले गर्दा बच्चालाई रगत र अक्सिजन राम्रोसँग पुग्छ।",
+            "**खुट्टा बाउँडिने:** यदि खुट्टा बाउँडिन्छ भने हल्का तन्काउन र दूध, दही जस्ता क्याल्सियम भएका खानेकुरा बढी खान सल्लाह दिनुहोस्।"
+          ]
+        },
+        {
+          "category": "### ५. खतराका लक्षण (तुरुन्तै अस्पताल जाने)",
+          "points": [
+            "**हात-मुख सुन्निएमा:** बिहान उठ्दा हात वा अनुहार धेरै सुन्निएको देखिएमा तुरुन्तै रक्तचाप (BP) जाँच्न पठाउनुहोस्।",
+            "**आँखा धमिलो भएमा:** कडा टाउको दुख्ने वा आँखा धमिलो हुने लक्षण देखिएमा यो उच्च रक्तचापको संकेत हुन सक्छ।",
+            "**कडा ज्वरो:** गर्भावस्थामा कडा ज्वरो आउनु खतरा हुन सक्छ, त्यसैले स्वास्थ्य संस्थामा जाँच गराउन भन्नुहोस्।"
+          ]
+        }
+      ]
+    }
+  },
+  "third_trimester_detailed": {
+    "en": {
+      "title": "3rd Trimester Detailed Guide (Months 7–9)",
+      "description": "The final months are about preparing for a safe delivery. Ensure the mother and family are ready for the 'Big Day'.",
+      "sections": [
+        {
+          "category": "### 1. Birth Preparedness Plan (The 5 'W's)",
+          "points": [
+            "**Where:** Help her decide on the health facility for delivery. Advise against home birth.",
+            "**Who:** Help her identify a family member or friend who will stay with her at the hospital.",
+            "**Way:** Discuss transportation. Does she have a phone number for an ambulance or a local driver?",
+            "**Wealth:** Ask if the family has saved enough money for medicines, transport, and food.",
+            "**Witness/Blood:** Advise her to identify at least one person who could donate blood if an emergency arises."
+          ]
+        },
+        {
+          "category": "### 2. Packing the 'Emergency Bag'",
+          "points": [
+            "**For the Mother:** Advise her to pack clean clothes, pads/clean cloths, her ANC card, and some dry food.",
+            "**For the Baby:** Remind her to pack warm clothes, a cap, socks, and a soft wrapper/towel to dry the baby immediately."
+          ]
+        },
+        {
+          "category": "### 3. Monitoring Baby's Movement",
+          "points": [
+            "**Kick Counting:** Advise her to notice the baby's kicks. She should feel at least **10 movements in 2 hours** after a meal. If the baby is moving significantly less, tell her to go to the clinic immediately."
+          ]
+        },
+        {
+          "category": "### 4. Nutrition & Final Checkups",
+          "points": [
+            "**Frequent Visits:** Encourage her to visit the health facility more often (at least once in month 8 and every week or two in month 9).",
+            "**Iron & Calcium:** Ensure she has enough iron tablets to last through the delivery and the first 45 days after birth."
+          ]
+        },
+        {
+          "category": "### 5. Final Danger Signs (Act Fast!)",
+          "points": [
+            "**Water Breaking:** If water leaks from the vagina even without pain, advise her to go to the hospital immediately.",
+            "**Blurry Vision/Headache:** These are signs of high blood pressure (Eclampsia) and are very dangerous.",
+            "**Severe Swelling:** Check for swelling in the face and hands, not just the feet."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "तेस्रो तीन महिनाको विस्तृत जानकारी (७–९ महिना)",
+      "description": "अन्तिम महिनाहरू डेलिभरी तयारीका लागि हुन्। आमा र परिवारलाई यो 'ठूलो दिन' को लागि तयार पार्नुहोस्:",
+      "sections": [
+        {
+          "category": "### १. डेलिभरी गर्ने योजना (५ कुराको तयारी)",
+          "points": [
+            "**कहाँ जाने:** डेलिभरी गर्न कुन अस्पताल जाने भनेर पहिल्यै निर्णय गर्न मद्दत गर्नुहोस्। घरमा डेलिभरी गर्नु खतरनाक हुन्छ भनेर बुझाउनुहोस्।",
+            "**को जाने:** अस्पताल जाँदा साथमा बस्ने कुरुवा को हुन्छ भनेर सोध्नुहोस्।",
+            "**कसरी जाने:** यातायातको साधन (एम्बुलेन्स वा गाडी) को फोन नम्बर पहिल्यै खोजेर राख्न भन्नुहोस्।",
+            "**पैसाको जोहो:** यातायात, औषधि र खानेकुराका लागि आवश्यक पैसाको जोहो भयो कि भएन सोध्नुहोस्।",
+            "**रगत दिने मान्छे:** आपतकालीन अवस्थामा रगत दिन सक्ने एक जना मान्छेको नाम र फोन नम्बर पहिल्यै तयार राख्न सल्लाह दिनुहोस्।"
+          ]
+        },
+        {
+          "category": "### २. सुत्केरी झोलाको तयारी",
+          "points": [
+            "**आमाको लागि:** झोलामा सफा लुगा, प्याड वा सफा सुतीका कपडाहरू, स्वास्थ्य जाँचको कार्ड (ANC Card) र केही सुक्खा खानेकुरा राख्न भन्नुहोस्।",
+            "**बच्चाको लागि:** न्यानो लुगा, टोपी, मोजा र बच्चालाई पुछ्नका लागि नरम टावेल वा कपडा तयार पार्न सम्झाउनुहोस्।"
+          ]
+        },
+        {
+          "category": "### ३. बच्चाको चालमा ध्यान",
+          "points": [
+            "**बच्चा चलेको गन्ने:** खाना खाएपछि २ घण्टामा बच्चा कम्तिमा **१० पटक** चल्नुपर्छ। यदि बच्चा एकदमै कम चलेको छ भने तुरुन्तै जचाउन जान सल्लाह दिनुहोस्।"
+          ]
+        },
+        {
+          "category": "### ४. पोषण र नियमित जाँच",
+          "points": [
+            "**छिटो-छिटो जाँच:** ८ औं महिनामा कम्तिमा एक पटक र ९ औं महिना लागेपछि हरेक हप्ता वा दुई हप्तामा जचाउन जान प्रोत्साहित गर्नुहोस्।",
+            "**आइरन चक्की:** डेलिभरी हुँदा र सुत्केरी भएको ४५ दिनसम्म पुग्ने गरी आइरन चक्की साथमा छ कि छैन पक्का गर्नुहोस्।"
+          ]
+        },
+        {
+          "category": "### ५. अन्तिम खतराका लक्षण (ढिलो नगर्नुहोस्)",
+          "points": [
+            "**व्यथा नलागी पानी बगेमा:** डेलिभरी हुने बेला नभए पनि वा व्यथा नलागे पनि योनिबाट पानी बग्न थाल्यो भने तुरुन्तै अस्पताल लैजानुहोस्।",
+            "**आँखा धमिलो हुने/टाउको दुख्ने:** यो उच्च रक्तचापको लक्षण हुन सक्छ र ज्यानै जाने खतरा हुन्छ।",
+            "**धेरै सुन्निनु:** गोडा मात्र होइन, अनुहार र हातहरू धेरै सुन्निएको छ भने तुरुन्तै जचाउनु पर्छ।"
+          ]
+        }
+      ]
+    }
+  }
+}

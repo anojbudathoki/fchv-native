@@ -40,6 +40,7 @@
     "drawer": {
       "profile": "My Profile",
       "language": "Change Language",
+      "learn": "Guidelines",
       "logout": "Sign Out",
       "health_id": "Health ID",
       "sync_data": "Sync Data Now"
@@ -132,5 +133,45 @@
       "title": "Save Details",
       "success": "Household added successfully!"
     }
+  },
+  "learn_page": {
+    "title": "Educational Resources",
+    "maternal_health": {
+      "title": "Maternal Health Guide",
+      "subtitle": "Complete guide for safe pregnancy"
+    },
+    "child_nutrition": {
+      "title": "Child Nutrition",
+      "subtitle": "Healthy diet for growing children"
+    },
+    "first_aid": {
+      "title": "First Aid Basics",
+      "subtitle": "Emergency care and response"
+    },
+    "anc": {
+      "title": "Antenatal Care (ANC)",
+      "subtitle": "Essential pregnancy checkups"
+    },
+    "pnc": {
+      "title": "Postnatal Care (PNC)",
+      "subtitle": "Care for mother after childbirth"
+    },
+    "baby_care": {
+      "title": "Newborn & Baby Care",
+      "subtitle": "Essential practices for infants"
+    }
+  },
+  "learn_details": {
+    "content_not_found": "Content not found",
+    "go_back": "Go Back",
+    "details": "Details",
+    "key_points": "Key Points",
+    "detailed_trimester_guide": "Detailed Trimester Guide",
+    "trimesters": {
+      "first": "1st Trimester",
+      "second": "2nd Trimester",
+      "third": "3rd Trimester"
+    },
+    "no_content": "No content available"
   }
-}
+}

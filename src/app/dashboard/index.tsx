@@ -63,8 +63,19 @@ const DashboardCard = ({
   </TouchableOpacity>
 );
 
+import { useOnlineStatus } from "../../hooks/useOnlineStatus";
+import { doSync } from "../../api/services/sync/sync";
+import { useEffect } from "react";
+
 export default function DashboardScreen() {
   const { t } = useLanguage();
+  const { isConnected } = useOnlineStatus();
+
+  useEffect(() => {
+    if (isConnected) {
+      doSync();
+    }
+  }, [isConnected]);
 
   const menuItems = [
     {

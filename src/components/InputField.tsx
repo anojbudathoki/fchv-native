@@ -8,6 +8,7 @@ interface InputFieldProps extends React.ComponentProps<typeof TextInput> {
   subLabel?: string;
   leftIcon?: React.ReactNode;
   containerClassName?: string;
+  error?: string;
 }
 
 export default function InputField({
@@ -16,6 +17,7 @@ export default function InputField({
   leftIcon,
   containerClassName,
   secureTextEntry,
+  error,
   ...props
 }: InputFieldProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -32,7 +34,7 @@ export default function InputField({
         )}
       </View>
 
-      <View className="flex-row items-center bg-white border border-gray-100 rounded-3xl h-14 px-4">
+      <View className={`flex-row items-center bg-white border ${error ? 'border-red-400' : 'border-gray-100'} rounded-3xl h-14 px-4`}>
         {leftIcon && <View className="mr-3">{leftIcon}</View>}
 
         <TextInput
@@ -55,6 +57,7 @@ export default function InputField({
           </TouchableOpacity>
         )}
       </View>
+      {error ? <Text className="text-red-500 text-xs mt-1.5 ml-4">{error}</Text> : null}
     </View>
   );
 }

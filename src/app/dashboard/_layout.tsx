@@ -6,7 +6,7 @@ import CustomDrawer from "@/components/navigation/CustomDrawer";
 export default function DashboardLayout() {
   return (
     <Drawer
-      drawerContent={(props) => <CustomDrawer {...props} />}
+      drawerContent={(props: any) => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: false,
         drawerStyle: {
@@ -56,6 +56,20 @@ export default function DashboardLayout() {
         name="change-language"
         options={{
           title: "Change Language",
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="learn"
+        options={{
+          title: "Learn & Resources",
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="learn-details"
+        options={{
+          title: "Learn Details",
           drawerItemStyle: { display: "none" },
         }}
       />

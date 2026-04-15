@@ -1,5 +1,5 @@
-import safeParse from "./parse";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { safeParse } from "./parse";
 
 const storage = {
   async set<T>(key: string, value: T): Promise<void> {
