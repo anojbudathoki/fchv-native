@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS mother(
     phone TEXT,
     address TEXT,
     husband_name TEXT,
+    photo TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );

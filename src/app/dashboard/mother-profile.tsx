@@ -208,7 +208,6 @@ export default function MotherProfileScreen() {
                 <Send size={20} color="#3B82F6" strokeWidth={2.5} />
               </View>
               <Text className="text-[#3B82F6] font-black text-base">Send Reminder</Text>
-              {/* <Text className="text-gray-400 font-bold text-xs mt-1">रिमाइन्डर पठाउनुहोस्</Text> */}
             </TouchableOpacity>
           </View>
 

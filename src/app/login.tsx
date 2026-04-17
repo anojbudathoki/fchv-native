@@ -6,7 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   Dimensions,
-  
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -69,7 +69,7 @@ export default function LoginScreen() {
       </View>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
         className="flex-1"
         style={{ zIndex: 10 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
@@ -77,7 +77,6 @@ export default function LoginScreen() {
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           className="px-8"
-          scrollEnabled={false}
           bounces={false}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -140,7 +139,11 @@ export default function LoginScreen() {
               disabled={isLoading}
               className="w-full bg-primary rounded-2xl h-16 items-center justify-center shadow-xl shadow-emerald-100 flex-row"
             >
-              <Text className="text-white font-black text-xl">{t("login.login_button")} </Text>
+              {isLoading ? (
+                <ActivityIndicator color="white" size="small" />
+              ) : (
+                <Text className="text-white font-black text-xl">{t("login.login_button")} </Text>
+              )}
             </TouchableOpacity>
 
             <Text className="text-[10px] text-center mt-6 text-gray-400">

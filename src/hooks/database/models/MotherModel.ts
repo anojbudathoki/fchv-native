@@ -10,8 +10,8 @@ export async function createMother(
 
   await db.runAsync(
     `INSERT OR REPLACE INTO mother 
-      (id, name, age, phone, address, husband_name, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+      (id, name, age, phone, address, husband_name, photo, is_synced, is_deleted, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
     [
       payload.id,
       payload.name ?? null,
@@ -19,6 +19,7 @@ export async function createMother(
       payload.phone ?? null,
       payload.address ?? null,
       payload.husband_name ?? null,
+      payload.photo ?? null,
       payload.is_synced ? 1 : 0,
       0,
       now,
@@ -33,6 +34,7 @@ export async function createMother(
     phone: payload.phone ?? null,
     address: payload.address ?? null,
     husband_name: payload.husband_name ?? null,
+    photo: payload.photo ?? null,
     is_synced: payload.is_synced ? 1 : 0,
     is_deleted: 0,
     created_at: now,
@@ -53,6 +55,7 @@ export async function unSyncedMothers(): Promise<CreateMotherPayload[]> {
     phone: row.phone ?? undefined,
     address: row.address ?? undefined,
     husband_name: row.husband_name ?? undefined,
+    photo: row.photo ?? undefined,
     is_synced: false
   }));
 }

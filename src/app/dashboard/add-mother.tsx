@@ -11,8 +11,11 @@ import {
   KeyboardAvoidingView,
   TextInput,
   Animated,
+  Image,
+  Alert,
 } from "react-native";
-import React, { useState, useRef, useEffect } from "react";
+import * as ImagePicker from "expo-image-picker";
+import React, { useState, useRef } from "react";
 import { useRouter } from "expo-router";
 import {
   ChevronLeft,
@@ -24,15 +27,16 @@ import {
   User,
   Baby,
   CheckCircle2,
+  X,
 } from "lucide-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Crypto from "expo-crypto";
 import { createMother } from "../../hooks/database/models/MotherModel";
 import { createPregnancy } from "../../hooks/database/models/PregnantWomenModal";
 import { useToast } from "../../context/ToastContext";
+import CameraCapture from "../../components/CameraCapture";
 import "../../global.css";
 
-// ─── Reusable field components ────────────────────────────────────────────────
 
 const FieldLabel = ({ label }: { label: string }) => (
   <Text className="text-gray-800 text-[15px] mb-2">{label}</Text>
@@ -75,7 +79,6 @@ const BoxInput = ({
   </View>
 );
 
-// ─── Step Indicator ───────────────────────────────────────────────────────────
 
 const StepIndicator = ({
   step,
@@ -142,7 +145,6 @@ const StepIndicator = ({
   );
 };
 
-// ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function AddMotherScreen() {
   const router = useRouter();
@@ -155,6 +157,10 @@ export default function AddMotherScreen() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [husbandName, setHusbandName] = useState("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  // In-app camera visibility
+  const [showCamera, setShowCamera] = useState(false);
 
   // Step 2 – Pregnancy Info
   const [gravida, setGravida] = useState("");
@@ -194,6 +200,73 @@ export default function AddMotherScreen() {
       setEdd(calcEDD(selected));
     }
   };
+
+  // ─── Photo handlers ───
+
+  const handlePhotoUpload = () => {
+    Alert.alert(
+      "Upload Photo",
+      "Choose an option",
+      [
+        {
+          text: "Take Photo",
+          onPress: () => setShowCamera(true),
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: chooseFromGallery,
+        },
+        ...(photoUrl
+          ? [
+              {
+                text: "Remove Photo",
+                onPress: () => {
+                  setPhotoUrl(null);
+                  showToast("Photo removed");
+                },
+                style: "destructive" as const,
+              },
+            ]
+          : []),
+        {
+          text: "Cancel",
+          style: "cancel" as const,
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const onCameraCapture = (uri: string) => {
+    setPhotoUrl(uri);
+    setShowCamera(false);
+  };
+
+
+  const chooseFromGallery = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        showToast("Gallery permission is required");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 0.5,
+      });
+
+      if (!result.canceled && result.assets?.[0]?.uri) {
+        setPhotoUrl(result.assets[0].uri);
+      }
+    } catch (err) {
+      console.error("Gallery picker error:", err);
+      showToast("Failed to pick image from gallery");
+    }
+  };
+
+  // ─── Validation ───
 
   const validateStep1 = () => {
     const e: Record<string, string> = {};
@@ -240,6 +313,7 @@ export default function AddMotherScreen() {
         phone: phone,
         address: address,
         husband_name: husbandName,
+        photo: photoUrl ?? undefined,
         is_synced: false,
       });
 
@@ -268,6 +342,13 @@ export default function AddMotherScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
 
+      {/* In-app camera modal – renders above everything including bottom tabs */}
+      <CameraCapture
+        visible={showCamera}
+        onCapture={onCameraCapture}
+        onClose={() => setShowCamera(false)}
+      />
+
       {/* Header */}
       <View className="px-5 pt-10 pb-4 bg-white flex-row items-center border-b border-gray-100">
         <TouchableOpacity
@@ -291,7 +372,7 @@ export default function AddMotherScreen() {
 
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 30}
       >
         <Animated.View
@@ -311,28 +392,39 @@ export default function AddMotherScreen() {
             {/* ─── STEP 1: Mother Registration ─── */}
             {step === 0 && (
               <>
-                {/* Section heading */}
-                <View className="flex-row items-center bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 mb-6">
-                  <User size={18} color="#3B82F6" strokeWidth={2} />
-                  <Text className="ml-2 text-blue-700 font-bold text-sm">
-                    Personal Details
-                  </Text>
-                </View>
-
                 {/* Photo Upload */}
                 <TouchableOpacity
                   activeOpacity={0.8}
+                  onPress={handlePhotoUpload}
                   className="bg-gray-100 rounded-3xl items-center justify-center py-9 mb-8 border border-gray-200 relative"
                 >
-                  <View className="absolute top-3 right-4 bg-[#F97316] w-6 h-6 rounded-full items-center justify-center">
-                    <Text className="text-white font-black text-xs">!</Text>
-                  </View>
-                  <View className="bg-white w-16 h-16 rounded-full items-center justify-center mb-3 shadow-sm relative border border-blue-100">
-                    <Camera size={30} color="#60A5FA" strokeWidth={2} />
-                    <View className="absolute -top-1.5 -right-1.5 bg-primary w-6 h-6 rounded-full items-center justify-center border-2 border-white">
-                      <Text className="text-white font-black text-xs">+</Text>
+                  {photoUrl ? (
+                    <View className="bg-white w-24 h-24 rounded-full items-center justify-center mb-3 shadow-sm relative border border-blue-100">
+                      <Image
+                        source={{ uri: photoUrl }}
+                        className="w-full h-full rounded-full"
+                        resizeMode="cover"
+                      />
+                      <TouchableOpacity
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          setPhotoUrl(null);
+                        }}
+                        activeOpacity={0.7}
+                        className="absolute -top-1.5 -right-1.5 bg-red-500 w-7 h-7 rounded-full items-center justify-center border-2 border-white z-10"
+                      >
+                        <X size={14} color="#fff" strokeWidth={3} />
+                      </TouchableOpacity>
                     </View>
-                  </View>
+                  ) : (
+                    <View className="bg-white w-16 h-16 rounded-full items-center justify-center mb-3 shadow-sm relative border border-blue-100">
+                      <Camera size={30} color="#60A5FA" strokeWidth={2} />
+                      <View className="absolute -top-1.5 -right-1.5 bg-primary w-6 h-6 rounded-full items-center justify-center border-2 border-white">
+                        <Text className="text-white font-black text-xs">+</Text>
+                      </View>
+                    </View>
+                  )}
+                  
                   <Text className="text-[#1E293B] font-black text-base">
                     Pregnant Mother Photo
                   </Text>

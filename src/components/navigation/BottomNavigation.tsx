@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Platform } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Platform, Keyboard } from "react-native";
 import { Home, Calendar, Plus, FileText, BookOpen } from "lucide-react-native";
 import { useRouter, usePathname } from "expo-router";
 import Colors from "../../constants/Colors";
@@ -7,6 +7,29 @@ import Colors from "../../constants/Colors";
 export default function BottomNavigation() {
   const router = useRouter();
   const pathname = usePathname();
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+  if (isKeyboardVisible) return null;
 
   const tabs = [
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
