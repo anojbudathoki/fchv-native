@@ -53,8 +53,8 @@ export default function DashboardScreen() {
         {/* Hero Greeting Card */}
         <View className="px-5 mt-4">
           <LinearGradient
-            colors={["#059669", "#10B981"]}
-            style={{ borderRadius: 7, borderColor: "#10B981", borderWidth: 1 }}
+            colors={["#3B82F6", "#266fe3ff"]}
+            style={{ borderRadius: 7, borderColor: "#3B82F6", borderWidth: 1 }}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             className="p-6 shadow-lg shadow-emerald-200"
