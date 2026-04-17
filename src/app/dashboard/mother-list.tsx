@@ -7,9 +7,10 @@ import {
   StatusBar,
   TextInput,
   Image,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
-import { useRouter } from "expo-router";
+import React, { useState, useCallback } from "react";
+import { useRouter, useFocusEffect } from "expo-router";
 import {
   ChevronLeft,
   Search,
@@ -22,75 +23,8 @@ import {
   CheckCircle2,
 } from "lucide-react-native";
 import "../../global.css";
-
-const MOTHERS = [
-  {
-    id: "1",
-    name: "Sita Devi Sharma",
-    nameNp: "सीता देवी शर्मा",
-    age: 24,
-    edd: "2025-06-15",
-    lmp: "2024-09-08",
-    anc: 3,
-    status: "active",
-    risk: "high",
-    ward: "Ward 4",
-    image: "https://i.pravatar.cc/150?u=sita",
-  },
-  {
-    id: "2",
-    name: "Radhika Thapa",
-    nameNp: "राधिका थापा",
-    age: 28,
-    edd: "2025-07-22",
-    lmp: "2024-10-15",
-    anc: 2,
-    status: "active",
-    risk: "low",
-    ward: "Ward 2",
-    image: "https://i.pravatar.cc/150?u=radhika",
-  },
-  {
-    id: "3",
-    name: "Maya Tamang",
-    nameNp: "माया तामाङ",
-    age: 31,
-    edd: "2025-05-10",
-    lmp: "2024-08-03",
-    anc: 5,
-    status: "delivered",
-    risk: "low",
-    ward: "Ward 6",
-    image: "https://i.pravatar.cc/150?u=maya",
-  },
-  {
-    id: "4",
-    name: "Sunita Basnet",
-    nameNp: "सुनिता बस्नेत",
-    age: 22,
-    edd: "2025-08-30",
-    lmp: "2024-11-23",
-    anc: 1,
-    status: "active",
-    risk: "high",
-    ward: "Ward 1",
-    image: "https://media.istockphoto.com/id/1525372632/vector/logo-with-mother-and-baby-silhouette-icon-logo-sign.jpg?s=612x612&w=0&k=20&c=c6gfhaEC2p_S5vWN2jYH5sZ4asrFxVYi2yZAiOxfBJ8=",
-
-  },
-  {
-    id: "5",
-    name: "Kamala Rai",
-    nameNp: "कमला राई",
-    age: 26,
-    edd: "2025-09-05",
-    lmp: "2024-11-29",
-    anc: 1,
-    status: "active",
-    risk: "low",
-    ward: "Ward 3",
-    image: "https://i.pravatar.cc/150?u=kamala",
-  },
-];
+import { getAllMothersList, MotherListDbItem } from "../../hooks/database/models/MotherModel";
+import CustomHeader from "../../components/CustomHeader";
 
 const FILTERS = ["All", "Active", "High Risk", "Delivered"];
 
@@ -98,11 +32,37 @@ export default function MotherListScreen() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
+  const [mothers, setMothers] = useState<MotherListDbItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = MOTHERS.filter((m) => {
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+      const fetchMothers = async () => {
+        try {
+          const list = await getAllMothersList();
+          if (isActive) {
+            setMothers(list);
+          }
+        } catch (error) {
+          console.error("Failed to fetch mothers:", error);
+        } finally {
+          if (isActive) setLoading(false);
+        }
+      };
+      
+      setLoading(true);
+      fetchMothers();
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
+
+  const filtered = mothers.filter((m) => {
     const matchSearch =
       m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.nameNp.includes(search);
+      (m.nameNp || "").includes(search);
     const matchFilter =
       activeFilter === "All" ||
       (activeFilter === "Active" && m.status === "active") ||
@@ -116,19 +76,22 @@ export default function MotherListScreen() {
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <View className="px-5 pt-4 pb-5 bg-white border-b border-gray-100 mt-10">
-        <View className="flex-row items-center justify-between mb-5 ">
-          <Text className="text-[#1E293B] text-lg font-black">Mother List</Text>
-          <TouchableOpacity
-            onPress={() => router.push("/dashboard/add-mother" as any)}
-            className="bg-primary p-2.5 rounded-2xl"
-          >
-            <Plus size={22} color="white" strokeWidth={2.5} />
-          </TouchableOpacity>
-        </View>
+      <View className="bg-white border-b border-gray-100 pb-5">
+        <CustomHeader
+          title="Mother List"
+          className="pt-4 px-5 pb-3 mt-10"
+          rightNode={
+            <TouchableOpacity
+              onPress={() => router.push("/dashboard/add-mother" as any)}
+              className="bg-primary p-2.5 rounded-2xl"
+            >
+              <Plus size={22} color="white" strokeWidth={2.5} />
+            </TouchableOpacity>
+          }
+        />
 
         {/* Search Bar */}
-        <View className="flex-row items-center bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100">
+        <View className="flex-row items-center bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100 mx-5">
           <Search size={18} color="#94a3b8" strokeWidth={2.5} />
           <TextInput
             className="flex-1 ml-3 text-[#1E293B] font-bold text-base"
@@ -175,7 +138,7 @@ export default function MotherListScreen() {
           <View>
             <Text className="text-gray-400 font-bold text-[10px]">Active</Text>
             <Text className="text-[#1E293B] font-black text-xl leading-none">
-              {MOTHERS.filter((m) => m.status === "active").length}
+              {mothers.filter((m) => m.status === "active").length}
             </Text>
           </View>
         </View>
@@ -187,7 +150,7 @@ export default function MotherListScreen() {
           <View>
             <Text className="text-gray-400 font-bold text-[10px]">High Risk</Text>
             <Text className="text-[#1E293B] font-black text-xl leading-none">
-              {MOTHERS.filter((m) => m.risk === "high").length}
+              {mothers.filter((m) => m.risk === "high").length}
             </Text>
           </View>
         </View>
@@ -198,7 +161,7 @@ export default function MotherListScreen() {
           <View>
             <Text className="text-gray-400 font-bold text-[10px]">Delivered</Text>
             <Text className="text-[#1E293B] font-black text-xl leading-none">
-              {MOTHERS.filter((m) => m.status === "delivered").length}
+              {mothers.filter((m) => m.status === "delivered").length}
             </Text>
           </View>
         </View>
@@ -210,7 +173,12 @@ export default function MotherListScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
       >
-        {filtered.length === 0 ? (
+        {loading ? (
+          <View className="items-center py-20">
+            <ActivityIndicator size="large" color="#3B82F6" />
+            <Text className="text-gray-400 font-bold text-base mt-4">Loading mothers...</Text>
+          </View>
+        ) : filtered.length === 0 ? (
           <View className="items-center py-20">
             <Baby size={48} color="#CBD5E1" />
             <Text className="text-gray-400 font-bold text-base mt-4">No records found</Text>
@@ -220,7 +188,7 @@ export default function MotherListScreen() {
             <TouchableOpacity
               key={mother.id}
               activeOpacity={0.75}
-              onPress={() => router.push("/dashboard/mother-profile" as any)}
+              onPress={() => router.push({ pathname: "/dashboard/mother-profile", params: { id: mother.id } } as any)}
               className="bg-white rounded-[28px] p-4 mb-4 shadow-sm border border-gray-50"
             >
               <View className="flex-row items-center">

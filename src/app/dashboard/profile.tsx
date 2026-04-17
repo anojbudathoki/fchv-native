@@ -34,6 +34,7 @@ import { useRouter } from "expo-router";
 import "../../global.css";
 import ModalWithSafeArea from "@/components/common/ModalWithSafeArea";
 import DatabaseViewer from "@/components/DatabaseViewer";
+import CustomHeader from "../../components/CustomHeader";
 
 // ── Stats ──────────────────────────────────────────────────────────────
 const STATS = [
@@ -79,16 +80,7 @@ export default function UserProfileScreen() {
       <StatusBar barStyle="dark-content" />
 
       {/* ── Header ───────────────────────────── */}
-      <View className="flex-row items-center justify-between px-5 pt-10 pb-4 bg-white border-b border-gray-100">
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="bg-gray-50 p-2.5 rounded-2xl border border-gray-100"
-        >
-          <ChevronLeft size={22} color="#1E293B" strokeWidth={2.5} />
-        </TouchableOpacity>
-        <Text className="text-[#1E293B] font-black text-lg">My Profile</Text>
-        <View className="w-10" />
-      </View>
+      <CustomHeader title="My Profile" />
 
       <ScrollView
         className="flex-1"

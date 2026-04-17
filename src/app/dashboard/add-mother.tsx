@@ -13,10 +13,11 @@ import {
   Animated,
   Image,
   Alert,
+  Modal,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import React, { useState, useRef } from "react";
-import { useRouter } from "expo-router";
+import React, { useState, useRef, useEffect } from "react";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import {
   ChevronLeft,
   ChevronRight,
@@ -31,16 +32,82 @@ import {
 } from "lucide-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Crypto from "expo-crypto";
-import { createMother } from "../../hooks/database/models/MotherModel";
+import { createMother, getMotherProfile } from "../../hooks/database/models/MotherModel";
 import { createPregnancy } from "../../hooks/database/models/PregnantWomenModal";
 import { useToast } from "../../context/ToastContext";
 import CameraCapture from "../../components/CameraCapture";
 import "../../global.css";
+import CustomHeader from "../../components/CustomHeader";
 
 
 const FieldLabel = ({ label }: { label: string }) => (
   <Text className="text-gray-800 text-[15px] mb-2">{label}</Text>
 );
+
+const JATI_CODES = [
+  { code: "1", name: "दलित (Dalit)" },
+  { code: "2", name: "जनजाति (Janajati)" },
+  { code: "3", name: "मधेसी (Madhesi)" },
+  { code: "4", name: "मुस्लिम (Muslim)" },
+  { code: "5", name: "ब्राह्मण/छेत्री (Brahmin/Chhetri)" },
+  { code: "6", name: "अन्य (Other)" },
+];
+
+const educationOptionsNepali = [
+  { value: "no_formal", label: "कुनै औपचारिक शिक्षा छैन (No Formal Education)" },
+  { value: "primary", label: "प्राथमिक तह – कक्षा १–५ (Primary Level)" },
+  { value: "lower_secondary", label: "निम्न माध्यमिक तह – कक्षा ६–८ (Lower Secondary Level)" },
+  { value: "secondary", label: "माध्यमिक तह – कक्षा ९–१० (Secondary Level / SEE)" },
+  { value: "higher_secondary", label: "उच्च माध्यमिक तह – कक्षा ११–१२ (+2 / Higher Secondary)" },
+  { value: "bachelor", label: "स्नातक तह (Bachelor’s Degree)" },
+  { value: "master", label: "स्नातकोत्तर तह (Master’s Degree)" },
+  { value: "doctoral", label: "विद्यावारिधि तह (Doctoral / PhD)" },
+];
+
+const SelectInput = ({ label, placeholder, value, options, onSelect, error }: any) => {
+  const [visible, setVisible] = useState(false);
+  const selectedLabel = options.find((o: any) => o.value === value)?.label || "";
+
+  return (
+    <View className="mb-6">
+      <TouchableOpacity
+        onPress={() => setVisible(true)}
+        className={`bg-gray-100 rounded-2xl px-4 h-14 justify-center border ${error ? "border-red-300" : "border-gray-200"}`}
+      >
+        <Text className={`text-base ${selectedLabel ? "text-[#1E293B]" : "text-[#b8bbbeff]"}`}>
+          {selectedLabel || placeholder}
+        </Text>
+      </TouchableOpacity>
+      {error ? <Text className="text-red-500 text-xs mt-1 ml-1 font-medium">{error}</Text> : null}
+
+      <Modal visible={visible} transparent animationType="slide">
+        <View className="flex-1 justify-end bg-black/50">
+          <View className="bg-white rounded-t-3xl p-5 max-h-[70%]">
+            <View className="flex-row justify-between mb-4">
+              <Text className="font-bold text-lg">{label}</Text>
+              <TouchableOpacity onPress={() => setVisible(false)}>
+                <X size={24} color="#000" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {options.map((opt: any) => (
+                <TouchableOpacity
+                  key={opt.value}
+                  onPress={() => { onSelect(opt.value); setVisible(false); }}
+                  className="py-4 border-b border-gray-100"
+                >
+                  <Text className={`text-base ${value === opt.value ? 'font-bold text-[#22C55E]' : 'text-gray-800'}`}>
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
 
 const BoxInput = ({
   placeholder,
@@ -148,6 +215,7 @@ const StepIndicator = ({
 
 export default function AddMotherScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const { showToast } = useToast();
   const [step, setStep] = useState(0);
 
@@ -157,6 +225,8 @@ export default function AddMotherScreen() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [husbandName, setHusbandName] = useState("");
+  const [ethnicity, setEthnicity] = useState("");
+  const [education, setEducation] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   // In-app camera visibility
@@ -171,6 +241,40 @@ export default function AddMotherScreen() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [pregnancyId, setPregnancyId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      const fetchEditData = async () => {
+        try {
+          setIsLoading(true);
+          const data = await getMotherProfile(id);
+          if (data) {
+            setName(data.name);
+            setAge(String(data.age || ""));
+            setPhone(data.phone || "");
+            setAddress(data.ward || "");
+            setHusbandName(data.husbandName || "");
+            setEthnicity(data.ethnicity || "");
+            setEducation(data.education || "");
+            if (data.image && !data.image.includes("vectorified")) {
+              setPhotoUrl(data.image);
+            }
+            setGravida(data.gravida || "");
+            setParity(data.parity || "");
+            setLmp(data.lmp || "");
+            setEdd(data.edd || "");
+            setPregnancyId(data.pregnancyId);
+          }
+        } catch (e) {
+          console.error("error fetching mother profile", e);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchEditData();
+    }
+  }, [id]);
 
   // Slide animation
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -273,6 +377,8 @@ export default function AddMotherScreen() {
     if (!name.trim()) e.name = "Full name is required";
     if (!age.trim()) e.age = "Age is required";
     if (phone && phone.length !== 10) e.phone = "Must be 10 digits";
+    if (!ethnicity) e.ethnicity = "Ethnicity is required";
+    if (!education) e.education = "Education is required";
     return e;
   };
 
@@ -298,6 +404,12 @@ export default function AddMotherScreen() {
     setStep(0);
   };
 
+  const generateCustomId = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const getRandom = (len: number) => Array.from({ length: len }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+    return `${getRandom(2)}-${getRandom(4)}-${getRandom(2)}`;
+  };
+
   const handleSave = async () => {
     const e = validateStep2();
     setErrors(e);
@@ -305,7 +417,7 @@ export default function AddMotherScreen() {
 
     setIsLoading(true);
     try {
-      const motherId = Crypto.randomUUID();
+      const motherId = id || generateCustomId();
       await createMother({
         id: motherId,
         name: name,
@@ -313,11 +425,14 @@ export default function AddMotherScreen() {
         phone: phone,
         address: address,
         husband_name: husbandName,
+        ethnicity: ethnicity,
+        education: education,
         photo: photoUrl ?? undefined,
         is_synced: false,
       });
 
       await createPregnancy({
+        id: pregnancyId || undefined,
         mother_id: motherId,
         gravida: parseInt(gravida) || 0,
         parity: parseInt(parity) || 0,
@@ -350,22 +465,11 @@ export default function AddMotherScreen() {
       />
 
       {/* Header */}
-      <View className="px-5 pt-10 pb-4 bg-white flex-row items-center border-b border-gray-100">
-        <TouchableOpacity
-          onPress={goBack}
-          className="bg-gray-50 p-2.5 rounded-2xl border border-gray-100 mr-4"
-        >
-          <ChevronLeft size={22} color="#1E293B" strokeWidth={2.5} />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text className="text-[#1E293B] text-xl font-black">
-            {step === 0 ? "Mother Registration" : "Pregnancy Information"}
-          </Text>
-          <Text className="text-gray-400 text-xs mt-0.5 font-medium">
-            Step {step + 1} of 2
-          </Text>
-        </View>
-      </View>
+      <CustomHeader
+        title={id ? (step === 0 ? "Edit Mother" : "Edit Pregnancy") : (step === 0 ? "Mother Registration" : "Pregnancy Information")}
+        subtitle={`Step ${step + 1} of 2`}
+        onBackPress={goBack}
+      />
 
       {/* Step Indicator */}
       <StepIndicator step={step} totalSteps={2} />
@@ -490,6 +594,28 @@ export default function AddMotherScreen() {
                   placeholder="Enter Husband's Name"
                   value={husbandName}
                   onChangeText={setHusbandName}
+                />
+
+                {/* Ethnicity */}
+                <FieldLabel label="Ethnicity" />
+                <SelectInput
+                  label="Select Ethnicity"
+                  placeholder="Select Ethnicity"
+                  value={ethnicity}
+                  options={JATI_CODES.map(j => ({ value: j.code, label: j.name }))}
+                  onSelect={(val: string) => { setEthnicity(val); setErrors({...errors, ethnicity: ""}) }}
+                  error={errors.ethnicity}
+                />
+
+                {/* Education */}
+                <FieldLabel label="Education" />
+                <SelectInput
+                  label="Select Education"
+                  placeholder="Select Education"
+                  value={education}
+                  options={educationOptionsNepali}
+                  onSelect={(val: string) => { setEducation(val); setErrors({...errors, education: ""}) }}
+                  error={errors.education}
                 />
 
                 {/* Next Button */}

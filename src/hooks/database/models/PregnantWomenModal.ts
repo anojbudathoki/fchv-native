@@ -5,11 +5,11 @@ import { setSyncTimestamp } from './SyncModel';
 import { CreatePregnancyPayload, PregnancyStoreType } from '../types/pregnancyModal';
 
 export async function createPregnancy(
-  payload: Omit<CreatePregnancyPayload, 'id' | 'created_at' | 'updated_at'>
+  payload: Omit<CreatePregnancyPayload, 'id' | 'created_at' | 'updated_at'> & { id?: string }
 ): Promise<PregnancyStoreType> {
   const db = await getDb();
   const now = new Date().toISOString();
-  const id = Crypto.randomUUID();
+  const id = payload.id || Crypto.randomUUID();
 
   await db.runAsync(
     `INSERT OR REPLACE INTO pregnancy 
