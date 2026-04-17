@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,291 +7,431 @@ import {
   SafeAreaView,
   StatusBar,
   Image,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import {
   ChevronLeft,
-  Bell,
-  Heart,
-  AlertTriangle,
-  Send,
+  Search,
+  MoreVertical,
+  User,
+  Activity,
   ClipboardList,
+  Calendar,
+  Phone,
   CheckCircle2,
   Circle,
-  ChevronRight,
-  Weight,
-  Activity,
-  Pill,
+  PlusCircle,
+  Edit,
+  Trash2,
 } from "lucide-react-native";
 import "../../global.css";
-
-// ─── Mock data (in real app, fetch by id from params) ──────────────────────────
-const MOTHER = {
-  name: "Sita Devi Gurung",
-  nameNp: "सिता देवी गुरुङ",
-  age: 26,
-  weeks: 28,
-  edd: "Nov 14, 2024",
-  eddNp: "कार्तिक २९, २०८१",
-  ward: "Ward 3",
-  risk: "high",
-  image: "https://media.istockphoto.com/id/1525372632/vector/logo-with-mother-and-baby-silhouette-icon-logo-sign.jpg?s=612x612&w=0&k=20&c=c6gfhaEC2p_S5vWN2jYH5sZ4asrFxVYi2yZAiOxfBJ8=",
-};
-
-const RECENT_VISITS = [
-  {
-    id: "v1",
-    day: "24",
-    month: "SEP",
-    title: "24th Week Checkup",
-    note: "Weight & BP Normal",
-    icon: "check",
-  },
-  {
-    id: "v2",
-    day: "12",
-    month: "AUG",
-    title: "Iron/Folic Acid Refill",
-    note: "30-day supply given",
-    icon: "pill",
-  },
-  {
-    id: "v3",
-    day: "05",
-    month: "JUL",
-    title: "20th Week ANC Visit",
-    note: "Referred for USG",
-    icon: "activity",
-  },
-];
-
-const BIRTH_PREP = [
-  { label: "Health Post Selected", done: true },
-  { label: "Transport Arranged", done: true },
-  { label: "Blood Donor Identified", done: false },
-  { label: "Savings for Delivery", done: false },
-];
-
-const TABS = ["Profile", "Visit History", "Birth Prep"];
-
-// ─── Component ──────────────────────────────────────────────────────────────────
+import { getMotherProfile, MotherProfileDbItem, deleteMother } from "../../hooks/database/models/MotherModel";
+import Colors from "../../constants/Colors";
+import CustomHeader from "../../components/CustomHeader";
 
 export default function MotherProfileScreen() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("Profile");
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const [mother, setMother] = useState<MotherProfileDbItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const completedPrep = BIRTH_PREP.filter((i) => i.done).length;
-  const prepProgress = completedPrep / BIRTH_PREP.length;
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+      const fetchMother = async () => {
+        if (!id) {
+          setLoading(false);
+          return;
+        }
+        try {
+          const data = await getMotherProfile(id);
+          if (isActive) {
+            setMother(data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch mother profile:", error);
+        } finally {
+          if (isActive) setLoading(false);
+        }
+      };
+
+      setLoading(true);
+      fetchMother();
+      return () => {
+        isActive = false;
+      };
+    }, [id])
+  );
+
+  const getGA = (lmp?: string) => {
+    if (!lmp || lmp === "N/A") return { weeks: 0, days: 0, months: 0 };
+    const lmpDate = new Date(lmp);
+    const now = new Date();
+    const diffTime = now.getTime() - lmpDate.getTime();
+    if (diffTime < 0) return { weeks: 0, days: 0, months: 0 };
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return {
+      weeks: Math.floor(diffDays / 7),
+      days: diffDays % 7,
+      months: Math.floor(diffDays / 30.44),
+    };
+  };
+
+  const ga = mother ? getGA(mother.lmp) : { weeks: 0, days: 0, months: 0 };
+
+  const formatShortDate = (dateStr: string) => {
+    if (!dateStr || dateStr === "N/A") return "N/A";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return months[d.getMonth()];
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Mother",
+      "Are you sure you want to delete this mother record?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            if (mother?.id) {
+              try {
+                await deleteMother(mother.id);
+                router.back();
+              } catch (error) {
+                Alert.alert("Error", "Could not delete mother.");
+              }
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center" style={{ backgroundColor: Colors.background }}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+        <Text className="mt-4 font-bold" style={{ color: Colors.textSecondary }}>Loading profile...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!mother) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center" style={{ backgroundColor: Colors.background }}>
+        <User size={48} color={Colors.textSecondary} />
+        <Text className="mt-4 font-bold text-lg" style={{ color: Colors.textSecondary }}>Mother not found</Text>
+        <TouchableOpacity onPress={() => router.back()} className="mt-6 px-6 py-3 rounded-full" style={{ backgroundColor: Colors.nepali }}>
+          <Text className="text-white font-bold">Go Back</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  const JATI_CODES = [
+    { code: "1", name: "दलित (Dalit)" },
+    { code: "2", name: "जनजाति (Janajati)" },
+    { code: "3", name: "मधेसी (Madhesi)" },
+    { code: "4", name: "मुस्लिम (Muslim)" },
+    { code: "5", name: "ब्राह्मण/छेत्री (Brahmin/Chhetri)" },
+    { code: "6", name: "अन्य (Other)" },
+  ];
+
+  const educationOptionsNepali = [
+    { value: "no_formal", label: "कुनै औपचारिक शिक्षा छैन (No Formal Education)" },
+    { value: "primary", label: "प्राथमिक तह – कक्षा १–५ (Primary Level)" },
+    { value: "lower_secondary", label: "निम्न माध्यमिक तह – कक्षा ६–८ (Lower Secondary Level)" },
+    { value: "secondary", label: "माध्यमिक तह – कक्षा ९–१० (Secondary Level / SEE)" },
+    { value: "higher_secondary", label: "उच्च माध्यमिक तह – कक्षा ११–१२ (+2 / Higher Secondary)" },
+    { value: "bachelor", label: "स्नातक तह (Bachelor’s Degree)" },
+    { value: "master", label: "स्नातकोत्तर तह (Master’s Degree)" },
+    { value: "doctoral", label: "विद्यावारिधि तह (Doctoral / PhD)" },
+  ];
+
+  const displayEthnicity = mother?.ethnicity ? (JATI_CODES.find(j => j.code === mother.ethnicity)?.name || mother.ethnicity) : "N/A";
+  const displayEducation = mother?.education ? (educationOptionsNepali.find(e => e.value === mother.education)?.label || mother.education) : "N/A";
+
+  const getInitials = (name: string) => {
+    return name.slice(0, 2).toUpperCase(); // mock logic, ideally should be NP if nameNp exists
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView className="flex-1" style={{ backgroundColor: Colors.background }}>
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
 
-      <View className="flex-row items-center gap-5  px-5 pt-10 pb-4 bg-white border-b border-gray-100">
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="bg-gray-50 p-2.5 rounded-2xl border border-gray-100"
-        >
-          <ChevronLeft size={22} color="#1E293B" strokeWidth={2.5} />
-        </TouchableOpacity>
-        <Text className="text-[#1E293B] font-black text-lg">Mother Profile</Text>
-        {/* <TouchableOpacity className="bg-rose-50 p-2.5 rounded-2xl border border-rose-100 relative">
-          <Bell size={20} color="#E11D48" strokeWidth={2.5} />
-          <View className="absolute top-2 right-2 w-2.5 h-2.5 bg-primary rounded-full border border-white" />
-        </TouchableOpacity> */}
+      {/* ── App Header ── */}
+      <CustomHeader
+        title="Mother Profile"
+        rightNode={
+          <TouchableOpacity 
+            onPress={() => router.push({ pathname: "/dashboard/add-mother", params: { id: mother.id } } as any)}
+            className="bg-white shadow-sm border border-slate-100 p-2 rounded-xl"
+          >
+            <Edit size={20} color={Colors.textPrimary} />
+          </TouchableOpacity>
+        }
+      />
+
+      {/* ── Profile Top Container ── */}
+      <View style={{ backgroundColor: Colors.primary }} className="rounded-b-[24px] rounded-t-[24px] mx-4 mt-2 mb-4 p-1 shadow-sm">
+        <View className="flex-row items-center bg-black/10 rounded-[20px] p-4">
+          {mother.image && !mother.image.includes("vectorified") ? (
+            <Image
+              source={{ uri: mother.image }}
+              className="w-16 h-16 rounded-full border-2 border-white/30"
+            />
+          ) : (
+            <View className="w-16 h-16 rounded-full bg-white/20 items-center justify-center border-2 border-white/30">
+              <Text className="text-white text-xl font-bold">{getInitials(mother.name)}</Text>
+            </View>
+          )}
+
+          <View className="ml-4 flex-1">
+            <Text className="text-white text-xl font-bold capitalize" numberOfLines={1}>{mother.name}</Text>
+            <Text className="text-white/80 text-xs mt-0.5 font-medium">FCHV ID: {mother.id}</Text>
+
+            <View className="flex-row items-center mt-2.5 gap-2">
+              <View className="bg-white/20 px-2.5 py-1 rounded-full">
+                <Text className="text-white text-[10px] font-bold">{mother.ward}</Text>
+              </View>
+              <View className="bg-white/90 px-2.5 py-1 rounded-full">
+                <Text className="text-[10px] font-bold" style={{ color: Colors.primary }}>{mother.status === 'active' ? 'Active' : 'Delivered'}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
 
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
       >
+        {/* ── Personal Information ── */}
+        <View className="bg-white mx-4 rounded-[24px] p-5 shadow-sm border border-slate-100 mb-4">
+          <View className="flex-row items-center mb-4 border-b border-slate-50 pb-3">
+            <User size={18} color={Colors.textSecondary} />
+            <Text className="ml-2 font-bold text-base" style={{ color: Colors.textPrimary }}>Personal information</Text>
+          </View>
 
-        <View className="bg-white items-center mt-3 pt-3 pb-6 px-5">
-          <View className="flex-row  border border-gray-200 rounded-md p-2">
-            <View className="w-28 h-28 rounded-full border-4 border-rose-100 overflow-hidden shadow-md">
-              <Image
-                source={{ uri: MOTHER.image }}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
+          <View className="flex-row flex-wrap">
+            <View className="w-1/2 mb-4 pr-2">
+              <Text className="text-[11px] font-bold mb-1" style={{ color: Colors.textSecondary }}>Age</Text>
+              <Text className="text-[14px] font-bold" style={{ color: Colors.textPrimary }}>{mother.age} years</Text>
             </View>
-            <View className="mt-5 ml-5">
-              <Text className="text-gray-800 text-xl capitalize">{MOTHER.name} | {MOTHER.age} Years</Text>
-              <Text className="text-gray-800 text-md">
-                Reg. Date: 2026-01-01
-              </Text>
+            <View className="w-1/2 mb-4 pl-2">
+              <Text className="text-[11px] font-bold mb-1" style={{ color: Colors.textSecondary }}>Ethnicity</Text>
+              <Text className="text-[13px] font-bold" style={{ color: Colors.textPrimary }} numberOfLines={2}>{displayEthnicity}</Text>
+            </View>
+
+            <View className="w-1/2 mb-4 pr-2">
+              <Text className="text-[11px] font-bold mb-1" style={{ color: Colors.textSecondary }}>Education</Text>
+              <Text className="text-[13px] font-bold" style={{ color: Colors.textPrimary }} numberOfLines={2}>{displayEducation}</Text>
+            </View>
+            <View className="w-1/2 mb-4 pl-2">
+              <Text className="text-[11px] font-bold mb-1" style={{ color: Colors.textSecondary }}>Phone</Text>
+              <Text className="text-[14px] font-bold" style={{ color: Colors.primary }}>{mother.phone || "N/A"}</Text>
+            </View>
+
+            <View className="w-1/2 mb-2 pr-2">
+              <Text className="text-[11px] font-bold mb-1" style={{ color: Colors.textSecondary }}>Husband's name</Text>
+              <Text className="text-[14px] font-bold" style={{ color: Colors.textPrimary }} numberOfLines={1}>{mother.husbandName || "N/A"}</Text>
+            </View>
+            <View className="w-1/2 mb-2 pl-2">
+              <Text className="text-[11px] font-bold mb-1" style={{ color: Colors.textSecondary }}>No. of children</Text>
+              <Text className="text-[14px] font-bold" style={{ color: Colors.textPrimary }}>{mother.parity || "0"}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* ── Pregnancy Status ── */}
+        <View className="bg-white mx-4 rounded-[24px] p-5 shadow-sm border border-slate-100 mb-4">
+          <View className="flex-row items-center justify-between mb-4 border-b border-slate-50 pb-3">
+            <View className="flex-row items-center">
+              <Activity size={18} color={Colors.textSecondary} />
+              <Text className="ml-2 font-bold text-base" style={{ color: Colors.textPrimary }}>Pregnancy status</Text>
+            </View>
+            <View className="bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
+              <Text className="text-orange-600 text-[10px] font-bold uppercase tracking-widest">Pregnant</Text>
             </View>
           </View>
 
+          <View className="flex-row justify-between mb-5 gap-2">
+            <View className="bg-slate-50 rounded-2xl flex-1 items-center justify-center py-4 border border-slate-100">
+              <Text className="text-2xl font-black" style={{ color: Colors.primary }}>{ga.months}</Text>
+              <Text className="text-[10px] font-bold mt-1" style={{ color: Colors.textSecondary }}>months</Text>
+            </View>
+            <View className="bg-slate-50 rounded-2xl flex-1 items-center justify-center py-4 border border-slate-100">
+              <Text className="text-2xl font-black" style={{ color: Colors.primary }}>3</Text>
+              <Text className="text-[10px] font-bold mt-1" style={{ color: Colors.textSecondary }}>ANC visits</Text>
+            </View>
+            <View className="bg-slate-50 rounded-2xl flex-1 items-center justify-center py-4 border border-slate-100">
+              <Text className="text-2xl font-black" style={{ color: Colors.primary }}>{formatShortDate(mother.edd)}</Text>
+              <Text className="text-[10px] font-bold mt-1 uppercase" style={{ color: Colors.textSecondary }}>EDD</Text>
+            </View>
+          </View>
 
+          <View className="flex-row justify-between items-end mb-2">
+            <Text className="text-[10px] font-bold" style={{ color: Colors.textSecondary }}>Gestational age</Text>
+            <Text className="text-[10px] font-bold" style={{ color: Colors.textPrimary }}>{ga.weeks}/40 weeks</Text>
+          </View>
+          <View className="h-1.5 bg-slate-100 rounded-full w-full overflow-hidden">
+            <View className="h-full rounded-full" style={{ width: `${Math.min((ga.weeks / 40) * 100, 100)}%`, backgroundColor: Colors.primary }} />
+          </View>
 
-          {/* ── Stat Cards ─────────────────────────────── */}
-          <View className="flex-row gap-4 mt-6 w-full">
-            <View className="flex-1 bg-blue-50 rounded-[24px] p-4 border border-blue-100">
-              <Text className="text-[#3B82F6] font-black text-[10px] uppercase tracking-widest">Gestational Age</Text>
+          <View className="flex-row justify-between items-center mt-5 pt-4 border-t border-slate-50">
+            <View>
+              <Text className="text-[10px] font-bold mb-1" style={{ color: Colors.textSecondary }}>LMP Date</Text>
+              <Text className="text-[13px] font-bold" style={{ color: Colors.textPrimary }}>{mother.lmp || "N/A"}</Text>
+            </View>
+            <View className="items-end">
+              <Text className="text-[10px] font-bold mb-1" style={{ color: Colors.textSecondary }}>EDD Date</Text>
+              <Text className="text-[13px] font-bold" style={{ color: Colors.textPrimary }}>{mother.edd || "N/A"}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* ── Health Indicators ── */}
+        <View className="bg-white mx-4 rounded-[24px] p-5 shadow-sm border border-slate-100 mb-4">
+          <View className="flex-row items-center mb-4 border-b border-slate-50 pb-3">
+            <Activity size={18} color={Colors.textSecondary} />
+            <Text className="ml-2 font-bold text-base" style={{ color: Colors.textPrimary }}>Health indicators</Text>
+          </View>
+
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-[13px] font-bold" style={{ color: Colors.textSecondary }}>Blood pressure</Text>
+            <View className="flex-row items-center">
+              <Text className="text-[13px] font-bold mr-3" style={{ color: Colors.textPrimary }}>118/76 mmHg</Text>
+              <View className="bg-green-50 px-2.5 py-1 rounded-md border border-green-100"><Text className="text-[10px] font-bold text-green-700">Normal</Text></View>
+            </View>
+          </View>
+
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-[13px] font-bold" style={{ color: Colors.textSecondary }}>Hemoglobin</Text>
+            <View className="flex-row items-center">
+              <Text className="text-[13px] font-bold mr-3" style={{ color: Colors.textPrimary }}>10.2 g/dL</Text>
+              <View className="bg-orange-50 px-2.5 py-1 rounded-md border border-orange-100"><Text className="text-[10px] font-bold text-orange-600">Mild anemia</Text></View>
+            </View>
+          </View>
+
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-[13px] font-bold" style={{ color: Colors.textSecondary }}>Weight</Text>
+            <View className="flex-row items-center">
+              <Text className="text-[13px] font-bold mr-3" style={{ color: Colors.textPrimary }}>56 kg</Text>
+              <View className="bg-green-50 px-2.5 py-1 rounded-md border border-green-100"><Text className="text-[10px] font-bold text-green-700">Normal</Text></View>
+            </View>
+          </View>
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-[13px] font-bold" style={{ color: Colors.textSecondary }}>IFA tablets</Text>
+            <View className="flex-row items-center">
+              <Text className="text-[13px] font-bold mr-3" style={{ color: Colors.textPrimary }}>90 days</Text>
+              <View className="bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200"><Text className="text-[10px] font-bold text-slate-600">Dispensed</Text></View>
+            </View>
+          </View>
+        </View>
+
+        {/* ── Services Received ── */}
+        <View className="bg-white mx-4 rounded-[24px] p-5 shadow-sm border border-slate-100 mb-4">
+          <View className="flex-row items-center mb-4 border-b border-slate-50 pb-3">
+            <ClipboardList size={18} color={Colors.textSecondary} />
+            <Text className="ml-2 font-bold text-base" style={{ color: Colors.textPrimary }}>Services received</Text>
+          </View>
+
+          <View className="gap-y-4">
+            <View className="flex-row items-center justify-between">
               <View className="flex-row items-center">
-                <Text className="text-[#1E293B] font-black text-[25px] leading-none mt-1">{MOTHER.weeks}.</Text>
-                <Text className="text-[#3B82F6] font-bold text-md">weeks,</Text>
-                <Text className="text-[#1E293B] font-black text-[25px] leading-none mt-1">10.</Text>
-                <Text className="text-[#3B82F6] font-bold text-md">Days</Text>
-
+                <CheckCircle2 size={18} color={Colors.primary} fill={Colors.primary + "1A"} />
+                <Text className="ml-3 font-bold text-[13px]" style={{ color: Colors.textPrimary }}>TT vaccination (2nd dose)</Text>
               </View>
-              <Text className="text-gray-400 font-medium text-[10px] mt-1">LMP : 2024-09-08</Text>
             </View>
-
-            <View className="flex-1 bg-rose-50 rounded-[24px] p-4 border border-rose-100">
-              <Text className="text-[#E11D48] font-black text-[10px] uppercase tracking-widest">EDD Date</Text>
-              <Text className="text-[#1E293B] font-black text-[22px] leading-snug mt-1">{MOTHER.edd}</Text>
-              <Text className="text-gray-400 font-medium text-[10px] mt-1">{MOTHER.eddNp}</Text>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <CheckCircle2 size={18} color={Colors.primary} fill={Colors.primary + "1A"} />
+                <Text className="ml-3 font-bold text-[13px]" style={{ color: Colors.textPrimary }}>Nutrition counselling</Text>
+              </View>
+            </View>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <CheckCircle2 size={18} color={Colors.primary} fill={Colors.primary + "1A"} />
+                <Text className="ml-3 font-bold text-[13px]" style={{ color: Colors.textPrimary }}>Safe delivery planning</Text>
+              </View>
+            </View>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center opacity-60">
+                <PlusCircle size={18} color={Colors.secondary} />
+                <Text className="ml-3 font-bold text-[13px]" style={{ color: Colors.textPrimary }}>Deworming tablet</Text>
+              </View>
+              <Text className="text-[10px] font-bold" style={{ color: Colors.secondary }}>Pending</Text>
+            </View>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center opacity-60">
+                <PlusCircle size={18} color={Colors.secondary} />
+                <Text className="ml-3 font-bold text-[13px]" style={{ color: Colors.textPrimary }}>4th ANC check-up</Text>
+              </View>
+              <Text className="text-[10px] font-bold" style={{ color: Colors.secondary }}>Pending</Text>
             </View>
           </View>
         </View>
 
-        {/* ── Tab Bar ────────────────────────────────────── */}
-        {/* <View className="flex-row bg-white px-5 pt-2 pb-0 border-b border-gray-100">
-          {TABS.map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => setActiveTab(tab)}
-              className={`mr-6 pb-3 ${activeTab === tab ? "border-b-2 border-[#E11D48]" : ""}`}
-            >
-              <Text
-                className={`font-black text-sm ${activeTab === tab ? "text-[#E11D48]" : "text-gray-400"
-                  }`}
-              >
-                {tab}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View> */}
+        {/* ── Last Home Visit ── */}
+        <View className="bg-white mx-4 rounded-[24px] p-5 shadow-sm border border-slate-100 flex-row items-center justify-between mb-4">
+          <View className="flex-row items-center">
+            <View style={{ backgroundColor: Colors.primary + "15" }} className="p-3 rounded-2xl border border-green-100">
+              <Calendar size={22} color={Colors.primary} strokeWidth={2.5} />
+            </View>
+            <View className="ml-3">
+              <Text className="text-[10px] font-bold" style={{ color: Colors.textSecondary }}>Last home visit</Text>
+              <Text className="text-[14px] font-black mt-0.5" style={{ color: Colors.textPrimary }}>April 10, 2026</Text>
+            </View>
+          </View>
+          <View className="items-end">
+            <Text className="text-[10px] font-bold" style={{ color: Colors.textSecondary }}>Next visit</Text>
+            <Text className="text-[12px] font-bold mt-1" style={{ color: Colors.primary }}>May 5, 2026</Text>
+          </View>
+        </View>
 
-        <View className="px-5 pt-5">
-
-          {/* ── Log New Visit CTA ──────────────────────── */}
+        {/* ── Delete Button ─────────────── */}
+        <View className="items-end mx-4 mb-8">
           <TouchableOpacity
-            activeOpacity={0.85}
-            className="bg-[#E11D48] rounded-[24px] p-5 flex-row items-center justify-between mb-5 shadow-lg shadow-rose-200"
+            activeOpacity={0.8}
+            onPress={handleDelete}
+            className="flex-row items-center border border-red-200 bg-red-50 px-4 py-3 rounded-2xl"
           >
-            <View className="flex-row items-center flex-1">
-              <View className="bg-white/20 p-2.5 rounded-2xl mr-4">
-                <ClipboardList size={24} color="white" strokeWidth={2.5} />
-              </View>
-              <View>
-                <Text className="text-white font-black text-lg">Log New Visit</Text>
-                {/* <Text className="text-white/70 font-bold text-xs mt-0.5">नयाँ जाँच दर्ता गर्नुहोस्</Text> */}
-              </View>
-            </View>
-            <View className="bg-white/20 p-2 rounded-xl">
-              <ChevronRight size={20} color="white" strokeWidth={3} />
-            </View>
+            <Trash2 size={18} color={Colors.nepali} strokeWidth={2.5} />
+            <Text className="ml-2 font-black text-sm" style={{ color: Colors.nepali }}>Delete Mother</Text>
           </TouchableOpacity>
-
-          {/* ── Action Cards ────────────────────────────── */}
-          <View className="flex-row gap-4 mb-6">
-            <TouchableOpacity
-              activeOpacity={0.8}
-              className="flex-1 bg-[#FFF1F2] rounded-[24px] p-5 border border-rose-100"
-            >
-              <View className="bg-rose-100 w-10 h-10 rounded-2xl items-center justify-center mb-4">
-                <AlertTriangle size={20} color="#E11D48" strokeWidth={2.5} />
-              </View>
-              <Text className="text-[#E11D48] font-black text-base">Danger Signs</Text>
-              {/* <Text className="text-gray-400 font-bold text-xs mt-1">खतराका चिन्ह्रुक</Text> */}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              className="flex-1 bg-[#EFF6FF] rounded-[24px] p-5 border border-blue-100"
-            >
-              <View className="bg-blue-100 w-10 h-10 rounded-2xl items-center justify-center mb-4">
-                <Send size={20} color="#3B82F6" strokeWidth={2.5} />
-              </View>
-              <Text className="text-[#3B82F6] font-black text-base">Send Reminder</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* ── Recent Visits ───────────────────────────── */}
-          <View className="mb-6">
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-[#1E293B] font-black text-xl">Recent Visits</Text>
-              <TouchableOpacity>
-                <Text className="text-[#E11D48] font-black text-sm">See All</Text>
-              </TouchableOpacity>
-            </View>
-
-            {RECENT_VISITS.map((visit) => (
-              <TouchableOpacity
-                key={visit.id}
-                activeOpacity={0.75}
-                className="bg-white rounded-[24px] p-4 mb-3 flex-row items-center border border-gray-50 shadow-sm"
-              >
-                {/* Date Badge */}
-                <View className="bg-gray-50 border border-gray-100 rounded-2xl items-center justify-center w-14 h-14 mr-4">
-                  <Text className="text-primary font-black text-[10px] uppercase">{visit.month}</Text>
-                  <Text className="text-[#1E293B] font-black text-xl leading-tight">{visit.day}</Text>
-                </View>
-
-                {/* Details */}
-                <View className="flex-1">
-                  <Text className="text-[#1E293B] font-black text-base">{visit.title}</Text>
-                  <View className="flex-row items-center mt-1">
-                    {visit.icon === "check" ? (
-                      <CheckCircle2 size={13} color="#22C55E" strokeWidth={2.5} />
-                    ) : visit.icon === "pill" ? (
-                      <Pill size={13} color="#3B82F6" strokeWidth={2.5} />
-                    ) : (
-                      <Activity size={13} color="#F97316" strokeWidth={2.5} />
-                    )}
-                    <Text className="text-gray-400 font-bold text-[12px] ml-1">{visit.note}</Text>
-                  </View>
-                </View>
-
-                <View className="bg-gray-50 p-2 rounded-xl">
-                  <ChevronRight size={16} color="#94a3b8" strokeWidth={2.5} />
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* ── Birth Preparedness Progress ─────────────── */}
-          <View className="bg-[#FFF8F5] rounded-[28px] p-6 border border-orange-100 mb-4">
-            <Text className="text-[#1E293B] font-black text-xl mb-1">Birth Preparedness Progress</Text>
-            <Text className="text-gray-400 font-bold text-xs mb-5">
-              {completedPrep}/{BIRTH_PREP.length} completed
-            </Text>
-
-            {/* Progress bar */}
-            <View className="h-3 bg-orange-100 rounded-full overflow-hidden mb-5">
-              <View
-                className="h-full bg-[#E11D48] rounded-full"
-                style={{ width: `${prepProgress * 100}%` }}
-              />
-            </View>
-
-            {/* Checklist */}
-            {BIRTH_PREP.map((item, i) => (
-              <View
-                key={i}
-                className={`flex-row items-center py-3 ${i < BIRTH_PREP.length - 1 ? "border-b border-orange-100" : ""}`}
-              >
-                {item.done ? (
-                  <CheckCircle2 size={18} color="#22C55E" strokeWidth={2.5} />
-                ) : (
-                  <Circle size={18} color="#CBD5E1" strokeWidth={2.5} />
-                )}
-                <Text
-                  className={`ml-3 font-bold text-[14px] ${item.done ? "text-[#1E293B]" : "text-gray-400"
-                    }`}
-                >
-                  {item.done ? "✓ " : ""}{item.label}
-                </Text>
-              </View>
-            ))}
-          </View>
-
         </View>
+
       </ScrollView>
+
+      {/* ── Bottom Fixed Actions ── */}
+      {/* <View className="absolute bottom-0 w-full bg-white border-t border-slate-100 px-5 py-4 flex-row gap-4 pb-8">
+        <TouchableOpacity 
+          activeOpacity={0.8}
+          onPress={() => router.push({ pathname: "/dashboard/add-mother", params: { id: mother.id } } as any)}
+          className="flex-1 h-14 rounded-2xl flex-row items-center justify-center shadow-sm shadow-green-100"
+          style={{ backgroundColor: Colors.primary }}
+        >
+          <Edit size={18} color="#FFF" />
+          <Text className="text-white font-bold text-base ml-2">Update record</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          activeOpacity={0.8}
+          className="flex-1 h-14 rounded-2xl flex-row items-center justify-center border-2"
+          style={{ borderColor: Colors.textSecondary + "30", backgroundColor: "#F8FAFC" }}
+        >
+          <Phone size={18} color={Colors.primary} />
+          <Text className="font-bold text-base ml-2" style={{ color: Colors.primary }}>Refer / Call</Text>
+        </TouchableOpacity>
+      </View> */}
     </SafeAreaView>
   );
 }
