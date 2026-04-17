@@ -24,7 +24,7 @@ export default function PrimaryButton({
       onPress={onPress}
       disabled={isLoading}
       className={twMerge(
-        "w-full bg-[#34d399] rounded-2xl h-14 flex-row items-center justify-center shadow-md",
+        "w-full bg-[#059669] rounded-2xl h-16 flex-row items-center justify-center shadow-lg shadow-emerald-700/30",
         className,
       )}
     >
@@ -32,12 +32,12 @@ export default function PrimaryButton({
         <ActivityIndicator color="white" />
       ) : (
         <View className="flex-row items-center">
-          <Text className="text-black font-bold text-lg">{title}</Text>
+          <Text className="text-white font-bold text-xl">{title}</Text>
           <ArrowRight
-            size={20}
-            color="black"
-            className="ml-2"
-            strokeWidth={2.5}
+            size={24}
+            color="white"
+            className="ml-3"
+            strokeWidth={3}
           />
         </View>
       )}

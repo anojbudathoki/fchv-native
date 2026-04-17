@@ -14,11 +14,13 @@ export default function WelcomeScreen() {
   }, []);
 
   return (
-    <View className="flex-1 justify-center items-center bg-white">
-      <Text className="text-2xl font-bold text-blue-600">
-        Welcome to FCHV Native
+    <View className="flex-1 justify-center items-center bg-background">
+      <Text className="text-3xl font-extrabold text-primary">
+        FCHV Native
       </Text>
-      <Text className="text-gray-500 mt-2">Pregnant Users Record System</Text>
+      <Text className="text-text-secondary text-lg mt-2 font-medium">
+        Pregnant Users Record System
+      </Text>
     </View>
   );
 }

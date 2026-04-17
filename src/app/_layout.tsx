@@ -22,6 +22,12 @@ export default function RootLayout() {
   //   }
   // }, [isConnected, doSync]);
 
+  useEffect(() => {
+    import("@/hooks/database/db").then(({ initDatabase }) => {
+      initDatabase().catch(err => console.error("DB Init Error:", err));
+    });
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>

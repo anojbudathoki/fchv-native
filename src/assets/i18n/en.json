@@ -3,7 +3,7 @@
     "welcome": "Welcome",
     "subtitle": "Health Data Collection App",
     "health_id_label": "Health Worker ID",
-    "health_id_placeholder": "Enter ID",
+    "health_id_placeholder": "Enter Email ID",
     "password_label": "Password",
     "password_placeholder": "Enter Password",
     "login_button": "Login",
@@ -174,4 +174,4 @@
     },
     "no_content": "No content available"
   }
-}
+}

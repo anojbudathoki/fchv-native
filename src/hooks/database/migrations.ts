@@ -1,45 +1,39 @@
 import * as SQLite from "expo-sqlite";
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 3;
 
 type Migration = {
   version: number;
   up: (db: SQLite.SQLiteDatabase) => Promise<void>;
 };
 
-// async function addColumnIfMissing(
-//   db: SQLite.SQLiteDatabase,
-//   tableName: string,
-//   columnName: string,
-//   columnDefinition: string
-// ): Promise<void> {
-//   const rows = await db.getAllAsync<{ name: string }>(
-//     `PRAGMA table_info(${tableName});`
-//   );
-//   const exists = rows.some((row) => row.name === columnName);
-//   if (exists) return;
-
-//   await db.execAsync(
-//     `ALTER TABLE ${tableName} ADD COLUMN ${columnDefinition};`
-//   );
-// }
-
 export const MIGRATIONS: Migration[] = [
   {
     version: 1,
+    up: async (db) => {}
+  },
+  {
+    version: 2,
     up: async (db) => {
-      // await addColumnIfMissing(
-      //   db,
-      //   "calendar_events",
-      //   "position",
-      //   "position INTEGER DEFAULT 0"
-      // );
-      // await addColumnIfMissing(
-      //   db,
-      //   "calendar_events_staging",
-      //   "position",
-      //   "position INTEGER DEFAULT 0"
-      // );
+      // Force table refresh for the new schema since development db may have dirty state
+      await db.execAsync(`
+        DROP TABLE IF EXISTS pregnancy;
+        DROP TABLE IF EXISTS mother;
+        DROP TABLE IF EXISTS sync;
+      `);
+      
+      const { SCHEMA_SQL } = require('./schema');
+      await db.execAsync(SCHEMA_SQL);
+    }
+  },
+  {
+    version: 3,
+    up: async (db) => {
+      try {
+        await db.execAsync(`ALTER TABLE mother ADD COLUMN photo TEXT;`);
+      } catch (e) {
+        console.log("Migration 3 (photo column) already applied or failed:", e);
+      }
     }
   }
 ];

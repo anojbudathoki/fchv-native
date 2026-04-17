@@ -4,7 +4,6 @@ import { bulkInsertToTempTable } from './CommonModal';
 import { setSyncTimestamp } from './SyncModel';
 import { CreatePregnancyPayload, PregnancyStoreType } from '../types/pregnancyModal';
 
-  
 export async function createPregnancy(
   payload: Omit<CreatePregnancyPayload, 'id' | 'created_at' | 'updated_at'>
 ): Promise<PregnancyStoreType> {
@@ -14,16 +13,15 @@ export async function createPregnancy(
 
   await db.runAsync(
     `INSERT OR REPLACE INTO pregnancy 
-      (id, name, lmp_date, caretakers_name, caretakers_phone, expected_delivery_date, is_current, parity, selected, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+      (id, mother_id, lmp_date, expected_delivery_date, is_current, gravida, parity, selected, is_synced, is_deleted, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
     [
       id,
-      payload.name ?? null,
+      payload.mother_id,
       payload.lmp_date,
-      payload.caretakers_name ?? null,
-      payload.caretakers_phone ?? null,
       payload.expected_delivery_date ?? null,
       payload.is_current ? 1 : 0,
+      payload.gravida ?? null,
       payload.parity ?? null,
       payload.selected ? 1 : 0,
       payload.is_synced ? 1 : 0,
@@ -35,12 +33,11 @@ export async function createPregnancy(
 
   return {
     id: id,
-    name: payload.name ?? null,
+    mother_id: payload.mother_id,
     lmp_date: payload.lmp_date,
-    caretakers_name: payload.caretakers_name ?? null,
-    caretakers_phone: payload.caretakers_phone ?? null,
     expected_delivery_date: payload.expected_delivery_date ?? null,
     is_current: payload.is_current ? 1 : 0,
+    gravida: payload.gravida ?? null,
     parity: payload.parity ?? null,
     selected: payload.selected ? 1 : 0,
     is_synced: payload.is_synced ? 1 : 0,
@@ -50,7 +47,7 @@ export async function createPregnancy(
   };
 }
 
- export async function unSyncedPregnancies(): Promise<CreatePregnancyPayload[]> {
+export async function unSyncedPregnancies(): Promise<CreatePregnancyPayload[]> {
   const db = await getDb();
   const rows = await db.getAllAsync<PregnancyStoreType>(
     `SELECT * FROM pregnancy WHERE is_synced = 0 AND is_deleted = 0`
@@ -58,14 +55,14 @@ export async function createPregnancy(
 
   return rows.map((row) => ({
     id: row.id,
-    name: row.name ?? undefined,
+    mother_id: row.mother_id,
+    gravida: row.gravida ?? undefined,
+    parity: row.parity ?? undefined,
     lmp_date: row.lmp_date,
-    caretakers_name: row.caretakers_name ?? undefined,
-    caretakers_phone: row.caretakers_phone ?? undefined,
     expected_delivery_date: row.expected_delivery_date ?? undefined,
     is_current: row.is_current === 1,
-    parity: row.parity ?? undefined,
-    selected: row.selected === 1
+    selected: row.selected === 1,
+    is_synced: false
   }));
 }
 
@@ -86,13 +83,12 @@ export async function insertToTempPregnancyTable(
 
   const columns = [
     "id",
-    "name",
+    "mother_id",
+    "gravida",
+    "parity",
     "lmp_date",
-    "caretakers_name",
-    "caretakers_phone",
     "expected_delivery_date",
     "is_current",
-    "parity",
     "selected",
     "is_synced",
     "is_deleted",
@@ -108,13 +104,12 @@ export async function insertToTempPregnancyTable(
       onConflict: "replace",
       rows: (item: any) => [
         item.id,
-        item.name ?? null,
+        item.mother_id,
+        item.gravida ?? null,
+        item.parity ?? null,
         item.lmp_date,
-        item.caretakers_name ?? null,
-        item.caretakers_phone ?? null,
         item.expected_delivery_date ?? null,
         item.is_current ? 1 : 0,
-        item.parity ?? 0,
         item.selected ? 1 : 0,
         1,
         item.deleted ? 1 : 0,
@@ -139,17 +134,16 @@ export async function moveTempToRealPregnancyTable() {
     await db.runAsync(
       `
       INSERT INTO pregnancy
-        (id, name, lmp_date, caretakers_name, caretakers_phone, expected_delivery_date, is_current, parity, selected, is_synced, is_deleted, created_at, updated_at)
+        (id, mother_id, gravida, parity, lmp_date, expected_delivery_date, is_current, selected, is_synced, is_deleted, created_at, updated_at)
       VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO UPDATE SET
-        name = excluded.name,
+        mother_id = excluded.mother_id,
+        gravida = excluded.gravida,
+        parity = excluded.parity,
         lmp_date = excluded.lmp_date,
-        caretakers_name = excluded.caretakers_name,
-        caretakers_phone = excluded.caretakers_phone,
         expected_delivery_date = excluded.expected_delivery_date,
         is_current = excluded.is_current,
-        parity = excluded.parity,
         selected = excluded.selected,
         created_at = excluded.created_at,
         updated_at = excluded.updated_at,
@@ -160,13 +154,12 @@ export async function moveTempToRealPregnancyTable() {
       `,
       [
         item.id,
-        item.name,
+        item.mother_id,
+        item.gravida,
+        item.parity,
         item.lmp_date,
-        item.caretakers_name,
-        item.caretakers_phone,
         item.expected_delivery_date,
         item.is_current,
-        item.parity,
         item.selected,
         1,
         item.is_deleted,

@@ -88,14 +88,12 @@ export default function PregnantWomenForm() {
 
     const parityVal = parseInt(parity, 10);
     const payload = {
-      name,
+      mother_id: "TBD", // Requires refactor to use createMother
       lmp_date: lmp,
-      caretakers_name: caretakersName,
-      caretakers_phone: caretakersPhone,
       expected_delivery_date: edd,
       parity: isNaN(parityVal) ? 0 : parityVal,
       selected: false,
-    }
+    } as any;
     const result = await addPregnancy(payload);
 
     if (result.success) {

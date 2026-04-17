@@ -25,7 +25,7 @@ async function initSyncDefaultColumns(): Promise<void> {
     ],
   );
 }
-
+                                                                                                         
 
 async function getUserVersion(
   db: SQLite.SQLiteDatabase

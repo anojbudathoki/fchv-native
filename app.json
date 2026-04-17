@@ -22,7 +22,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.fchvnative"
+      "package": "com.anonymous.fchvnative",
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -33,7 +34,20 @@
       }
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends.",
+          "cameraPermission": "The app accesses your camera to let you take photos."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow this app to access the camera to take mother photos."
+        }
+      ]
     ],
     "owner": "anojbudathoki"
   }
