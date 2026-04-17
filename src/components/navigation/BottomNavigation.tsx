@@ -35,7 +35,7 @@ export default function BottomNavigation() {
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
     { id: "visit", label: "Visit", icon: Calendar, path: "/dashboard/follow-up" },
     { id: "action", label: "", icon: Plus, path: "", isAction: true },
-    { id: "report", label: "Report", icon: FileText, path: "/dashboard" }, // Placeholder for stats
+    { id: "report", label: "Report", icon: FileText, path: "/dashboard/report" }, // Placeholder for stats
     { id: "guide", label: "Guideline", icon: BookOpen, path: "/dashboard/learn" },
   ];
 
@@ -46,7 +46,7 @@ export default function BottomNavigation() {
   };
 
   return (
-    <View className="absolute bottom-0 left-0 right-0 bg-white/90 border-t border-gray-100 flex-row justify-around items-center px-2 shadow-2xl pb-6 pt-2">
+    <View className="absolute bottom-0 left-0 right-0 bg-white border-t pb-14 border-gray-100 flex-row justify-around items-center px-2 shadow-2xl pb-6 pt-2">
       {tabs.map((tab, index) => {
         const Icon = tab.icon;
         const active = isActive(tab.path);
