@@ -2,6 +2,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react-native";
 import { twMerge } from "tailwind-merge";
+import Colors from "../constants/Colors";
 
 interface InputFieldProps extends React.ComponentProps<typeof TextInput> {
   label: string;
@@ -24,22 +25,20 @@ export default function InputField({
   const isPasswordType = secureTextEntry;
 
   return (
-    <View className={twMerge("w-full mb-4", containerClassName)}>
-      <View className="flex-row items-center mb-2">
-        <Text className="text-gray-700 font-medium text-base">{label}</Text>
+    <View className={twMerge("w-full mb-8", containerClassName)}>
+      <View className="flex-row items-center justify-between mb-1.5 px-0.5">
+        <Text className="text-gray-500 font-bold text-[13px] uppercase tracking-wider">{label}</Text>
         {subLabel && (
-          <Text className="text-gray-500 font-normal text-base ml-1">
-            / {subLabel}
-          </Text>
+          <Text className="text-gray-400 font-bold text-[11px] uppercase">{subLabel}</Text>
         )}
       </View>
-
-      <View className={`flex-row items-center bg-white border ${error ? 'border-red-400' : 'border-gray-100'} rounded-3xl h-14 px-4`}>
-        {leftIcon && <View className="mr-3">{leftIcon}</View>}
-
+      
+      <View className="flex-row items-center border-b border-gray-200 h-14 pb-1">
+        {leftIcon && <View className="mr-2">{leftIcon}</View>}
+        
         <TextInput
-          className="flex-1 text-gray-800 text-base h-full"
-          placeholderTextColor="#9CA3AF"
+          className="flex-1 text-[#1E293B] text-lg h-full font-bold"
+          placeholderTextColor="#cbd5e1"
           secureTextEntry={isPasswordType && !isPasswordVisible}
           {...props}
         />
@@ -50,14 +49,14 @@ export default function InputField({
             className="ml-2"
           >
             {isPasswordVisible ? (
-              <EyeOff size={22} color="#9CA3AF" />
+              <EyeOff size={18} color="#94a3b8" />
             ) : (
-              <Eye size={22} color="#9CA3AF" />
+              <Eye size={18} color="#94a3b8" />
             )}
           </TouchableOpacity>
         )}
       </View>
-      {error ? <Text className="text-red-500 text-xs mt-1.5 ml-4">{error}</Text> : null}
+      {error ? <Text className="text-red-500 text-xs mt-1.5 font-medium">{error}</Text> : null}
     </View>
   );
 }

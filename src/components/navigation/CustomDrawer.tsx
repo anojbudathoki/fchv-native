@@ -13,7 +13,7 @@ import DatabaseViewer from "../DatabaseViewer";
 export default function CustomDrawer(props: DrawerContentComponentProps) {
   const { t } = useLanguage();
   const router = useRouter();
-   const [isDbOpen, setIsDbOpen] = useState(false);
+  const [isDbOpen, setIsDbOpen] = useState(false);
 
   const handleLogout = () => {
     props.navigation.closeDrawer?.();
@@ -55,7 +55,9 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
               {t("dashboard.drawer.profile")}
             </Text>
           </TouchableOpacity>
-
+          <View>
+            <Text>View Db</Text>
+          </View>
           <TouchableOpacity
             onPress={() => {
               props.navigation.closeDrawer();
@@ -87,13 +89,13 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
           </TouchableOpacity>
           <Pressable className="rounded-full" onPress={() => setIsDbOpen(true)}><Text className="py-2 px-3 bg-green-500 my-3 text-white rounded-full">Open DB</Text></Pressable>
           <ModalWithSafeArea
-        visible={isDbOpen}
-        animationType="slide"
-        presentationStyle="fullScreen"
-        onRequestClose={() => setIsDbOpen(false)}
-      >
-        <DatabaseViewer onClose={() => setIsDbOpen(false)} />
-      </ModalWithSafeArea>
+            visible={isDbOpen}
+            animationType="slide"
+            presentationStyle="fullScreen"
+            onRequestClose={() => setIsDbOpen(false)}
+          >
+            <DatabaseViewer onClose={() => setIsDbOpen(false)} />
+          </ModalWithSafeArea>
         </View>
 
         {/* Logout Button */}

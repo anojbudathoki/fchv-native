@@ -1,85 +1,111 @@
+import { View } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import React from "react";
 import "../../global.css";
 import CustomDrawer from "@/components/navigation/CustomDrawer";
+import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 export default function DashboardLayout() {
   return (
-    <Drawer
-      drawerContent={(props: any) => <CustomDrawer {...props} />}
-      screenOptions={{
-        headerShown: false,
-        drawerStyle: {
-          width: "75%",
-        },
-        drawerPosition: "left",
-        swipeEdgeWidth: 0,
-      }}
-    >
-      <Drawer.Screen
-        name="index"
-        options={{
-          drawerItemStyle: { display: "none" },
-          title: "Dashboard",
+    <View className="flex-1">
+      <Drawer
+        drawerContent={(props: any) => <CustomDrawer {...props} />}
+        screenOptions={{
+          headerShown: false,
+          drawerStyle: {
+            width: "75%",
+          },
+          drawerPosition: "left",
+          swipeEdgeWidth: 0,
         }}
-      />
-      <Drawer.Screen name="household" />
-      <Drawer.Screen
-        name="pregnant-women"
-        options={{
-          title: "Pregnant Women",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-      <Drawer.Screen
-        name="children"
-        options={{
-          title: "Children (0-5)",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-      <Drawer.Screen
-        name="family-planning"
-        options={{
-          title: "Family Planning",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-      <Drawer.Screen
-        name="follow-up"
-        options={{
-          title: "Follow Up",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-      <Drawer.Screen
-        name="change-language"
-        options={{
-          title: "Change Language",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-      <Drawer.Screen
-        name="learn"
-        options={{
-          title: "Learn & Resources",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-      <Drawer.Screen
-        name="learn-details"
-        options={{
-          title: "Learn Details",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-      <Drawer.Screen
-        name="profile"
-        options={{
-          title: "My Profile",
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-    </Drawer>
+      >
+        <Drawer.Screen
+          name="index"
+          options={{
+            drawerItemStyle: { display: "none" },
+            title: "Dashboard",
+          }}
+        />
+        <Drawer.Screen name="household" />
+        <Drawer.Screen
+          name="pregnant-women"
+          options={{
+            title: "Pregnant Women",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="children"
+          options={{
+            title: "Children (0-5)",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="family-planning"
+          options={{
+            title: "Family Planning",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="follow-up"
+          options={{
+            title: "Follow Up",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="change-language"
+          options={{
+            title: "Change Language",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="learn"
+          options={{
+            title: "Learn & Resources",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="learn-details"
+          options={{
+            title: "Learn Details",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="profile"
+          options={{
+            title: "My Profile",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="mother-list"
+          options={{
+            title: "Mother List",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="add-mother"
+          options={{
+            title: "Add Mother",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="mother-profile"
+          options={{
+            title: "Mother Profile",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+      </Drawer>
+      <BottomNavigation />
+    </View>
   );
 }

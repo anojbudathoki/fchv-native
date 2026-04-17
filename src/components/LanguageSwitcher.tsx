@@ -4,6 +4,8 @@ import { Globe, ChevronDown, Check } from "lucide-react-native";
 import { useLanguage } from "../context/LanguageContext";
 import { twMerge } from "tailwind-merge";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Colors from "../constants/Colors";
+
 
 export default function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
@@ -23,13 +25,13 @@ export default function LanguageSwitcher() {
       <TouchableOpacity
         onPress={() => setShowLangDropdown(!showLangDropdown)}
         activeOpacity={0.8}
-        className="flex-row items-center bg-white px-4 py-2.5 rounded-full border border-gray-100 shadow-sm"
+        className="flex-row items-center bg-surface px-4 py-2.5 rounded-full border border-gray-100 shadow-sm"
       >
-        <Globe size={18} color="#10b981" />
-        <Text className="text-gray-700 font-semibold ml-2 text-sm">
+        <Globe size={18} color={Colors.primary} />
+        <Text className="text-text-primary font-semibold ml-2 text-sm">
           {language === "en" ? "En" : "Np"}
         </Text>
-        <ChevronDown size={16} color="#9CA3AF" className="ml-1" />
+        <ChevronDown size={16} color={Colors.textSecondary} className="ml-1" />
       </TouchableOpacity>
 
       {showLangDropdown && (
@@ -51,20 +53,20 @@ export default function LanguageSwitcher() {
               onPress={() => toggleLanguage("en")}
               className={twMerge(
                 "flex-row items-center justify-between px-4 py-3 rounded-xl",
-                language === "en" ? "bg-emerald-50" : "",
+                language === "en" ? "bg-primary/10" : "",
               )}
             >
               <Text
                 className={twMerge(
                   "text-sm",
                   language === "en"
-                    ? "text-emerald-700 font-bold"
-                    : "text-gray-600 font-medium",
+                    ? "text-primary font-bold"
+                    : "text-text-secondary font-medium",
                 )}
               >
                 English
               </Text>
-              {language === "en" && <Check size={16} color="#10b981" />}
+              {language === "en" && <Check size={16} color={Colors.primary} />}
             </TouchableOpacity>
 
             <View className="h-[1px] bg-gray-50 mx-2 my-1" />
@@ -73,20 +75,20 @@ export default function LanguageSwitcher() {
               onPress={() => toggleLanguage("np")}
               className={twMerge(
                 "flex-row items-center justify-between px-4 py-3 rounded-xl",
-                language === "np" ? "bg-emerald-50" : "",
+                language === "np" ? "bg-primary/10" : "",
               )}
             >
               <Text
                 className={twMerge(
                   "text-sm",
                   language === "np"
-                    ? "text-emerald-700 font-bold"
-                    : "text-gray-600 font-medium",
+                    ? "text-primary font-bold"
+                    : "text-text-secondary font-medium",
                 )}
               >
                 नेपाली
               </Text>
-              {language === "np" && <Check size={16} color="#10b981" />}
+              {language === "np" && <Check size={16} color={Colors.primary} />}
             </TouchableOpacity>
           </View>
         </>
