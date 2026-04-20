@@ -1,5 +1,6 @@
 export type MotherStoreType = {
   id: string;
+  code: string | null;
   is_synced: number;
   is_deleted: number;
   name: string | null;
@@ -16,6 +17,7 @@ export type MotherStoreType = {
 
 export type CreateMotherPayload = {
   id: string;
+  code?: string;
   name?: string;
   age?: number;
   phone?: string;

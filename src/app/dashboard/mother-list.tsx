@@ -50,7 +50,7 @@ export default function MotherListScreen() {
           if (isActive) setLoading(false);
         }
       };
-      
+
       setLoading(true);
       fetchMothers();
       return () => {
@@ -103,7 +103,7 @@ export default function MotherListScreen() {
         </View>
 
         {/* Filter Chips */}
-        <ScrollView
+        {/* <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           className="mt-4"
@@ -126,7 +126,7 @@ export default function MotherListScreen() {
               </Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+        </ScrollView> */}
       </View>
 
       {/* Summary Strip */}
@@ -208,7 +208,10 @@ export default function MotherListScreen() {
                 {/* Details */}
                 <View className="flex-1">
                   <View className="flex-row items-center justify-between">
-                    <Text className="text-[#1E293B] text-base font-black">{mother.name}</Text>
+                    <View>
+                      <Text className="text-[#1E293B] text-base font-black">{mother.name}</Text>
+                      {/* <Text className="text-gray-400 text-[10px] font-bold">Code: {mother.code || 'N/A'} | ID: {mother.id ? mother.id.split('-')[0] : 'N/A'}</Text> */}
+                    </View>
                     <View
                       className={`px-2.5 py-1 rounded-full ${mother.status === "delivered"
                         ? "bg-green-50"
@@ -233,16 +236,19 @@ export default function MotherListScreen() {
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-gray-400 font-bold text-[11px] mt-0.5">{mother.nameNp} • Age {mother.age} • {mother.ward}</Text>
                   <View className="flex-row items-center mt-2 gap-4">
+                    <View className="flex-row items-center">
+                      <Calendar size={12} color="#94a3b8" strokeWidth={2.5} />
+                      <Text className="text-gray-400 font-bold text-[11px] ml-1">LMP: {mother.lmp}</Text>
+                    </View>
                     <View className="flex-row items-center">
                       <Calendar size={12} color="#94a3b8" strokeWidth={2.5} />
                       <Text className="text-gray-400 font-bold text-[11px] ml-1">EDD: {mother.edd}</Text>
                     </View>
-                    <View className="flex-row items-center">
-                      <Baby size={12} color="#94a3b8" strokeWidth={2.5} />
-                      <Text className="text-gray-400 font-bold text-[11px] ml-1">ANC: {mother.anc}</Text>
-                    </View>
+                  </View>
+                  <View className="flex-row items-center">
+                    <Baby size={12} color="#94a3b8" strokeWidth={2.5} />
+                    <Text className="text-gray-400 font-bold text-[11px] ml-1">Age: {mother.age}</Text>
                   </View>
                 </View>
 

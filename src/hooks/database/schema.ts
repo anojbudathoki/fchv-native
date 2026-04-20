@@ -3,6 +3,7 @@ export const SCHEMA_SQL = `
 
 CREATE TABLE IF NOT EXISTS mother(
     id TEXT PRIMARY KEY,
+    code TEXT,
     is_synced INTEGER NOT NULL DEFAULT 0,
     is_deleted INTEGER NOT NULL DEFAULT 0,
     name TEXT,

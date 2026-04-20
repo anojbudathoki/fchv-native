@@ -228,6 +228,7 @@ export default function AddMotherScreen() {
   const [ethnicity, setEthnicity] = useState("");
   const [education, setEducation] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [codeState, setCodeState] = useState<string | null>(null);
 
   // In-app camera visibility
   const [showCamera, setShowCamera] = useState(false);
@@ -265,6 +266,7 @@ export default function AddMotherScreen() {
             setLmp(data.lmp || "");
             setEdd(data.edd || "");
             setPregnancyId(data.pregnancyId);
+            setCodeState(data.code || null);
           }
         } catch (e) {
           console.error("error fetching mother profile", e);
@@ -417,9 +419,13 @@ export default function AddMotherScreen() {
 
     setIsLoading(true);
     try {
-      const motherId = id || generateCustomId();
+      // Ensure we use the existing ID if editing, otherwise generate a new one
+      const dbId = (id && typeof id === 'string' && id.trim().length > 0) ? id : Crypto.randomUUID();
+      const mCode = codeState || generateCustomId();
+
       await createMother({
-        id: motherId,
+        id: dbId,
+        code: mCode,
         name: name,
         age: parseInt(age) || 0,
         phone: phone,
@@ -432,8 +438,8 @@ export default function AddMotherScreen() {
       });
 
       await createPregnancy({
-        id: pregnancyId || undefined,
-        mother_id: motherId,
+        id: (pregnancyId && pregnancyId.trim().length > 0) ? pregnancyId : undefined,
+        mother_id: dbId,
         gravida: parseInt(gravida) || 0,
         parity: parseInt(parity) || 0,
         lmp_date: lmp,

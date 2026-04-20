@@ -9,11 +9,25 @@ export async function createMother(
   const now = new Date().toISOString();
 
   await db.runAsync(
-    `INSERT OR REPLACE INTO mother 
-      (id, name, age, phone, address, husband_name, ethnicity, education, photo, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+    `INSERT INTO mother 
+      (id, code, name, age, phone, address, husband_name, ethnicity, education, photo, is_synced, is_deleted, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      code = excluded.code,
+      name = excluded.name,
+      age = excluded.age,
+      phone = excluded.phone,
+      address = excluded.address,
+      husband_name = excluded.husband_name,
+      ethnicity = excluded.ethnicity,
+      education = excluded.education,
+      photo = excluded.photo,
+      is_synced = excluded.is_synced,
+      is_deleted = excluded.is_deleted,
+      updated_at = excluded.updated_at;`,
     [
       payload.id,
+      payload.code ?? null,
       payload.name ?? null,
       payload.age ?? null,
       payload.phone ?? null,
@@ -31,6 +45,7 @@ export async function createMother(
 
   return {
     id: payload.id,
+    code: payload.code ?? null,
     name: payload.name ?? null,
     age: payload.age ?? null,
     phone: payload.phone ?? null,
@@ -54,6 +69,7 @@ export async function unSyncedMothers(): Promise<CreateMotherPayload[]> {
 
   return rows.map((row) => ({
     id: row.id,
+    code: row.code ?? undefined,
     name: row.name ?? undefined,
     age: row.age ?? undefined,
     phone: row.phone ?? undefined,
@@ -77,6 +93,7 @@ export async function deleteMother(id: string): Promise<void> {
 
 export interface MotherListDbItem {
   id: string;
+  code?: string;
   name: string;
   nameNp: string;
   age: number;
@@ -95,6 +112,7 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
   const query = `
     SELECT 
       m.id,
+      m.code,
       m.name,
       m.husband_name as nameNp,
       m.age,
@@ -116,6 +134,7 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
 
   return rows.map((row) => ({
     id: row.id,
+    code: row.code || "",
     name: row.name || "Unknown",
     nameNp: row.nameNp || "",
     age: row.age || 0,
@@ -130,6 +149,7 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
 }
 
 export interface MotherProfileDbItem extends MotherListDbItem {
+  code: string;
   phone: string;
   regDate: string;
   pregnancyId: string | null;
@@ -145,6 +165,7 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
   const query = `
     SELECT 
       m.id,
+      m.code,
       m.name,
       m.husband_name as nameNp,
       m.husband_name as husbandName,
@@ -173,6 +194,7 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
 
   return {
     id: row.id,
+    code: row.code || "",
     name: row.name || "Unknown",
     nameNp: row.nameNp || "",
     husbandName: row.husbandName || "",
