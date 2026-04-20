@@ -42,7 +42,10 @@ export default function ChangeLanguageScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <NavigationLayout title="Language Selector" />
+      <NavigationLayout 
+        onBackPress={() => router.push("/dashboard/profile")} 
+        title="Language Selector" 
+      />
       <ScrollView
         className="flex-1 px-5"
         showsVerticalScrollIndicator={false}

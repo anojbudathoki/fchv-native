@@ -173,5 +173,9 @@
       "third": "3rd Trimester"
     },
     "no_content": "No content available"
+  },
+  "header": {
+    "fchv": "FCHV",
+    "community_connect": "Community Connect"
   }
 }

@@ -193,3 +193,11 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
     regDate: row.regDate || "N/A",
   };
 }
+
+export async function getMotherCount(): Promise<number> {
+  const db = await getDb();
+  const result = await db.getFirstAsync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM mother WHERE is_deleted = 0"
+  );
+  return result?.count ?? 0;
+}

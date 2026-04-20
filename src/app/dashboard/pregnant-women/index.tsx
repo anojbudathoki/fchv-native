@@ -1,28 +1,57 @@
-import { View, Text, ScrollView, Alert, Pressable, KeyboardAvoidingView, Platform } from "react-native";
-import React, { useState } from "react";
-import InputField from "../../components/InputField";
-import PrimaryButton from "../../components/PrimaryButton";
+import { View, Text, Alert, Pressable, Platform, ActivityIndicator } from "react-native";
+import React, { useState, useEffect } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import InputField from "../../../components/InputField";
+import PrimaryButton from "../../../components/PrimaryButton";
 import { User, Calendar, Phone, PlusCircle } from "lucide-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import NavigationLayout from "@/components/NavigationLayout";
-import { useLanguage } from "../../context/LanguageContext";
-import { usePregnancy } from "../../hooks/usePregnancy";
+import { useLanguage } from "../../../context/LanguageContext";
+import { usePregnancy } from "../../../hooks/usePregnancy";
 import { useToast } from "@/context/ToastContext";
 
 export default function PregnantWomenForm() {
   const { t } = useLanguage();
-  const { addPregnancy, isLoading } = usePregnancy();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const isEditing = !!id;
+
+  const { addPregnancy, getPregnancy, editPregnancy, isLoading } = usePregnancy();
   const [name, setName] = useState("");
   const [parity, setParity] = useState("");
+  const [gravida, setGravida] = useState("");
   const [lmp, setLmp] = useState("");
   const [edd, setEdd] = useState("");
   const [caretakersName, setCaretakersName] = useState("");
   const [caretakersPhone, setCaretakersPhone] = useState("");
+  const [motherId, setMotherId] = useState("");
+  const [isDataLoading, setIsDataLoading] = useState(false);
   
   const [errors, setErrors] = useState<{ name?: string; lmp?: string; edd?: string; caretakersPhone?: string }>({});
   const [showLmpPicker, setShowLmpPicker] = useState(false);
   const [showEddPicker, setShowEddPicker] = useState(false);
-   const { showToast } = useToast();
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (isEditing) {
+      const fetchRecord = async () => {
+        setIsDataLoading(true);
+        const record = await getPregnancy(id);
+        if (record) {
+          setName(record.mother_name || "");
+          setParity(String(record.parity || "0"));
+          setGravida(String(record.gravida || ""));
+          setLmp(record.lmp_date || "");
+          setEdd(record.expected_delivery_date || "");
+          setCaretakersPhone(record.mother_phone || "");
+          setMotherId(record.mother_id);
+        }
+        setIsDataLoading(false);
+      };
+      fetchRecord();
+    }
+  }, [id]);
 
   const formatDate = (date: Date) => {
     try {
@@ -87,48 +116,71 @@ export default function PregnantWomenForm() {
     }
 
     const parityVal = parseInt(parity, 10);
+    const gravidaVal = parseInt(gravida, 10);
+
     const payload = {
-      mother_id: "TBD", // Requires refactor to use createMother
       lmp_date: lmp,
       expected_delivery_date: edd,
       parity: isNaN(parityVal) ? 0 : parityVal,
-      selected: false,
+      gravida: isNaN(gravidaVal) ? 0 : gravidaVal,
     } as any;
-    const result = await addPregnancy(payload);
+
+    let result;
+    if (isEditing) {
+      result = await editPregnancy(id, payload);
+    } else {
+      payload.mother_id = motherId || "TBD"; // TBD: needs mother selection
+      payload.is_current = 1;
+      payload.selected = 0;
+      result = await addPregnancy(payload);
+    }
 
     if (result.success) {
-      showToast("Pregnant mother added successfully.");
-      // Clear form
-      setName("");
-      setParity("");
-      setLmp("");
-      setEdd("");
-      setCaretakersName("");
-      setCaretakersPhone("");
-      setErrors({});
+      showToast(isEditing ? "Pregnancy record updated." : "Pregnant mother added successfully.");
+      if (isEditing) {
+        router.back();
+      } else {
+        // Clear form for new entry
+        setName("");
+        setParity("");
+        setGravida("");
+        setLmp("");
+        setEdd("");
+        setCaretakersName("");
+        setCaretakersPhone("");
+        setErrors({});
+      }
     } else {
       showToast("Could not save details.");
     }
   };
 
+  if (isDataLoading) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center">
+        <ActivityIndicator size="large" color="#3B82F6" />
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-white">
-      <NavigationLayout title={t("pregnant_form.title") || "Register Pregnant Mother"} />
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
+      <NavigationLayout title={isEditing ? "Edit Pregnancy Record" : (t("pregnant_form.title") || "Register Pregnant Mother")} />
+      <KeyboardAwareScrollView
         style={{ flex: 1 }}
+        className="px-4"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40, paddingTop: 20, flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        extraScrollHeight={20}
       >
-        <ScrollView
-          className="flex-1 px-4"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 40, paddingTop: 20 }}
-          keyboardShouldPersistTaps="handled"
-        >
         <View>
           <InputField
             label={t("pregnant_form.basic_info.name_label") || "Mother's Name"}
             placeholder="Enter full name"
             value={name}
+            editable={!isEditing} // Name is usually fixed for the mother
             onChangeText={(txt) => {
               setName(txt);
               if (errors.name) setErrors({ ...errors, name: undefined });
@@ -136,14 +188,29 @@ export default function PregnantWomenForm() {
             leftIcon={<User size={18} color="#64748B" />}
             error={errors.name}
           />
-          <InputField
-            label="Parity (Number of previous births)"
-            placeholder="0 for first child"
-            keyboardType="numeric"
-            value={parity}
-            onChangeText={setParity}
-            leftIcon={<PlusCircle size={18} color="#64748B" />}
-          />
+          
+          <View className="flex-row gap-4">
+             <View className="flex-1">
+                <InputField
+                    label="Gravida"
+                    placeholder="Total pregnancies"
+                    keyboardType="numeric"
+                    value={gravida}
+                    onChangeText={setGravida}
+                    leftIcon={<PlusCircle size={18} color="#64748B" />}
+                />
+             </View>
+             <View className="flex-1">
+                <InputField
+                    label="Parity"
+                    placeholder="Births"
+                    keyboardType="numeric"
+                    value={parity}
+                    onChangeText={setParity}
+                    leftIcon={<PlusCircle size={18} color="#64748B" />}
+                />
+             </View>
+          </View>
 
           <Pressable onPress={() => setShowLmpPicker(true)}>
             <View pointerEvents="none">
@@ -202,17 +269,11 @@ export default function PregnantWomenForm() {
           })()}
 
           <InputField
-            label="Caretaker Name"
-            placeholder="Enter caretaker's full name"
-            value={caretakersName}
-            onChangeText={setCaretakersName}
-            leftIcon={<User size={18} color="#64748B" />}
-          />
-          <InputField
-            label="Caretaker Phone"
+            label="Phone"
             placeholder="Enter 10-digit mobile number"
             keyboardType="phone-pad"
             value={caretakersPhone}
+            editable={!isEditing}
             onChangeText={(txt) => {
               const cleaned = txt.replace(/[^0-9]/g, '');
               setCaretakersPhone(cleaned);
@@ -225,16 +286,15 @@ export default function PregnantWomenForm() {
 
           <View className="mt-8">
             <PrimaryButton
-              title={t("pregnant_form.submit.title") || "Save"}
-              subTitle="Save pregnant mother data"
+              title={isEditing ? "Update Details" : (t("pregnant_form.submit.title") || "Register")}
+              subTitle={isEditing ? "Save changes to record" : "Register new pregnant mother"}
               onPress={handleSubmit}
               isLoading={isLoading}
               className="mb-10 shadow-lg shadow-blue-200"
             />
           </View>
         </View>
-      </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </View>
   );
 }

@@ -7,8 +7,8 @@ import {
   StatusBar,
   Image,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { router } from "expo-router";
+import React, { useEffect, useState, useCallback } from "react";
+import { router, useFocusEffect } from "expo-router";
 import {
   Baby,
   Smile,
@@ -25,16 +25,37 @@ import { useLanguage } from "../../context/LanguageContext";
 import TopHeader from "@/components/layout/TopHeader";
 import { useOnlineStatus } from "../../hooks/useOnlineStatus";
 import { doSync } from "../../api/services/sync/sync";
+import { getMotherCount } from "../../hooks/database/models/MotherModel";
+import { getPregnancyCount } from "../../hooks/database/models/PregnantWomenModal";
 
 export default function DashboardScreen() {
   const { t } = useLanguage();
   const { isConnected } = useOnlineStatus();
+  const [motherCount, setMotherCount] = useState(0);
+  const [pregnancyCount, setPregnancyCount] = useState(0);
 
   useEffect(() => {
     if (isConnected) {
       doSync();
     }
   }, [isConnected]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchCounts = async () => {
+        try {
+          const mCount = await getMotherCount();
+          const pCount = await getPregnancyCount();
+          setMotherCount(mCount);
+          setPregnancyCount(pCount);
+        } catch (error) {
+          console.error("Failed to fetch counts:", error);
+        }
+      };
+
+      fetchCounts();
+    }, [])
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-[#F8FAFC]">
@@ -82,7 +103,6 @@ export default function DashboardScreen() {
           <TouchableOpacity
             activeOpacity={0.8}
             className="flex-1 bg-white rounded-[28px] overflow-hidden shadow-sm border border-gray-100"
-            onPress={() => router.push("/dashboard/pregnant-women" as any)}
           >
             <View className="bg-blue-500 h-1.5 w-full" />
             <View className="p-5">
@@ -95,7 +115,7 @@ export default function DashboardScreen() {
                   <Text className="text-primary font-black text-[9px] ml-1">+2</Text>
                 </View>
               </View>
-              <Text className="text-[#1E293B] text-[36px] font-black leading-none">12</Text>
+              <Text className="text-[#1E293B] text-[36px] font-black leading-none">{pregnancyCount}</Text>
               <Text className="text-gray-500 font-black text-[11px] uppercase tracking-wider mt-2">Pregnant</Text>
               <Text className="text-gray-400 font-bold text-[10px]">गर्भवती महिला</Text>
             </View>
@@ -117,9 +137,9 @@ export default function DashboardScreen() {
                   <Text className="text-[#E11D48] font-black text-[9px] ml-1">+1</Text>
                 </View>
               </View>
-              <Text className="text-[#1E293B] text-[36px] font-black leading-none">2</Text>
-              <Text className="text-gray-500 font-black text-[11px] uppercase tracking-wider mt-2">Deliveries</Text>
-              <Text className="text-gray-400 font-bold text-[10px]">नयाँ सुत्केरी</Text>
+              <Text className="text-[#1E293B] text-[36px] font-black leading-none">{motherCount}</Text>
+              <Text className="text-gray-500 font-black text-[11px] uppercase tracking-wider mt-2">MOTHERS</Text>
+              <Text className="text-gray-400 font-bold text-[10px]">आमाहरू</Text>
             </View>
           </TouchableOpacity>
         </View>
