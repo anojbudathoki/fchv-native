@@ -74,5 +74,17 @@ export const MIGRATIONS: Migration[] = [
         console.log("Migration 5 (visit table) failed:", e);
       }
     }
+  },
+  {
+    version: 5,
+    up: async (db) => {
+      try {
+        await db.execAsync(`
+          ALTER TABLE mother ADD COLUMN code TEXT;
+        `);
+      } catch (e) {
+        console.log("Migration 5 failed or columns already exist:", e);
+      }
+    }
   }
 ];

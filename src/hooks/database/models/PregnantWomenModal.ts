@@ -12,9 +12,20 @@ export async function createPregnancy(
   const id = payload.id || Crypto.randomUUID();
 
   await db.runAsync(
-    `INSERT OR REPLACE INTO pregnancy 
+    `INSERT INTO pregnancy 
       (id, mother_id, lmp_date, expected_delivery_date, is_current, gravida, parity, selected, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      mother_id = excluded.mother_id,
+      lmp_date = excluded.lmp_date,
+      expected_delivery_date = excluded.expected_delivery_date,
+      is_current = excluded.is_current,
+      gravida = excluded.gravida,
+      parity = excluded.parity,
+      selected = excluded.selected,
+      is_synced = excluded.is_synced,
+      is_deleted = excluded.is_deleted,
+      updated_at = excluded.updated_at;`,
     [
       id,
       payload.mother_id,
