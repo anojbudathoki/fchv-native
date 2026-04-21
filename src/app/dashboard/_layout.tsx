@@ -104,6 +104,13 @@ export default function DashboardLayout() {
             drawerItemStyle: { display: "none" },
           }}
         />
+        <Drawer.Screen
+          name="report"
+          options={{
+            title: "Reports",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
       </Drawer>
       <BottomNavigation />
     </View>

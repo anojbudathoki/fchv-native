@@ -194,7 +194,7 @@ export default function MotherProfileScreen() {
 
           <View className="ml-4 flex-1">
             <Text className="text-white text-xl font-bold capitalize" numberOfLines={1}>{mother.name}</Text>
-            <Text className="text-white/80 text-xs mt-0.5 font-medium">FCHV ID: {mother.id}</Text>
+            <Text className="text-white/80 text-xs mt-0.5 font-medium">FCHV ID: {mother.code}</Text>
 
             <View className="flex-row items-center mt-2.5 gap-2">
               <View className="bg-white/20 px-2.5 py-1 rounded-full">
@@ -236,7 +236,7 @@ export default function MotherProfileScreen() {
             </View>
             <View className="w-1/2 mb-4 pl-2">
               <Text className="text-[11px] font-bold mb-1" style={{ color: Colors.textSecondary }}>Phone</Text>
-              <Text className="text-[14px] font-bold" style={{ color: Colors.primary }}>{mother.phone || "N/A"}</Text>
+              <Text className="text-[14px] font-bold" style={{ color: Colors.textPrimary }}>{mother.phone || "N/A"}</Text>
             </View>
 
             <View className="w-1/2 mb-2 pr-2">

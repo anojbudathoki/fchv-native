@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 type Migration = {
   version: number;
@@ -46,6 +46,18 @@ export const MIGRATIONS: Migration[] = [
         `);
       } catch (e) {
         console.log("Migration 4 failed or columns already exist:", e);
+      }
+    }
+  },
+  {
+    version: 5,
+    up: async (db) => {
+      try {
+        await db.execAsync(`
+          ALTER TABLE mother ADD COLUMN code TEXT;
+        `);
+      } catch (e) {
+        console.log("Migration 5 failed or columns already exist:", e);
       }
     }
   }
