@@ -22,9 +22,9 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react-native";
-import "../../global.css";
-import { getAllMothersList, MotherListDbItem } from "../../hooks/database/models/MotherModel";
-import CustomHeader from "../../components/CustomHeader";
+import "../../../global.css";
+import { getAllMothersList, MotherListDbItem } from "../../../hooks/database/models/MotherModel";
+import CustomHeader from "../../../components/CustomHeader";
 
 const FILTERS = ["All", "Active", "High Risk", "Delivered"];
 
@@ -82,7 +82,7 @@ export default function MotherListScreen() {
           className="pt-4 px-5 pb-3 mt-10"
           rightNode={
             <TouchableOpacity
-              onPress={() => router.push("/dashboard/add-mother" as any)}
+              onPress={() => router.push("/dashboard/mother-list/add-mother" as any)}
               className="bg-primary p-2.5 rounded-2xl"
             >
               <Plus size={22} color="white" strokeWidth={2.5} />

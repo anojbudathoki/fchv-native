@@ -1,6 +1,5 @@
 export type PregnancyStoreType = {
   id: string;
-  mother_id: string;
   is_synced: number;
   is_deleted: number;
   gravida: number | null;
@@ -15,7 +14,6 @@ export type PregnancyStoreType = {
 
 export interface PregnancyData {
   id: string;
-  mother_id: string;
   gravida: number;
   parity: number;
   lmp_date: string;
@@ -26,7 +24,6 @@ export interface PregnancyData {
 
 export type CreatePregnancyPayload = {
   id: string;
-  mother_id: string;
   gravida?: number;
   parity?: number;
   lmp_date: string;

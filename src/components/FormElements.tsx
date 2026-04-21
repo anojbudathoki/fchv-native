@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView } from "react-native";
-import { X, ChevronDown } from "lucide-react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, ActivityIndicator } from "react-native";
+import { X, ChevronDown, Save } from "lucide-react-native";
 import Dropdown from "react-native-input-select";
 
 export const FieldLabel = ({ label }: { label: string }) => (
@@ -21,8 +21,8 @@ export const SelectInput = ({ label, placeholder, value, options, onSelect, erro
           borderColor: error ? '#F87171' : '#E5E7EB',
           borderWidth: 1,
           borderRadius: 14,
-          height: 44,
-          minHeight: 44,
+          height: 50,
+          minHeight: 50,
           paddingHorizontal: 16,
           paddingVertical: 0, 
         }}
@@ -31,7 +31,7 @@ export const SelectInput = ({ label, placeholder, value, options, onSelect, erro
         }}
         dropdownIcon={<ChevronDown size={18} color="#9CA3AF" />}
         dropdownIconStyle={{
-          top: 13,
+          top: 15,
           right: 18,
         }}
         placeholderStyle={{
@@ -86,3 +86,4 @@ export const BoxInput = ({
     ) : null}
   </View>
 );
+

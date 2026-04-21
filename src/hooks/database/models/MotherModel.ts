@@ -4,7 +4,6 @@ import { CreateMotherPayload, MotherStoreType } from '../types/motherModal';
 export async function createMother(
   payload: Omit<CreateMotherPayload, 'created_at' | 'updated_at'>
 ): Promise<MotherStoreType> {
-  console.log("Creating mother", payload);
   const db = await getDb();
   const now = new Date().toISOString();
 
@@ -108,29 +107,8 @@ export interface MotherListDbItem {
 
 export async function getAllMothersList(): Promise<MotherListDbItem[]> {
   const db = await getDb();
-  
-  const query = `
-    SELECT 
-      m.id,
-      m.code,
-      m.name,
-      m.husband_name as nameNp,
-      m.age,
-      m.address as ward,
-      m.photo as image,
-      p.lmp_date as lmp,
-      p.expected_delivery_date as edd
-    FROM mother m
-    LEFT JOIN pregnancy p ON p.id = (
-      SELECT id FROM pregnancy 
-      WHERE mother_id = m.id AND is_deleted = 0 
-      ORDER BY created_at DESC LIMIT 1
-    )
-    WHERE m.is_deleted = 0
-    ORDER BY m.created_at DESC
-  `;
 
-  const rows = await db.getAllAsync<any>(query);
+  const rows = await db.getAllAsync<any>(`SELECT * FROM mother WHERE is_deleted = 0 ORDER BY created_at ASC`);
 
   return rows.map((row) => ({
     id: row.id,
@@ -165,7 +143,6 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
   const query = `
     SELECT 
       m.id,
-      m.code,
       m.name,
       m.husband_name as nameNp,
       m.husband_name as husbandName,

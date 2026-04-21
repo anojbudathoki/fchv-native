@@ -30,6 +30,7 @@ import "../../global.css";
 import { getMotherProfile, MotherProfileDbItem, deleteMother } from "../../hooks/database/models/MotherModel";
 import Colors from "../../constants/Colors";
 import CustomHeader from "../../components/CustomHeader";
+import { EDUCATION_LEVELS, JATI_CODES } from "@/utils/data";
 
 export default function MotherProfileScreen() {
   const router = useRouter();
@@ -78,7 +79,6 @@ export default function MotherProfileScreen() {
       months: Math.floor(diffDays / 30.44),
     };
   };
-
   const ga = mother ? getGA(mother.lmp) : { weeks: 0, days: 0, months: 0 };
 
   const formatShortDate = (dateStr: string) => {
@@ -134,28 +134,8 @@ export default function MotherProfileScreen() {
     );
   }
 
-  const JATI_CODES = [
-    { code: "1", name: "दलित (Dalit)" },
-    { code: "2", name: "जनजाति (Janajati)" },
-    { code: "3", name: "मधेसी (Madhesi)" },
-    { code: "4", name: "मुस्लिम (Muslim)" },
-    { code: "5", name: "ब्राह्मण/छेत्री (Brahmin/Chhetri)" },
-    { code: "6", name: "अन्य (Other)" },
-  ];
-
-  const educationOptionsNepali = [
-    { value: "no_formal", label: "कुनै औपचारिक शिक्षा छैन (No Formal Education)" },
-    { value: "primary", label: "प्राथमिक तह – कक्षा १–५ (Primary Level)" },
-    { value: "lower_secondary", label: "निम्न माध्यमिक तह – कक्षा ६–८ (Lower Secondary Level)" },
-    { value: "secondary", label: "माध्यमिक तह – कक्षा ९–१० (Secondary Level / SEE)" },
-    { value: "higher_secondary", label: "उच्च माध्यमिक तह – कक्षा ११–१२ (+2 / Higher Secondary)" },
-    { value: "bachelor", label: "स्नातक तह (Bachelor’s Degree)" },
-    { value: "master", label: "स्नातकोत्तर तह (Master’s Degree)" },
-    { value: "doctoral", label: "विद्यावारिधि तह (Doctoral / PhD)" },
-  ];
-
   const displayEthnicity = mother?.ethnicity ? (JATI_CODES.find(j => j.code === mother.ethnicity)?.name || mother.ethnicity) : "N/A";
-  const displayEducation = mother?.education ? (educationOptionsNepali.find(e => e.value === mother.education)?.label || mother.education) : "N/A";
+  const displayEducation = mother?.education ? (EDUCATION_LEVELS.find(e => e.value === mother.education)?.label || mother.education) : "N/A";
 
   const getInitials = (name: string) => {
     return name.slice(0, 2).toUpperCase(); // mock logic, ideally should be NP if nameNp exists
@@ -170,7 +150,7 @@ export default function MotherProfileScreen() {
         title="Mother Profile"
         rightNode={
           <TouchableOpacity 
-            onPress={() => router.push({ pathname: "/dashboard/add-mother", params: { id: mother.id } } as any)}
+            onPress={() => router.push({ pathname: "/dashboard/mother-list/add-mother", params: { id: mother.id } } as any)}
             className="bg-white shadow-sm border border-slate-100 p-2 rounded-xl"
           >
             <Edit size={20} color={Colors.textPrimary} />
@@ -415,7 +395,7 @@ export default function MotherProfileScreen() {
       {/* <View className="absolute bottom-0 w-full bg-white border-t border-slate-100 px-5 py-4 flex-row gap-4 pb-8">
         <TouchableOpacity 
           activeOpacity={0.8}
-          onPress={() => router.push({ pathname: "/dashboard/add-mother", params: { id: mother.id } } as any)}
+          onPress={() => router.push({ pathname: "/dashboard/mother-list/add-mother", params: { id: mother.id } } as any)}
           className="flex-1 h-14 rounded-2xl flex-row items-center justify-center shadow-sm shadow-green-100"
           style={{ backgroundColor: Colors.primary }}
         >

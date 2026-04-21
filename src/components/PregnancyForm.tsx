@@ -8,8 +8,10 @@ import { getMotherProfile } from "../hooks/database/models/MotherModel";
 import { createPregnancy } from "../hooks/database/models/PregnantWomenModal";
 import { useToast } from "../context/ToastContext";
 import { FieldLabel, BoxInput } from "./FormElements";
+import { Button } from "./button";
+import InputField from "./InputField";
 
-export default function PregnancyForm({ id }: { id?: string }) {
+export default function PregnancyForm({ id, onSwitchToMother }: { id?: string, onSwitchToMother?: () => void }) {
   const router = useRouter();
   const { showToast } = useToast();
 
@@ -70,11 +72,6 @@ export default function PregnancyForm({ id }: { id?: string }) {
   };
 
   const save = async () => {
-    if (!id) {
-      showToast("Please save the mother details first.");
-      return;
-    }
-
     const e = validate();
     setErrors(e);
     if (Object.keys(e).length > 0) return;
@@ -82,15 +79,12 @@ export default function PregnancyForm({ id }: { id?: string }) {
     setIsLoading(true);
     try {
       await createPregnancy({
-        id: (pregnancyId && pregnancyId.trim().length > 0) ? pregnancyId : Crypto.randomUUID(),
-        mother_id: id,
         gravida: parseInt(gravida) || 0,
         parity: parseInt(parity) || 0,
         lmp_date: lmp,
         expected_delivery_date: edd,
         is_current: true,
         selected: true,
-        is_synced: false
       });
       
       showToast("Pregnancy details saved successfully");
@@ -102,20 +96,6 @@ export default function PregnancyForm({ id }: { id?: string }) {
       setIsLoading(false);
     }
   };
-
-  if (!id) {
-    return (
-      <View className="flex-1 items-center justify-center p-10 mt-10">
-        <View className="bg-orange-50 w-20 h-20 rounded-full items-center justify-center mb-6 border border-orange-100">
-          <Baby size={40} color="#F97316" strokeWidth={2} />
-        </View>
-        <Text className="text-[#1E293B] text-xl font-bold text-center mb-3">No Mother Found</Text>
-        <Text className="text-gray-500 text-center text-sm font-medium leading-5">
-          Please register and save the Mother's basic details first. Once the mother is created, you can add pregnancy records.
-        </Text>
-      </View>
-    );
-  }
 
   return (
     <>
@@ -160,72 +140,41 @@ export default function PregnancyForm({ id }: { id?: string }) {
           </View>
         </View>
       </View>
+      
+       <Pressable onPress={() => setShowLmpPicker(true)}>
+                  <View pointerEvents="none">
+                    <InputField
+                      label="LMP Date"
+                      subLabel="अन्तिम महिनावारी मिति"
+                      placeholder="YYYY-MM-DD"
+                      value={lmp}
+                      leftIcon={<Calendar size={18} color="#64748B" />}
+                      editable={false}
+                      error={errors.lmp}
+                    />
+                  </View>
+                </Pressable>
+                {showLmpPicker && (() => {
+                  const maxDate = new Date();
+                  maxDate.setMonth(maxDate.getMonth() + 9);
+      
+                  return (
+                    <DateTimePicker
+                      value={lmp ? new Date(lmp) : new Date()}
+                      mode="date"
+                      display="spinner"
+                      maximumDate={maxDate}
+                      onChange={onLmpChange}
+                    />
+                  );
+                })()}
 
-      <View className="bg-white rounded-3xl p-5 mb-8 border border-gray-100 shadow-sm shadow-gray-200/40">
-        <View className="flex-row items-center mb-6">
-          <View className="bg-blue-50 w-11 h-11 rounded-2xl items-center justify-center mr-3 border border-blue-100">
-            <Calendar size={22} color="#3B82F6" strokeWidth={2.5} />
-          </View>
-          <View>
-            <Text className="text-[#1E293B] font-bold text-lg">Pregnancy Timeline</Text>
-            <Text className="text-gray-400 text-xs font-medium mt-0.5">LMP and Expected Delivery Date</Text>
-          </View>
-        </View>
-
-        <Text className="text-[#1E293B] font-bold text-[14px] mb-3">Last Menstrual Period (LMP)</Text>
-        <Pressable onPress={() => setShowLmpPicker(true)}>
-          <View className={`flex-row items-center bg-gray-50 border rounded-2xl px-4 h-14 mb-1 ${errors.lmp ? "border-red-300" : "border-gray-200"}`}>
-            <Calendar size={18} color={lmp ? "#3B82F6" : "#A1A1AA"} strokeWidth={2.5} className="mr-3" />
-            <Text className={`flex-1 font-semibold text-base ${lmp ? "text-[#1E293B]" : "text-gray-400"}`}>
-              {lmp || "Select LMP Date"}
-            </Text>
-            <View className="bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm shadow-gray-200/30">
-              <Text className="text-[11px] font-black text-gray-600 uppercase">Pick</Text>
-            </View>
-          </View>
-        </Pressable>
-        {errors.lmp ? <Text className="text-red-500 text-xs mb-4 font-medium ml-1">{errors.lmp}</Text> : <View className="mb-5" />}
-
-        {showLmpPicker && (
-          <DateTimePicker
-            value={lmp ? new Date(lmp) : new Date()}
-            mode="date"
-            display="spinner"
-            maximumDate={new Date()}
-            onChange={onLmpChange}
-          />
-        )}
-
-        <View className={`rounded-2xl p-4 border flex-row items-center justify-between mt-1 ${edd ? "bg-emerald-50 border-emerald-100" : "bg-gray-50 border-gray-200"}`}>
-          <View className="flex-1">
-            <Text className={`font-bold text-[10px] uppercase tracking-wider mb-1 ${edd ? "text-emerald-700" : "text-gray-400"}`}>
-              Estimated Delivery Date
-            </Text>
-            <Text className={`font-black text-lg ${edd ? "text-emerald-800" : "text-gray-400"}`}>
-              {edd || "Awaiting LMP"}
-            </Text>
-          </View>
-          <View className={`w-11 h-11 rounded-full items-center justify-center ${edd ? "bg-white border border-emerald-100 shadow-sm shadow-emerald-200" : "bg-gray-200"}`}>
-            <Info size={20} color={edd ? "#059669" : "#94A3B8"} strokeWidth={2.5} />
-          </View>
-        </View>
-      </View>
-
-      <TouchableOpacity
-        activeOpacity={0.88}
+      <Button
         onPress={save}
-        disabled={isLoading}
-        className="bg-primary rounded-2xl h-16 flex-row items-center justify-center shadow-xl shadow-emerald-200 mt-2"
-      >
-        {isLoading ? (
-          <ActivityIndicator color="white" size="small" />
-        ) : (
-          <>
-            <Save size={20} color="white" strokeWidth={2.5} />
-            <Text className="text-white font-black text-lg ml-2">Save Pregnancy Info</Text>
-          </>
-        )}
-      </TouchableOpacity>
+        isLoading={isLoading}
+        title="Save Pregnancy Info"
+      />
+     
     </>
   );
 }

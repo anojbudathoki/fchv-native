@@ -10,7 +10,6 @@ import {
 import React, { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import InputField from "../../components/InputField";
-import PrimaryButton from "../../components/PrimaryButton";
 import {
   User,
   Calendar,
@@ -25,6 +24,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import NavigationLayout from "@/components/NavigationLayout";
 import { useVisit } from "../../hooks/useVisit";
 import { useToast } from "@/context/ToastContext";
+import { Button } from "@/components/button";
 
 type VisitType = "ANC" | "PNC";
 
@@ -226,12 +226,10 @@ export default function FollowUpForm() {
           />
 
           <View className="mt-4">
-            <PrimaryButton
+            <Button
               title="Save Visit"
-              subTitle="Record visit data"
               onPress={handleSubmit}
               isLoading={isLoading}
-              className="mb-10 bg-primary"
             />
           </View>
       </KeyboardAwareScrollView>
