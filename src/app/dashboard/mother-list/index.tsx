@@ -9,257 +9,218 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter, useFocusEffect } from "expo-router";
 import {
-  ChevronLeft,
   Search,
   Plus,
   Baby,
   Calendar,
   ChevronRight,
-  Phone,
   AlertCircle,
   CheckCircle2,
+  Phone,
+  User,
+  Bell,
+  Check,
 } from "lucide-react-native";
-import "../../../global.css";
 import { getAllMothersList, MotherListDbItem } from "../../../hooks/database/models/MotherModel";
-import CustomHeader from "../../../components/CustomHeader";
-
-const FILTERS = ["All", "Active", "High Risk", "Delivered"];
 
 export default function MotherListScreen() {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
   const [mothers, setMothers] = useState<MotherListDbItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const loadMothers = async () => {
+    try {
+      const list = await getAllMothersList();
+      setMothers(list);
+    } catch (error) {
+      console.error("Failed to fetch mothers:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
-      let isActive = true;
-      const fetchMothers = async () => {
-        try {
-          const list = await getAllMothersList();
-          if (isActive) {
-            setMothers(list);
-          }
-        } catch (error) {
-          console.error("Failed to fetch mothers:", error);
-        } finally {
-          if (isActive) setLoading(false);
-        }
-      };
-
-      setLoading(true);
-      fetchMothers();
-      return () => {
-        isActive = false;
-      };
+      loadMothers();
     }, [])
   );
 
   const filtered = mothers.filter((m) => {
     const matchSearch =
       m.name.toLowerCase().includes(search.toLowerCase()) ||
-      (m.nameNp || "").includes(search);
-    const matchFilter =
-      activeFilter === "All" ||
-      (activeFilter === "Active" && m.status === "active") ||
-      (activeFilter === "High Risk" && m.risk === "high") ||
-      (activeFilter === "Delivered" && m.status === "delivered");
-    return matchSearch && matchFilter;
+      (m.nameNp || "").includes(search) ||
+      (m.ward || "").toLowerCase().includes(search.toLowerCase());
+    return matchSearch;
   });
 
+  const getAncStatus = (lmp: string | null) => {
+    if (!lmp) return { status: 'New Case', color: 'blue' };
+    const lmpDate = new Date(lmp);
+    const now = new Date();
+    const dif = now.getTime() - lmpDate.getTime();
+    const wks = Math.floor(dif / (1000 * 60 * 60 * 24 * 7));
+
+    const milestones = [12, 16, 20, 24, 28, 32, 36, 40];
+    let currentVisit = 0;
+    milestones.forEach((m, i) => {
+      if (wks >= m) currentVisit = i + 1;
+    });
+
+    if (wks > 42) return { status: 'Post-Term', color: 'red' };
+    if (currentVisit === 0) return { status: 'New Case', color: 'blue' };
+    return { status: `Visit ${currentVisit} Complete`, color: 'blue' };
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
 
-      {/* Header */}
-      <View className="bg-white border-b border-gray-100 pb-5">
-        <CustomHeader
-          title="Mother List"
-          className="pt-4 px-5 pb-3 mt-10"
-          rightNode={
-            <TouchableOpacity
-              onPress={() => router.push("/dashboard/mother-list/add-mother" as any)}
-              className="bg-primary p-2.5 rounded-2xl"
-            >
-              <Plus size={22} color="white" strokeWidth={2.5} />
-            </TouchableOpacity>
-          }
-        />
-
-        {/* Search Bar */}
-        <View className="flex-row items-center bg-gray-50 rounded-2xl px-4 py-3 border border-gray-100 mx-5">
-          <Search size={18} color="#94a3b8" strokeWidth={2.5} />
-          <TextInput
-            className="flex-1 ml-3 text-[#1E293B] font-bold text-base"
-            placeholder="Search by name..."
-            placeholderTextColor="#CBD5E1"
-            value={search}
-            onChangeText={setSearch}
-          />
+      {/* Custom FCHV Header */}
+      <View className="px-6 pt-14 pb-4 flex-row justify-between items-center bg-white">
+        <View className="flex-row items-center">
+          <View className="bg-blue-50 p-1.5 rounded-xl mr-3">
+            <Image
+              source={require("../../../assets/fchv-logo.png")}
+              className="w-10 h-10"
+              resizeMode="contain"
+            />
+          </View>
+          <Text className="text-primary text-xl font-black">FCHV Assistant</Text>
         </View>
-
-        {/* Filter Chips */}
-        {/* <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="mt-4"
-          contentContainerStyle={{ paddingRight: 16 }}
-        >
-          {FILTERS.map((f) => (
-            <TouchableOpacity
-              key={f}
-              onPress={() => setActiveFilter(f)}
-              className={`mr-2 px-4 py-2 rounded-full border ${activeFilter === f
-                ? "bg-primary border-primary"
-                : "bg-white border-gray-200"
-                }`}
-            >
-              <Text
-                className={`font-black text-[12px] ${activeFilter === f ? "text-white" : "text-gray-500"
-                  }`}
-              >
-                {f}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView> */}
+        <TouchableOpacity className="bg-gray-50 p-2.5 rounded-2xl">
+          <Bell size={24} color="#1E293B" strokeWidth={2.5} />
+        </TouchableOpacity>
       </View>
 
-      {/* Summary Strip */}
-      <View className="flex-row px-5 py-4 gap-3">
-        <View className="flex-1 bg-white rounded-2xl px-4 py-3 border border-gray-100 flex-row items-center">
-          <View className="bg-blue-50 p-2 rounded-xl mr-3">
-            <Baby size={16} color="#3B82F6" strokeWidth={2.5} />
-          </View>
-          <View>
-            <Text className="text-gray-400 font-bold text-[10px]">Active</Text>
-            <Text className="text-[#1E293B] font-black text-xl leading-none">
-              {mothers.filter((m) => m.status === "active").length}
-            </Text>
-          </View>
-        </View>
-        <View className="flex-1 bg-white rounded-2xl px-4 py-3 border border-gray-100 flex-row items-center">
-          <View className="bg-rose-50 p-2 rounded-xl mr-3">
-            <AlertCircle size={16} color="#E11D48" strokeWidth={2.5} />
-          </View>
-
-          <View>
-            <Text className="text-gray-400 font-bold text-[10px]">High Risk</Text>
-            <Text className="text-[#1E293B] font-black text-xl leading-none">
-              {mothers.filter((m) => m.risk === "high").length}
-            </Text>
-          </View>
-        </View>
-        <View className="flex-1 bg-white rounded-2xl px-4 py-3 border border-gray-100 flex-row items-center">
-          <View className="bg-green-50 p-2 rounded-xl mr-3">
-            <CheckCircle2 size={16} color="#22C55E" strokeWidth={2.5} />
-          </View>
-          <View>
-            <Text className="text-gray-400 font-bold text-[10px]">Delivered</Text>
-            <Text className="text-[#1E293B] font-black text-xl leading-none">
-              {mothers.filter((m) => m.status === "delivered").length}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Mother List */}
       <ScrollView
-        className="flex-1 px-5"
+        className="flex-1 bg-[#F8FAFC]"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
-        {loading ? (
-          <View className="items-center py-20">
-            <ActivityIndicator size="large" color="#3B82F6" />
-            <Text className="text-gray-400 font-bold text-base mt-4">Loading mothers...</Text>
+        {/* Search Bar */}
+        <View className="px-5 mt-4">
+          <View className="flex-row items-center bg-white px-4 h-14 rounded-2xl border border-gray-100 shadow-sm">
+            <Search size={20} color="#94A3B8" />
+            <TextInput
+              className="flex-1 ml-3 text-base text-[#1E293B] font-medium"
+              placeholder="Search pregnant women by name..."
+              placeholderTextColor="#94A3B8"
+              value={search}
+              onChangeText={setSearch}
+            />
           </View>
-        ) : filtered.length === 0 ? (
-          <View className="items-center py-20">
-            <Baby size={48} color="#CBD5E1" />
-            <Text className="text-gray-400 font-bold text-base mt-4">No records found</Text>
-          </View>
-        ) : (
-          filtered.map((mother) => (
-            <TouchableOpacity
-              key={mother.id}
-              activeOpacity={0.75}
-              onPress={() => router.push({ pathname: "/dashboard/mother-profile", params: { id: mother.id } } as any)}
-              className="bg-white rounded-[28px] p-4 mb-4 shadow-sm border border-gray-50"
-            >
-              <View className="flex-row items-center">
-                {/* Avatar */}
-                <View className="relative mr-4">
-                  <Image
-                    source={{ uri: mother.image }}
-                    className="w-14 h-14 rounded-2xl"
-                  />
-                  {mother.risk === "high" && (
-                    <View className="absolute -top-1 -right-1 bg-rose-500 w-4 h-4 rounded-full border-2 border-white items-center justify-center">
-                      <Text className="text-white text-[7px] font-black">!</Text>
-                    </View>
-                  )}
-                </View>
+        </View>
 
-                {/* Details */}
-                <View className="flex-1">
-                  <View className="flex-row items-center justify-between">
-                    <View>
-                      <Text className="text-[#1E293B] text-base font-black">{mother.name}</Text>
-                      {/* <Text className="text-gray-400 text-[10px] font-bold">Code: {mother.code || 'N/A'} | ID: {mother.id ? mother.id.split('-')[0] : 'N/A'}</Text> */}
+        {/* Action Buttons */}
+        <View className="flex-row px-5 mt-6 gap-4">
+          <TouchableOpacity
+            onPress={() => router.push("/dashboard/mother-list/add-mother" as any)}
+            className="flex-1 bg-[#0262C4] p-5 rounded-[28px] items-center justify-center shadow-lg shadow-blue-900/20"
+          >
+            <View className="bg-white/20 p-2 rounded-xl mb-3">
+              <Plus size={24} color="white" strokeWidth={3} />
+            </View>
+            <Text className="text-white font-black text-center text-[13px] leading-tight">New{"\n"}Registration</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-1 bg-[#006F62] p-5 rounded-[28px] items-center justify-center shadow-lg shadow-teal-900/20"
+          >
+            <View className="bg-white/20 p-2 rounded-xl mb-3">
+              <Baby size={24} color="white" strokeWidth={3} />
+            </View>
+            <Text className="text-white font-black text-center text-[13px] leading-tight">Record Birth</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View className="px-5">
+          {loading ? (
+            <View className="items-center py-20">
+              <ActivityIndicator size="large" color="#3B82F6" />
+              <Text className="text-gray-400 font-black text-sm mt-4 italic">Loading trackers...</Text>
+            </View>
+          ) : filtered.length === 0 ? (
+            <View className="py-20 items-center justify-center opacity-50">
+              <User size={48} color="#CBD5E1" strokeWidth={1.5} />
+              <Text className="text-gray-400 font-black text-base italic mt-4">No trackers found</Text>
+            </View>
+          ) : (
+            filtered?.map((mother) => {
+              const status = getAncStatus(mother.lmp);
+              const lmpTime = mother.lmp ? new Date(mother.lmp).getTime() : 0;
+              const wks = mother.lmp ? Math.floor((new Date().getTime() - lmpTime) / (1000 * 60 * 60 * 24 * 7)) : 0;
+
+              return (
+                <TouchableOpacity
+                  key={mother.id}
+                  activeOpacity={0.8}
+                  onPress={() => router.push({ pathname: "/dashboard/mother-profile", params: { id: mother.id } } as any)}
+                  className="bg-white p-5 rounded-[32px] mb-6 border border-gray-100 shadow-sm"
+                >
+                  <View className="flex-row justify-between items-start mb-4">
+                    <View className="flex-1 pr-4">
+                      <Text className="text-[#1E293B] text-2xl font-black leading-tight">{mother.name}</Text>
+                      <Text className="text-gray-400 font-bold text-xs mt-1">
+                        Age: {mother.age || '26'} • {mother.pregnancy_count || '1'}st Pregnancy
+                      </Text>
                     </View>
-                    <View
-                      className={`px-2.5 py-1 rounded-full ${mother.status === "delivered"
-                        ? "bg-green-50"
-                        : mother.risk === "high"
-                          ? "bg-rose-50"
-                          : "bg-blue-50"
-                        }`}
-                    >
-                      <Text
-                        className={`text-[10px] font-black ${mother.status === "delivered"
-                          ? "text-primary"
-                          : mother.risk === "high"
-                            ? "text-[#E11D48]"
-                            : "text-[#3B82F6]"
-                          }`}
-                      >
-                        {mother.status === "delivered"
-                          ? "Delivered"
-                          : mother.risk === "high"
-                            ? "High Risk"
-                            : "Active"}
+                    <View className={`px-3 py-1.5 rounded-xl ${status.color === 'red' ? 'bg-rose-50' : 'bg-blue-50'}`}>
+                      <Text className={`text-[11px] font-black ${status.color === 'red' ? 'text-rose-600' : 'text-blue-600'}`}>
+                        {status.status}
                       </Text>
                     </View>
                   </View>
-                  <View className="flex-row items-center mt-2 gap-4">
-                    <View className="flex-row items-center">
-                      <Calendar size={12} color="#94a3b8" strokeWidth={2.5} />
-                      <Text className="text-gray-400 font-bold text-[11px] ml-1">LMP: {mother.lmp}</Text>
-                    </View>
-                    <View className="flex-row items-center">
-                      <Calendar size={12} color="#94a3b8" strokeWidth={2.5} />
-                      <Text className="text-gray-400 font-bold text-[11px] ml-1">EDD: {mother.edd}</Text>
-                    </View>
-                  </View>
-                  <View className="flex-row items-center">
-                    <Baby size={12} color="#94a3b8" strokeWidth={2.5} />
-                    <Text className="text-gray-400 font-bold text-[11px] ml-1">Age: {mother.age}</Text>
-                  </View>
-                </View>
 
-                {/* Arrow */}
-                <View className="bg-gray-50 p-2.5 rounded-2xl ml-3">
-                  <ChevronRight size={16} color="#64748B" strokeWidth={2.5} />
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))
-        )}
+                  <View className="flex-row gap-3 mb-6">
+                    <View className="flex-1 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                      <Text className="text-gray-400 font-black text-[10px] uppercase">LMP</Text>
+                      <Text className="text-[#1E293B] font-black text-base mt-0.5">{mother.lmp || 'Jan 12, 2024'}</Text>
+                    </View>
+                    <View className="flex-1 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                      <Text className="text-gray-400 font-black text-[10px] uppercase">EDD</Text>
+                      <Text className="text-[#1E293B] font-black text-base mt-0.5">{mother.edd || 'Oct 18, 2024'}</Text>
+                    </View>
+                  </View>
+
+                  <View className="flex-row justify-between items-center mb-4">
+                    <Text className="text-[#1E293B] font-bold text-[13px]">ANC Schedule (8 Visits)</Text>
+                    <Text className="text-blue-600 font-black text-[13px]">
+                      {wks < 40 ? `Next Visit: Week ${[12, 16, 20, 24, 28, 32, 36, 40].find(m => m > wks)}` : 'Completed'}
+                    </Text>
+                  </View>
+
+                  <View className="flex-row items-center justify-between px-1">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((v, i) => {
+                      const completed = wks >= [12, 16, 20, 24, 28, 32, 36, 40][i];
+                      const current = !completed && (i === 0 || wks >= [12, 16, 20, 24, 28, 32, 36, 40][i - 1]);
+
+                      return (
+                        <View key={v} className="flex-row items-center flex-1">
+                          <View className={`w-8 h-8 rounded-full items-center justify-center border-2 ${completed ? 'bg-[#006F62] border-[#006F62]' :
+                              current ? 'border-primary' : 'bg-gray-100 border-gray-100'
+                            }`}>
+                            {completed ? (
+                              <Check size={14} color="white" strokeWidth={4} />
+                            ) : (
+                              <Text className={`text-[11px] font-black ${current ? 'text-primary' : 'text-gray-400'}`}>{v}</Text>
+                            )}
+                          </View>
+                          {i < 7 && (
+                            <View className={`h-[2px] flex-1 mx-1 ${completed ? 'bg-[#006F62]' : 'bg-gray-100'}`} />
+                          )}
+                        </View>
+                      );
+                    })}
+                  </View>
+                </TouchableOpacity>
+              );
+            })
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

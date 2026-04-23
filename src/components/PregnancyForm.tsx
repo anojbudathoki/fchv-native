@@ -4,10 +4,10 @@ import { Baby, Calendar, Info, Save } from "lucide-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
-import { getMotherProfile } from "../hooks/database/models/MotherModel";
+import { getAllMothersList, getMotherProfile, MotherListDbItem } from "../hooks/database/models/MotherModel";
 import { createPregnancy } from "../hooks/database/models/PregnantWomenModal";
 import { useToast } from "../context/ToastContext";
-import { FieldLabel, BoxInput } from "./FormElements";
+import { FieldLabel, BoxInput, SelectInput } from "./FormElements";
 import { Button } from "./button";
 import InputField from "./InputField";
 
@@ -15,6 +15,8 @@ export default function PregnancyForm({ id, onSwitchToMother }: { id?: string, o
   const router = useRouter();
   const { showToast } = useToast();
 
+  const [mothers, setMothers] = useState<MotherListDbItem[]>([]);
+  const [selectedMotherId, setSelectedMotherId] = useState<string>(id || "");
   const [gravida, setGravida] = useState("");
   const [parity, setParity] = useState("");
   const [lmp, setLmp] = useState("");
@@ -26,7 +28,20 @@ export default function PregnancyForm({ id, onSwitchToMother }: { id?: string, o
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const fetchMothers = async () => {
+      try {
+        const list = await getAllMothersList();
+        setMothers(list);
+      } catch (err) {
+        console.error("Error fetching mothers:", err);
+      }
+    };
+    fetchMothers();
+  }, []);
+
+  useEffect(() => {
     if (id) {
+      setSelectedMotherId(id);
       const fetchEditData = async () => {
         try {
           setIsLoading(true);
@@ -65,6 +80,7 @@ export default function PregnancyForm({ id, onSwitchToMother }: { id?: string, o
 
   const validate = () => {
     const e: Record<string, string> = {};
+    if (!selectedMotherId) e.motherId = "Please select a mother";
     if (!gravida.trim()) e.gravida = "Gravida is required";
     if (!parity.trim()) e.parity = "Parity is required";
     if (!lmp) e.lmp = "LMP date is required";
@@ -79,6 +95,8 @@ export default function PregnancyForm({ id, onSwitchToMother }: { id?: string, o
     setIsLoading(true);
     try {
       await createPregnancy({
+        id: pregnancyId || Crypto.randomUUID(),
+        mother_id: selectedMotherId,
         gravida: parseInt(gravida) || 0,
         parity: parseInt(parity) || 0,
         lmp_date: lmp,
@@ -104,6 +122,22 @@ export default function PregnancyForm({ id, onSwitchToMother }: { id?: string, o
         <Text className="text-gray-500 text-[13px] font-medium leading-5">
           Please enter the correct obstetric history and timeline information below for accurate tracking.
         </Text>
+      </View>
+
+      <View className="mb-6">
+        <FieldLabel label="Select Mother" />
+        <SelectInput
+          label="Select Mother"
+          placeholder={isLoading ? "Loading mothers..." : "Choose a mother"}
+          value={selectedMotherId}
+          disabled={!!id}
+          options={mothers.length > 0 ? mothers.map(m => ({ value: m.id, label: `${m.name} (${m.ward})` })) : (id ? [{value: id, label: "Loading..."}] : [])}
+          onSelect={(val: string) => {
+            setSelectedMotherId(val);
+            setErrors({ ...errors, motherId: "" });
+          }}
+          error={errors.motherId}
+        />
       </View>
 
       <View className="bg-white rounded-3xl p-5 mb-6 border border-gray-100 shadow-sm shadow-gray-200/40">

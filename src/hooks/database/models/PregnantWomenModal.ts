@@ -13,9 +13,10 @@ export async function createPregnancy(
 
   await db.runAsync(
     `INSERT INTO pregnancy 
-      (id, lmp_date, expected_delivery_date, is_current, gravida, parity, selected, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, mother_id, lmp_date, expected_delivery_date, is_current, gravida, parity, selected, is_synced, is_deleted, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
+      mother_id = excluded.mother_id,
       lmp_date = excluded.lmp_date,
       expected_delivery_date = excluded.expected_delivery_date,
       is_current = excluded.is_current,
@@ -27,6 +28,7 @@ export async function createPregnancy(
       updated_at = excluded.updated_at;`,
     [
       id,
+      payload.mother_id,
       payload.lmp_date,
       payload.expected_delivery_date ?? null,
       payload.is_current ? 1 : 0,
@@ -42,6 +44,7 @@ export async function createPregnancy(
 
   return {
     id: id,
+    mother_id: payload.mother_id,
     lmp_date: payload.lmp_date,
     expected_delivery_date: payload.expected_delivery_date ?? null,
     is_current: payload.is_current ? 1 : 0,
@@ -63,6 +66,7 @@ export async function unSyncedPregnancies(): Promise<CreatePregnancyPayload[]> {
 
   return rows.map((row) => ({
     id: row.id,
+    mother_id: row.mother_id || "",
     gravida: row.gravida ?? undefined,
     parity: row.parity ?? undefined,
     lmp_date: row.lmp_date,

@@ -108,16 +108,31 @@ export interface MotherListDbItem {
 export async function getAllMothersList(): Promise<MotherListDbItem[]> {
   const db = await getDb();
 
-  const rows = await db.getAllAsync<any>(`SELECT * FROM mother WHERE is_deleted = 0 ORDER BY created_at ASC`);
+  const query = `
+    SELECT 
+      m.*,
+      p.lmp_date as lmp,
+      p.expected_delivery_date as edd
+    FROM mother m
+    LEFT JOIN pregnancy p ON p.id = (
+      SELECT id FROM pregnancy 
+      WHERE mother_id = m.id AND is_deleted = 0 
+      ORDER BY created_at DESC LIMIT 1
+    )
+    WHERE m.is_deleted = 0 
+    ORDER BY m.created_at ASC
+  `;
+
+  const rows = await db.getAllAsync<any>(query);
 
   return rows.map((row) => ({
     id: row.id,
     code: row.code || "",
     name: row.name || "Unknown",
-    nameNp: row.nameNp || "",
+    nameNp: row.husband_name || "",
     age: row.age || 0,
-    ward: row.ward || "Unknown Ward",
-    image: row.image || "https://vectorified.com/images/no-profile-picture-icon-13.png",
+    ward: row.address || "Unknown Ward",
+    image: row.photo || "https://vectorified.com/images/no-profile-picture-icon-13.png",
     lmp: row.lmp || "N/A",
     edd: row.edd || "N/A",
     anc: 0,
@@ -143,6 +158,7 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
   const query = `
     SELECT 
       m.id,
+      m.code,
       m.name,
       m.husband_name as nameNp,
       m.husband_name as husbandName,
