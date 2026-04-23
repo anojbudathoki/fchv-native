@@ -4,7 +4,6 @@ import { CreateMotherPayload, MotherStoreType } from '../types/motherModal';
 export async function createMother(
   payload: Omit<CreateMotherPayload, 'created_at' | 'updated_at'>
 ): Promise<MotherStoreType> {
-  console.log("Creating mother", payload);
   const db = await getDb();
   const now = new Date().toISOString();
 
@@ -108,16 +107,10 @@ export interface MotherListDbItem {
 
 export async function getAllMothersList(): Promise<MotherListDbItem[]> {
   const db = await getDb();
-  
+
   const query = `
     SELECT 
-      m.id,
-      m.code,
-      m.name,
-      m.husband_name as nameNp,
-      m.age,
-      m.address as ward,
-      m.photo as image,
+      m.*,
       p.lmp_date as lmp,
       p.expected_delivery_date as edd
     FROM mother m
@@ -126,8 +119,8 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
       WHERE mother_id = m.id AND is_deleted = 0 
       ORDER BY created_at DESC LIMIT 1
     )
-    WHERE m.is_deleted = 0
-    ORDER BY m.created_at DESC
+    WHERE m.is_deleted = 0 
+    ORDER BY m.created_at ASC
   `;
 
   const rows = await db.getAllAsync<any>(query);
@@ -136,10 +129,10 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
     id: row.id,
     code: row.code || "",
     name: row.name || "Unknown",
-    nameNp: row.nameNp || "",
+    nameNp: row.husband_name || "",
     age: row.age || 0,
-    ward: row.ward || "Unknown Ward",
-    image: row.image || "https://vectorified.com/images/no-profile-picture-icon-13.png",
+    ward: row.address || "Unknown Ward",
+    image: row.photo || "https://vectorified.com/images/no-profile-picture-icon-13.png",
     lmp: row.lmp || "N/A",
     edd: row.edd || "N/A",
     anc: 0,
@@ -214,4 +207,12 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
     risk: "low",
     regDate: row.regDate || "N/A",
   };
+}
+
+export async function getMotherCount(): Promise<number> {
+  const db = await getDb();
+  const result = await db.getFirstAsync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM mother WHERE is_deleted = 0"
+  );
+  return result?.count ?? 0;
 }

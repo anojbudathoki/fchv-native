@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react-native";
 import { twMerge } from "tailwind-merge";
 import Colors from "../constants/Colors";
+import React from "react";
 
 interface InputFieldProps extends React.ComponentProps<typeof TextInput> {
   label: string;

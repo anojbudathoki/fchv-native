@@ -8,26 +8,8 @@ import { createMother, getMotherProfile } from "../hooks/database/models/MotherM
 import { useToast } from "../context/ToastContext";
 import CameraCapture from "../components/CameraCapture";
 import { FieldLabel, BoxInput, SelectInput } from "./FormElements";
-
-const JATI_CODES = [
-  { code: "1", name: "दलित (Dalit)" },
-  { code: "2", name: "जनजाति (Janajati)" },
-  { code: "3", name: "मधेसी (Madhesi)" },
-  { code: "4", name: "मुस्लिम (Muslim)" },
-  { code: "5", name: "ब्राह्मण/छेत्री (Brahmin/Chhetri)" },
-  { code: "6", name: "अन्य (Other)" },
-];
-
-const educationOptionsNepali = [
-  { value: "no_formal", label: "कुनै औपचारिक शिक्षा छैन (No Formal Education)" },
-  { value: "primary", label: "प्राथमिक तह – कक्षा १–५ (Primary Level)" },
-  { value: "lower_secondary", label: "निम्न माध्यमिक तह – कक्षा ६–८ (Lower Secondary Level)" },
-  { value: "secondary", label: "माध्यमिक तह – कक्षा ९–१० (Secondary Level / SEE)" },
-  { value: "higher_secondary", label: "उच्च माध्यमिक तह – कक्षा ११–१२ (+2 / Higher Secondary)" },
-  { value: "bachelor", label: "स्नातक तह (Bachelor’s Degree)" },
-  { value: "master", label: "स्नातकोत्तर तह (Master’s Degree)" },
-  { value: "doctoral", label: "विद्यावारिधि तह (Doctoral / PhD)" },
-];
+import { Button } from "./button";
+import { EDUCATION_LEVELS, JATI_CODES } from "@/utils/data";
 
 const generateCustomId = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -59,6 +41,7 @@ export default function MotherForm({ id }: { id?: string }) {
         try {
           setIsLoading(true);
           const data = await getMotherProfile(id);
+          console.log({data})
           if (data) {
             setName(data.name);
             setAge(String(data.age || ""));
@@ -258,26 +241,16 @@ export default function MotherForm({ id }: { id?: string }) {
         label="Select Education"
         placeholder="Select Education"
         value={education}
-        options={educationOptionsNepali}
+        options={EDUCATION_LEVELS}
         onSelect={(val: string) => { setEducation(val); setErrors({...errors, education: ""}) }}
         error={errors.education}
       />
 
-      <TouchableOpacity
-        activeOpacity={0.88}
+      <Button
         onPress={save}
-        disabled={isLoading}
-        className="bg-primary rounded-2xl h-14 flex-row items-center justify-center mt-2"
-      >
-        {isLoading ? (
-          <ActivityIndicator color="white" size="small" />
-        ) : (
-          <>
-            <Save size={16} color="white" strokeWidth={2.3} />
-            <Text className="text-white font-semibold text-md ml-2">Save Mother Info</Text>
-          </>
-        )}
-      </TouchableOpacity>
+        isLoading={isLoading}
+        title="Save Mother Info"
+      />
     </>
   );
 }

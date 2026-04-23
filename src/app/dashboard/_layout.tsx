@@ -90,13 +90,7 @@ export default function DashboardLayout() {
             drawerItemStyle: { display: "none" },
           }}
         />
-        <Drawer.Screen
-          name="add-mother"
-          options={{
-            title: "Add Mother",
-            drawerItemStyle: { display: "none" },
-          }}
-        />
+
         <Drawer.Screen
           name="mother-profile"
           options={{

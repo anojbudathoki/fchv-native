@@ -35,16 +35,30 @@ import "../../global.css";
 import ModalWithSafeArea from "@/components/common/ModalWithSafeArea";
 import DatabaseViewer from "@/components/DatabaseViewer";
 import CustomHeader from "../../components/CustomHeader";
+import { useLanguage } from "../../context/LanguageContext";
 
-// ── Stats ──────────────────────────────────────────────────────────────
+interface SettingItem {
+  icon: any;
+  label: string;
+  color: string;
+  bg: string;
+  toggle?: boolean;
+  value?: string;
+  onPress?: (router: any) => void;
+}
+
+interface SettingSection {
+  section: string;
+  items: SettingItem[];
+}
+
 const STATS = [
   { label: "Mothers\nRegistered", value: "42", icon: Users, color: "#3B82F6", bg: "#EFF6FF" },
   { label: "Visits\nCompleted", value: "128", icon: TrendingUp, color: "#22C55E", bg: "#F0FFF4" },
   { label: "Years\nActive", value: "3", icon: Star, color: "#F97316", bg: "#FFF7ED" },
 ];
 
-// ── Settings sections ─────────────────────────────────────────────────
-const SETTINGS = [
+const SETTINGS: SettingSection[] = [
   {
     section: "Account",
     items: [
@@ -56,8 +70,21 @@ const SETTINGS = [
   {
     section: "Preferences",
     items: [
-      { icon: Bell, label: "Notifications", color: "#F97316", bg: "#FFF7ED", toggle: true },
-      { icon: Globe, label: "Language", color: "#06B6D4", bg: "#ECFEFF", value: "नेपाली" },
+      { 
+        icon: Bell, 
+        label: "Notifications", 
+        color: "#F97316", 
+        bg: "#FFF7ED", 
+        toggle: true 
+      },
+      { 
+        icon: Globe, 
+        label: "Language", 
+        color: "#06B6D4", 
+        bg: "#ECFEFF", 
+        value: "नेपाली",
+        onPress: (router: any) => router.push("/dashboard/change-language")
+      },
     ],
   },
   {
@@ -71,6 +98,7 @@ const SETTINGS = [
 
 export default function UserProfileScreen() {
   const router = useRouter();
+  const { language } = useLanguage();
   const [notifications, setNotifications] = useState(true);
   const [isDbOpen, setIsDbOpen] = useState(false);
 
@@ -79,7 +107,6 @@ export default function UserProfileScreen() {
     <SafeAreaView className="flex-1 bg-[#F8FAFC]">
       <StatusBar barStyle="dark-content" />
 
-      {/* ── Header ───────────────────────────── */}
       <CustomHeader title="My Profile" />
 
       <ScrollView
@@ -88,11 +115,9 @@ export default function UserProfileScreen() {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
 
-        {/* ── Hero Card ────────────────────────── */}
         <View className="mx-5 mt-5">
           <View className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm items-center">
 
-            {/* Avatar */}
             <View className="relative mb-4">
               <View className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-100 shadow-md">
                 <Image
@@ -128,9 +153,6 @@ export default function UserProfileScreen() {
           </View>
         </View>
 
-
-
-        {/* ── Settings Sections ────────────────── */}
         {SETTINGS.map((section, si) => (
           <View key={si} className="px-5 mt-6">
             <Text className="text-gray-400 font-black text-[11px] uppercase tracking-widest mb-3 px-1">
@@ -144,6 +166,7 @@ export default function UserProfileScreen() {
                   <TouchableOpacity
                     key={ii}
                     activeOpacity={0.7}
+                    onPress={() => item.onPress && item.onPress(router)}
                     className={`flex-row items-center px-5 py-4 ${!isLast ? "border-b border-gray-50" : ""}`}
                   >
                     <View
@@ -161,6 +184,11 @@ export default function UserProfileScreen() {
                         trackColor={{ false: "#E5E7EB", true: "#86EFAC" }}
                         thumbColor={notifications ? "#22C55E" : "#9CA3AF"}
                       />
+                    ) : item.label === "Language" ? (
+                      <View className="flex-row items-center">
+                        <Text className="text-gray-400 font-bold text-sm mr-2">{language === 'np' ? 'नेपाली' : 'English'}</Text>
+                        <ChevronRight size={16} color="#CBD5E1" strokeWidth={2.5} />
+                      </View>
                     ) : (item as any).value ? (
                       <View className="flex-row items-center">
                         <Text className="text-gray-400 font-bold text-sm mr-2">{(item as any).value}</Text>
@@ -176,7 +204,6 @@ export default function UserProfileScreen() {
           </View>
         ))}
 
-        {/* ── Log Out ──────────────────────────── */}
         <View className="px-5 mt-6">
           <TouchableOpacity
             activeOpacity={0.85}
@@ -191,7 +218,6 @@ export default function UserProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* ── App version ──────────────────────── */}
         <Text className="text-gray-300 font-bold text-xs text-center mt-8">
           FCHV Saathi v1.0.0 • Ministry of Health, Nepal
         </Text>

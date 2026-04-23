@@ -35,7 +35,7 @@ export async function createPregnancy(
       payload.gravida ?? null,
       payload.parity ?? null,
       payload.selected ? 1 : 0,
-      payload.is_synced ? 1 : 0,
+      0,
       0,
       now,
       now
@@ -66,7 +66,7 @@ export async function unSyncedPregnancies(): Promise<CreatePregnancyPayload[]> {
 
   return rows.map((row) => ({
     id: row.id,
-    mother_id: row.mother_id,
+    mother_id: row.mother_id || "",
     gravida: row.gravida ?? undefined,
     parity: row.parity ?? undefined,
     lmp_date: row.lmp_date,
@@ -189,5 +189,113 @@ export async function getSelectedPregnancy(): Promise<PregnancyStoreType | null>
   return await db.getFirstAsync<PregnancyStoreType>(
     `SELECT * FROM pregnancy WHERE selected = 1 AND is_deleted = 0`
   );
+}
+
+export async function getPregnancyCount(): Promise<number> {
+  const db = await getDb();
+  const result = await db.getFirstAsync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM pregnancy WHERE is_deleted = 0 AND is_current = 1"
+  );
+  return result?.count ?? 0;
+}
+
+export interface PregnantWomenListItem {
+  id: string;
+  mother_id: string;
+  name: string;
+  husband_name: string;
+  age: number;
+  ward: string;
+  phone: string;
+  lmp_date: string;
+  edd: string;
+  gravida: number;
+  parity: number;
+}
+
+export async function getPregnantWomenList(): Promise<PregnantWomenListItem[]> {
+  const db = await getDb();
+  const query = `
+    SELECT 
+      p.id,
+      p.mother_id,
+      m.name,
+      m.husband_name,
+      m.age,
+      m.address as ward,
+      m.phone,
+      p.lmp_date,
+      p.expected_delivery_date as edd,
+      p.gravida,
+      p.parity
+    FROM pregnancy p
+    INNER JOIN mother m ON p.mother_id = m.id
+    WHERE p.is_deleted = 0 AND p.is_current = 1 AND m.is_deleted = 0
+    ORDER BY p.updated_at DESC
+  `;
+  const rows = await db.getAllAsync<any>(query);
+  return rows.map(row => ({
+    ...row,
+    gravida: row.gravida || 0,
+    parity: row.parity || 0,
+  }));
+}
+
+export async function getPregnancyById(id: string): Promise<any> {
+  const db = await getDb();
+  const query = `
+    SELECT 
+      p.*,
+      m.name as mother_name,
+      m.phone as mother_phone
+    FROM pregnancy p
+    INNER JOIN mother m ON p.mother_id = m.id
+    WHERE p.id = ? AND p.is_deleted = 0
+  `;
+  return await db.getFirstAsync<any>(query, [id]);
+}
+
+export async function updatePregnancy(
+  id: string,
+  payload: Partial<Omit<CreatePregnancyPayload, 'id' | 'created_at' | 'updated_at'>>
+): Promise<void> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  
+  const sets: string[] = ["updated_at = ?"];
+  const values: any[] = [now];
+
+  if (payload.lmp_date !== undefined) {
+    sets.push("lmp_date = ?");
+    values.push(payload.lmp_date);
+  }
+  if (payload.expected_delivery_date !== undefined) {
+    sets.push("expected_delivery_date = ?");
+    values.push(payload.expected_delivery_date);
+  }
+  if (payload.gravida !== undefined) {
+    sets.push("gravida = ?");
+    values.push(payload.gravida);
+  }
+  if (payload.parity !== undefined) {
+    sets.push("parity = ?");
+    values.push(payload.parity);
+  }
+  if (payload.is_current !== undefined) {
+    sets.push("is_current = ?");
+    values.push(payload.is_current ? 1 : 0);
+  }
+  if (payload.selected !== undefined) {
+    sets.push("selected = ?");
+    values.push(payload.selected ? 1 : 0);
+  }
+  if (payload.is_synced !== undefined) {
+    sets.push("is_synced = ?");
+    values.push(payload.is_synced ? 1 : 0);
+  }
+
+  values.push(id);
+  const sql = `UPDATE pregnancy SET ${sets.join(", ")} WHERE id = ?`;
+  await db.runAsync(sql, values);
 }
 

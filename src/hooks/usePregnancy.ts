@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createPregnancy } from './database/models/PregnantWomenModal';
+import { createPregnancy, getPregnancyById, updatePregnancy } from './database/models/PregnantWomenModal';
 import { CreatePregnancyPayload } from './database/types/pregnancyModal';
 
 export const usePregnancy = () => {
@@ -10,9 +10,7 @@ export const usePregnancy = () => {
     setIsLoading(true);
     setError(null);
     try {
-    console.log({data})
       const result = await createPregnancy(data);
-      
       return { success: true, id: result.id };
     } catch (err: any) {
       console.error('Error adding pregnancy:', err);
@@ -23,8 +21,37 @@ export const usePregnancy = () => {
     }
   };
 
+  const getPregnancy = async (id: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await getPregnancyById(id);
+    } catch (err: any) {
+      setError(err);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const editPregnancy = async (id: string, data: Partial<CreatePregnancyPayload>) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await updatePregnancy(id, data);
+      return { success: true };
+    } catch (err: any) {
+      setError(err);
+      return { success: false, error: err };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     addPregnancy,
+    getPregnancy,
+    editPregnancy,
     isLoading,
     error,
   };

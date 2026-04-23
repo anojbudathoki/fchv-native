@@ -33,7 +33,7 @@ export default function BottomNavigation() {
 
   const tabs = [
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
-    { id: "visit", label: "Visit", icon: Calendar, path: "/dashboard/follow-up" },
+    { id: "visit", label: "Visit", icon: Calendar, path: "/dashboard/visit-list" },
     { id: "action", label: "", icon: Plus, path: "", isAction: true },
     { id: "report", label: "Report", icon: FileText, path: "/dashboard/report" }, // Placeholder for stats
     { id: "guide", label: "Guideline", icon: BookOpen, path: "/dashboard/learn" },

@@ -1,27 +1,39 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
-import { CircleUser, CircleUserRound, Menu, User2 } from "lucide-react-native";
-import { useNavigation } from "@react-navigation/native";
-import { DrawerActions } from "@react-navigation/native";
+import { CircleUserRound } from "lucide-react-native";
 import { useRouter } from "expo-router";
+import { useLanguage } from "../../context/LanguageContext";
 
 const TopHeader = () => {
   const router = useRouter();
-  const navigation = useNavigation();
+  const { t } = useLanguage();
 
   return (
-    <View className="px-6 pt-14 flex-row justify-between items-center bg-white">
-          <TouchableOpacity
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        className="bg-white p-2 rounded-2xl"
+    <View className="px-6 pt-14 pb-4 flex-row justify-between items-center bg-white border-b border-gray-50">
+      <View className="flex-row items-center">
+        <View className="bg-blue-50 p-1 rounded-xl mr-3">
+          <Image 
+            source={require("../../assets/fchv-logo.png")} 
+            className="w-10 h-10" 
+            resizeMode="contain" 
+          />
+        </View>
+        <View>
+          <Text className="text-[#1E293B] text-[17px] font-black leading-none">
+            {t('header.fchv')}
+          </Text>
+          <Text className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">
+            {t('header.community_connect')}
+          </Text>
+        </View>
+      </View>
+      
+      <TouchableOpacity 
+        onPress={() => router.push("/dashboard/profile")} 
+        className="bg-gray-50 p-2 rounded-2xl"
       >
-        <Menu size={24} color="#3B82F6" strokeWidth={2.5} />
+        <CircleUserRound size={22} color="#64748B" strokeWidth={2.5} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={()=> router.push("/dashboard/profile")} className="flex-row items-center">
-       <CircleUserRound size={24} color="#3B82F6" strokeWidth={2.5} />
-      </TouchableOpacity>
-
-  
     </View>
   );
 };
