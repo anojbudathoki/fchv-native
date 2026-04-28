@@ -105,6 +105,27 @@ export default function DashboardLayout() {
             drawerItemStyle: { display: "none" },
           }}
         />
+        <Drawer.Screen
+          name="maternal-death-report"
+          options={{
+            title: "Maternal Death Report",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="newborn-death-report/index"
+          options={{
+            title: "Newborn Death Report",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="child-death-report"
+          options={{
+            title: "Child Death Report",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
       </Drawer>
       <BottomNavigation />
     </View>

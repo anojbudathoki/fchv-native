@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import React, { useEffect } from "react";
 import { useRouter } from "expo-router";
+import { Loader2Icon } from "lucide-react-native";
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -16,11 +17,9 @@ export default function WelcomeScreen() {
   return (
     <View className="flex-1 justify-center items-center bg-background">
       <Text className="text-3xl font-extrabold text-primary">
-        FCHV Native
+        Welcome to FCHV
       </Text>
-      <Text className="text-text-secondary text-lg mt-2 font-medium">
-        Pregnant Users Record System
-      </Text>
+      <Loader2Icon className="animate-spin" />
     </View>
   );
 }

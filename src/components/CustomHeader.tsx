@@ -26,8 +26,11 @@ export default function CustomHeader({
   const handleBack = () => {
     if (onBackPress) {
       onBackPress();
-    } else {
+    } else if (router.canGoBack()) {
       router.back();
+    } else {
+      // Fallback to dashboard if no history exists
+      router.replace("/dashboard");
     }
   };
 
