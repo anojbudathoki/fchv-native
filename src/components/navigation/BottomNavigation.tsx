@@ -10,32 +10,33 @@ export default function BottomNavigation() {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const keyboardDidShowListener = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
+    const keyboardDidShowListener2 = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true)); // Extra safety for Android
+    const keyboardDidHideListener = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+    const keyboardDidHideListener2 = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
 
     return () => {
-      keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
+      keyboardDidShowListener2.remove();
+      keyboardDidHideListener.remove();
+      keyboardDidHideListener2.remove();
     };
   }, []);
 
-  if (isKeyboardVisible) return null;
+  const hiddenRoutes = ["add-record", "add-mother", "follow-up", "mother-profile", "mother-list/add-mother"];
+  const isSearchActive = pathname.includes("record") && isKeyboardVisible; // Specifically hide when searching in record
+  const shouldHide = hiddenRoutes.some(route => pathname.includes(route)) || isKeyboardVisible || isSearchActive;
+
+  if (shouldHide) return null;
 
   const tabs = [
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
     { id: "visit", label: "Visit", icon: Calendar, path: "/dashboard/visit-list" },
-    { id: "action", label: "", icon: Plus, path: "", isAction: true },
-    { id: "report", label: "Report", icon: FileText, path: "/dashboard/report" }, // Placeholder for stats
+    { id: "record", label: "Register", icon: Plus, path: "/dashboard/record", isAction: true },
+    { id: "report", label: "Report", icon: FileText, path: "/dashboard/report" },
     { id: "guide", label: "Guideline", icon: BookOpen, path: "/dashboard/learn" },
   ];
 
@@ -46,18 +47,18 @@ export default function BottomNavigation() {
   };
 
   return (
-    <View className="absolute bottom-0 left-0 right-0 bg-white border-t pb-14 border-gray-100 flex-row justify-around items-center px-2 shadow-2xl pb-6 pt-2">
+    <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex-row justify-around items-center px-2 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] pb-8 pt-2">
       {tabs.map((tab, index) => {
         const Icon = tab.icon;
         const active = isActive(tab.path);
 
-        if (tab.isAction) {
+        if (tab?.isAction) {
           return (
             <TouchableOpacity
               key={tab.id}
               activeOpacity={0.8}
-              onPress={() => router.push("/dashboard/mother-list" as any)}
-              className="bg-primary -mt-10 w-16 h-16 rounded-full items-center justify-center shadow-xl shadow-emerald-200 border-4 border-white"
+              onPress={() => tab.path && router.push(tab.path as any)}
+              className="bg-primary -mt-12 w-16 h-16 rounded-full items-center justify-center shadow-xl shadow-blue-200 border-4 border-white"
             >
               <Plus size={32} color="white" strokeWidth={3} />
             </TouchableOpacity>
@@ -71,14 +72,15 @@ export default function BottomNavigation() {
             onPress={() => tab.path && router.push(tab.path as any)}
             className="items-center justify-center py-2 px-3 flex-1"
           >
-            <Icon
-              size={24}
-              color={active ? Colors.primary : "#94a3b8"}
-              strokeWidth={active ? 2.5 : 2}
-            />
+            <View className={`p-1.5 rounded-xl ${active ? 'bg-blue-50' : 'bg-transparent'}`}>
+                <Icon
+                size={22}
+                color={active ? Colors.primary : "#64748B"}
+                strokeWidth={active ? 2.5 : 2}
+                />
+            </View>
             <Text
-              className={`text-[10px] mt-1 font-black ${active ? "text-primary" : "text-gray-700"
-                }`}
+              className={`text-[9px] mt-1 font-black uppercase tracking-tighter ${active ? "text-primary" : "text-slate-400"}`}
             >
               {tab.label}
             </Text>

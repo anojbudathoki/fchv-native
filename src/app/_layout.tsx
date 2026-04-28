@@ -1,4 +1,5 @@
 import "react-native-gesture-handler";
+import React from "react";
 import "../global.css";
 import "../i18n/config"; // Import i18n config
 import { Slot } from "expo-router";

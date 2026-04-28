@@ -103,6 +103,7 @@ export interface MotherListDbItem {
   risk: string;
   ward: string;
   image: string;
+  pregnancy_count: number;
 }
 
 export async function getAllMothersList(): Promise<MotherListDbItem[]> {
@@ -112,7 +113,8 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
     SELECT 
       m.*,
       p.lmp_date as lmp,
-      p.expected_delivery_date as edd
+      p.expected_delivery_date as edd,
+      (SELECT COUNT(*) FROM pregnancy WHERE mother_id = m.id AND is_deleted = 0) as pregnancy_count
     FROM mother m
     LEFT JOIN pregnancy p ON p.id = (
       SELECT id FROM pregnancy 
@@ -138,6 +140,7 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
     anc: 0,
     status: "active",
     risk: "low",
+    pregnancy_count: row.pregnancy_count || 0
   }));
 }
 
@@ -173,7 +176,8 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
       p.lmp_date as lmp,
       p.expected_delivery_date as edd,
       p.gravida,
-      p.parity
+      p.parity,
+      (SELECT COUNT(*) FROM pregnancy WHERE mother_id = m.id AND is_deleted = 0) as pregnancy_count
     FROM mother m
     LEFT JOIN pregnancy p ON p.id = (
       SELECT id FROM pregnancy 
@@ -206,6 +210,7 @@ export async function getMotherProfile(id: string): Promise<MotherProfileDbItem 
     status: "active",
     risk: "low",
     regDate: row.regDate || "N/A",
+    pregnancy_count: row.pregnancy_count || 0
   };
 }
 
