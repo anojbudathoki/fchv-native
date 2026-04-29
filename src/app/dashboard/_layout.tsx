@@ -63,19 +63,13 @@ export default function DashboardLayout() {
           }}
         />
         <Drawer.Screen
-          name="learn"
+          name="guidelines"
           options={{
             title: "Learn & Resources",
             drawerItemStyle: { display: "none" },
           }}
         />
-        <Drawer.Screen
-          name="learn-details"
-          options={{
-            title: "Learn Details",
-            drawerItemStyle: { display: "none" },
-          }}
-        />
+
         <Drawer.Screen
           name="profile"
           options={{

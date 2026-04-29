@@ -37,7 +37,7 @@ export default function BottomNavigation() {
     { id: "visit", label: "Visit", icon: Calendar, path: "/dashboard/visit-list" },
     { id: "record", label: "Register", icon: Plus, path: "/dashboard/record", isAction: true },
     { id: "report", label: "Report", icon: FileText, path: "/dashboard/report" },
-    { id: "guide", label: "Guideline", icon: BookOpen, path: "/dashboard/learn" },
+    { id: "guide", label: "Guideline", icon: BookOpen, path: "/dashboard/guidelines" },
   ];
 
   const isActive = (path: string | null) => {
