@@ -57,7 +57,7 @@ export default function BottomNavigation() {
             <TouchableOpacity
               key={tab.id}
               activeOpacity={0.8}
-              onPress={() => tab.path && router.push(tab.path as any)}
+              onPress={() => tab.path && pathname !== tab.path && router.replace(tab.path as any)}
               className="bg-primary -mt-12 w-16 h-16 rounded-full items-center justify-center shadow-xl shadow-blue-200 border-4 border-white"
             >
               <Plus size={32} color="white" strokeWidth={3} />
@@ -69,7 +69,7 @@ export default function BottomNavigation() {
           <TouchableOpacity
             key={tab.id}
             activeOpacity={0.7}
-            onPress={() => tab.path && router.push(tab.path as any)}
+            onPress={() => tab.path && pathname !== tab.path && router.replace(tab.path as any)}
             className="items-center justify-center py-2 px-3 flex-1"
           >
             <View className={`p-1.5 rounded-xl ${active ? 'bg-blue-50' : 'bg-transparent'}`}>

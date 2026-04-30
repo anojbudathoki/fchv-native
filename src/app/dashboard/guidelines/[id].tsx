@@ -245,7 +245,7 @@ export default function GuidelineDetailScreen() {
     <View className="flex-1 bg-white pb-16">
       <CustomHeader 
         title={pageTitle}
-        onBackPress={() => router.push("/dashboard/guidelines")}
+        onBackPress={() => router.back()}
         className="pt-12 pb-4 px-5 border-b border-gray-100 bg-white"
       />
 
@@ -306,37 +306,12 @@ export default function GuidelineDetailScreen() {
 
             {/* Tab Bar */}
             <View className="mb-6 px-1">
-              {isCheckups ? (
-                <AppSegmentedControl
-                  values={tabTitles}
-                  segmentIndex={activeTab}
-                  setSegmentIndex={switchTab}
-                  size="large"
-                />
-              ) : (
-                <View className="flex-row p-1 rounded-xl">
-                  {tabTitles.map((title, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => switchTab(index)}
-                      activeOpacity={0.7}
-                      className={`flex-1 py-3 items-center border-b-2`}
-                      style={{
-                        borderBottomColor: activeTab === index ? activeColor.accent : 'transparent'
-                      }}
-                    >
-                      <Text
-                        className={`font-bold text-[12px]`}
-                        style={{
-                          color: activeTab === index ? activeColor.accent : '#6B7280'
-                        }}
-                      >
-                        {title}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+              <AppSegmentedControl
+                values={tabTitles}
+                segmentIndex={activeTab}
+                setSegmentIndex={switchTab}
+                size="large"
+              />
             </View>
 
             {/* Swipeable Tab Content */}

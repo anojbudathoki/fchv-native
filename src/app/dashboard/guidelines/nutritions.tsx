@@ -157,7 +157,7 @@ export default function NutritionsScreen() {
     activeTab === "pregnant" ? (nutritionData.pregnant as any) : (nutritionData.child as any);
 
   const handleBack = useCallback(() => {
-    router.push('/dashboard/guidelines');
+    router.back();
   }, [router]);
 
   return (
