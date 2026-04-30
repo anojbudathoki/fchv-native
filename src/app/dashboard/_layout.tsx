@@ -126,6 +126,20 @@ export default function DashboardLayout() {
             drawerItemStyle: { display: "none" },
           }}
         />
+        <Drawer.Screen
+          name="service-report"
+          options={{
+            title: "Service Beneficiary Report",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="child-monitoring-report"
+          options={{
+            title: "Child Monitoring Report",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
       </Drawer>
       <BottomNavigation />
     </View>

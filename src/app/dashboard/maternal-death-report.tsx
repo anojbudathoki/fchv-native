@@ -113,23 +113,23 @@ export default function MaternalDeathReportScreen() {
     }, [])
   );
 
-  const Cell = ({ children, width, borderRight = true }: any) => (
+  const Cell = ({ children, width, borderRight = true, align = "text-center" }: any) => (
     <View 
       style={{ width }} 
-      className={`h-full justify-center px-2 py-3 ${borderRight ? "border-r border-gray-300" : ""}`}
+      className={`justify-center px-1 py-0 ${borderRight ? "border-r border-gray-300" : ""}`}
     >
-      <Text className="text-slate-900 font-bold text-[11px] text-center" numberOfLines={2}>
+      <Text className={`text-slate-900 font-bold text-[8.5px] ${align}`} numberOfLines={2}>
         {children}
       </Text>
     </View>
   );
 
-  const HeaderCell = ({ children, width, height = 40, borderRight = true, borderBottom = true }: any) => (
+  const HeaderCell = ({ children, width, height = 25, borderRight = true, borderBottom = true }: any) => (
     <View 
       style={{ width, height }} 
-      className={`justify-center items-center px-1 bg-slate-100 ${borderRight ? "border-r border-gray-300" : ""} ${borderBottom ? "border-b border-gray-300" : ""}`}
+      className={`justify-center items-center px-0.5 bg-slate-100 ${borderRight ? "border-r border-gray-300" : ""} ${borderBottom ? "border-b border-gray-300" : ""}`}
     >
-      <Text className="text-slate-900 font-black text-[10px] text-center uppercase">
+      <Text className="text-slate-900 font-extrabold text-[7.5px] text-center uppercase leading-none">
         {children}
       </Text>
     </View>
@@ -161,10 +161,10 @@ export default function MaternalDeathReportScreen() {
 
       <View className="flex-1">
         {/* Table Controls */}
-        <View className="flex-row px-4 py-4 gap-3 bg-white border-b border-gray-100">
-           <View className="flex-1 flex-row items-center bg-slate-50 px-4 py-2.5 rounded-2xl border border-slate-100">
-              <Search size={16} color="#64748B" />
-              <Text className="ml-2 text-slate-400 font-bold text-xs uppercase tracking-widest">Search Register...</Text>
+        <View className="flex-row px-4 py-3 gap-3 bg-white border-b border-gray-100">
+           <View className="flex-1 flex-row items-center bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
+              <Search size={14} color="#64748B" />
+              <Text className="ml-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest">Search Register...</Text>
            </View>
            <TouchableOpacity className="bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
               <Filter size={20} color="#64748B" />
@@ -175,59 +175,66 @@ export default function MaternalDeathReportScreen() {
           <View>
             {/* Hierarchical Header */}
             <View className="flex-row border-b border-gray-300 bg-slate-100">
-              <HeaderCell width={50} height={80}>क्र.सं.</HeaderCell>
-              <HeaderCell width={180} height={80}>मृतक महिलाको नाम</HeaderCell>
-              <HeaderCell width={70} height={80}>उमेर (वर्षमा)</HeaderCell>
+              <HeaderCell width={30} height={50}>क्र.सं.</HeaderCell>
+              <HeaderCell width={120} height={50}>मृतक महिलाको नाम</HeaderCell>
+              <HeaderCell width={40} height={50}>उमेर</HeaderCell>
               
               {/* Status Section */}
               <View>
-                <HeaderCell width={240} height={40}>मृत्यु हुँदाको अवस्था*</HeaderCell>
+                <HeaderCell width={135} height={25}>मृत्यु हुँदाको अवस्था*</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={80} height={40}>गर्भवती</HeaderCell>
-                  <HeaderCell width={80} height={40}>प्रसव</HeaderCell>
-                  <HeaderCell width={80} height={40}>सुत्केरी</HeaderCell>
+                  <HeaderCell width={45} height={25}>गर्भवती</HeaderCell>
+                  <HeaderCell width={45} height={25}>प्रसव</HeaderCell>
+                  <HeaderCell width={45} height={25}>सुत्केरी</HeaderCell>
                 </View>
               </View>
 
               {/* Date Section */}
               <View>
-                <HeaderCell width={180} height={40}>मृत्यु भएको मिति</HeaderCell>
+                <HeaderCell width={105} height={25}>मृत्यु भएको मिति</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={60} height={40}>गते</HeaderCell>
-                  <HeaderCell width={60} height={40}>महिना</HeaderCell>
-                  <HeaderCell width={60} height={40}>साल</HeaderCell>
+                  <HeaderCell width={35} height={25}>गते</HeaderCell>
+                  <HeaderCell width={35} height={25}>महिना</HeaderCell>
+                  <HeaderCell width={35} height={25}>साल</HeaderCell>
                 </View>
               </View>
 
               {/* Birth Place */}
               <View>
-                <HeaderCell width={180} height={40}>प्रसूति भएको स्थान*</HeaderCell>
+                <HeaderCell width={105} height={25}>प्रसूति स्थान*</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={60} height={40}>घर</HeaderCell>
-                  <HeaderCell width={60} height={40}>संस्था</HeaderCell>
-                  <HeaderCell width={60} height={40}>अन्य</HeaderCell>
+                  <HeaderCell width={35} height={25}>घर</HeaderCell>
+                  <HeaderCell width={35} height={25}>संस्था</HeaderCell>
+                  <HeaderCell width={35} height={25}>अन्य</HeaderCell>
                 </View>
               </View>
 
               {/* Death Place */}
               <View>
-                <HeaderCell width={180} height={40}>मृत्यु भएको स्थान*</HeaderCell>
+                <HeaderCell width={105} height={25}>मृत्यु स्थान*</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={60} height={40}>घर</HeaderCell>
-                  <HeaderCell width={60} height={40}>संस्था</HeaderCell>
-                  <HeaderCell width={60} height={40}>अन्य</HeaderCell>
+                  <HeaderCell width={35} height={25}>घर</HeaderCell>
+                  <HeaderCell width={35} height={25}>संस्था</HeaderCell>
+                  <HeaderCell width={35} height={25}>अन्य</HeaderCell>
                 </View>
               </View>
 
-              <HeaderCell width={200} height={80}>कैफियत</HeaderCell>
-              <HeaderCell width={70} height={80} borderRight={false}>Action</HeaderCell>
+              <HeaderCell width={140} height={50}>कैफियत</HeaderCell>
+              <HeaderCell width={40} height={50} borderRight={false}>Action</HeaderCell>
             </View>
 
-            {/* Static Numbers Row as in Image */}
+            {/* Static Numbers Row */}
             <View className="flex-row border-b border-gray-300 bg-slate-50">
-               {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].map((n, i) => (
-                  <View key={i} style={{ width: n === 1 ? 50 : n === 2 ? 180 : n === 3 ? 70 : (n >= 4 && n <= 6) ? 80 : (n >= 200) ? 200 : 60, height: 30 }} className="border-r border-gray-300 justify-center items-center">
-                    <Text className="text-slate-400 font-bold text-[10px]">{n}</Text>
+               {[
+                 {n: 1, w: 30}, {n: 2, w: 120}, {n: 3, w: 40},
+                 {n: 4, w: 45}, {n: 5, w: 45}, {n: 6, w: 45},
+                 {n: 7, w: 35}, {n: 8, w: 35}, {n: 9, w: 35},
+                 {n: 10, w: 35}, {n: 11, w: 35}, {n: 12, w: 35},
+                 {n: 13, w: 35}, {n: 14, w: 35}, {n: 15, w: 35},
+                 {n: 16, w: 140}, {n: 0, w: 40}
+               ].map((col, i) => (
+                  <View key={i} style={{ width: col.w, height: 28 }} className="border-r border-gray-300 justify-center items-center">
+                    <Text className="text-slate-400 font-bold text-[9px]">{col.n || 'Act'}</Text>
                   </View>
                ))}
             </View>
@@ -235,47 +242,47 @@ export default function MaternalDeathReportScreen() {
             {/* Data Rows */}
             <ScrollView className="flex-1" showsVerticalScrollIndicator={true}>
               {data.map((item, index) => (
-                <View key={item.id} className="flex-row border-b border-gray-200">
-                  <Cell width={50}>{index + 1}</Cell>
-                  <Cell width={180}>{item.mother_name}</Cell>
-                  <Cell width={70}>{item.mother_age}</Cell>
+                <View key={item.id} style={{ height: 35 }} className="flex-row border-b border-gray-200">
+                  <Cell width={30}>{index + 1}</Cell>
+                  <Cell width={120} align="text-left">{item.mother_name}</Cell>
+                  <Cell width={40}>{item.mother_age}</Cell>
                   
                   {/* Status Indicator */}
-                  <Cell width={80}>{item.death_condition?.toLowerCase() === 'pregnant' ? "✔" : ""}</Cell>
-                  <Cell width={80}>{item.death_condition?.toLowerCase() === 'labor' ? "✔" : ""}</Cell>
-                  <Cell width={80}>{item.death_condition?.toLowerCase() === 'post_delivery' ? "✔" : ""}</Cell>
-
+                  <Cell width={45}>{item.death_condition?.toLowerCase() === 'pregnant' ? "✔" : ""}</Cell>
+                  <Cell width={45}>{item.death_condition?.toLowerCase() === 'labor' ? "✔" : ""}</Cell>
+                  <Cell width={45}>{item.death_condition?.toLowerCase() === 'post_delivery' ? "✔" : ""}</Cell>
+...
                   {/* Date */}
-                  <Cell width={60}>{item.death_day}</Cell>
-                  <Cell width={60}>{item.death_month}</Cell>
-                  <Cell width={60}>{item.death_year}</Cell>
+                  <Cell width={35}>{item.death_day}</Cell>
+                  <Cell width={35}>{item.death_month}</Cell>
+                  <Cell width={35}>{item.death_year}</Cell>
 
                   {/* Birth Place */}
-                  <Cell width={60}>{item.delivery_place?.toLowerCase() === 'home' ? "✔" : ""}</Cell>
-                  <Cell width={60}>{item.delivery_place?.toLowerCase() === 'institution' ? "✔" : ""}</Cell>
-                  <Cell width={60}>{item.delivery_place?.toLowerCase() === 'other' ? "✔" : ""}</Cell>
+                  <Cell width={35}>{item.delivery_place?.toLowerCase() === 'home' ? "✔" : ""}</Cell>
+                  <Cell width={35}>{item.delivery_place?.toLowerCase() === 'institution' ? "✔" : ""}</Cell>
+                  <Cell width={35}>{item.delivery_place?.toLowerCase() === 'other' ? "✔" : ""}</Cell>
 
                   {/* Death Place */}
-                  <Cell width={60}>{item.death_place?.toLowerCase() === 'home' ? "✔" : ""}</Cell>
-                  <Cell width={60}>{item.death_place?.toLowerCase() === 'institution' ? "✔" : ""}</Cell>
-                  <Cell width={60}>{item.death_place?.toLowerCase() === 'other' ? "✔" : ""}</Cell>
+                  <Cell width={35}>{item.death_place?.toLowerCase() === 'home' ? "✔" : ""}</Cell>
+                  <Cell width={35}>{item.death_place?.toLowerCase() === 'institution' ? "✔" : ""}</Cell>
+                  <Cell width={35}>{item.death_place?.toLowerCase() === 'other' ? "✔" : ""}</Cell>
 
-                  <Cell width={200}>{item.remarks}</Cell>
-                  <View style={{ width: 70 }} className="h-full justify-center items-center py-3">
+                  <Cell width={140} align="text-left">{item.remarks}</Cell>
+                  <View style={{ width: 40 }} className="justify-center items-center">
                     <TouchableOpacity
                       onPress={() => handleDelete(item.id!, item.mother_name!)}
-                      className="bg-red-50 p-2 rounded-lg"
+                      className="bg-red-50 p-1 rounded-md"
                     >
-                      <Trash2 size={16} color="#EF4444" />
+                      <Trash2 size={12} color="#EF4444" />
                     </TouchableOpacity>
                   </View>
                 </View>
               ))}
-              {data.length === 0 && (
-                <View className="py-20 items-center justify-center" style={{ width: 1270 }}>
+              {/* {data.length === 0 && (
+                <View className="py-20 items-center justify-center" style={{ width: 850 }}>
                   <Text className="text-slate-400 font-black italic">No records found in this register.</Text>
                 </View>
-              )}
+              )} */}
             </ScrollView>
           </View>
         </ScrollView>

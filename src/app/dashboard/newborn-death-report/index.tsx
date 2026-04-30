@@ -31,13 +31,13 @@ export default function NewbornDeathReportScreen() {
 
     try {
       const headers = [
-        "S.N.", "Dead Newborn Name", "Gender", "Mother Name", "Mother Age", 
-        "Birth Day", "Birth Month", "Birth Year", 
-        "Birth:Home", "Birth:Inst", "Birth:Other", 
+        "S.N.", "Dead Newborn Name", "Gender", "Mother Name", "Mother Age",
+        "Birth Day", "Birth Month", "Birth Year",
+        "Birth:Home", "Birth:Inst", "Birth:Other",
         "Cond:Preterm", "Cond:LowWeight", "Cond:Normal", "Cond:Other",
         "Death Age (Days)",
         "Cause:Asphyxia", "Cause:Hypothermia", "Cause:Infection", "Cause:Other",
-        "DeathPlace:Home", "DeathPlace:Inst", "DeathPlace:Other", 
+        "DeathPlace:Home", "DeathPlace:Inst", "DeathPlace:Other",
         "Remarks"
       ].join(",");
 
@@ -124,23 +124,23 @@ export default function NewbornDeathReportScreen() {
     }, [])
   );
 
-  const Cell = ({ children, width, borderRight = true }: any) => (
+  const Cell = ({ children, width, borderRight = true, align = "text-center" }: any) => (
     <View 
       style={{ width }} 
-      className={`h-full justify-center px-2 py-3 ${borderRight ? "border-r border-gray-300" : ""}`}
+      className={`justify-center px-0.5 py-0 ${borderRight ? "border-r border-gray-300" : ""}`}
     >
-      <Text className="text-slate-900 font-bold text-[11px] text-center" numberOfLines={2}>
+      <Text className={`text-slate-900 font-bold text-[8.2px] ${align}`} numberOfLines={2}>
         {children}
       </Text>
     </View>
   );
 
-  const HeaderCell = ({ children, width, height = 40, borderRight = true, borderBottom = true }: any) => (
+  const HeaderCell = ({ children, width, height = 24, borderRight = true, borderBottom = true }: any) => (
     <View 
       style={{ width, height }} 
-      className={`justify-center items-center px-1 bg-slate-100 ${borderRight ? "border-r border-gray-300" : ""} ${borderBottom ? "border-b border-gray-300" : ""}`}
+      className={`justify-center items-center px-0 bg-slate-100 ${borderRight ? "border-r border-gray-300" : ""} ${borderBottom ? "border-b border-gray-300" : ""}`}
     >
-      <Text className="text-slate-900 font-black text-[10px] text-center uppercase">
+      <Text className="text-slate-900 font-extrabold text-[7.2px] text-center uppercase leading-none">
         {children}
       </Text>
     </View>
@@ -155,17 +155,16 @@ export default function NewbornDeathReportScreen() {
   }
 
   // Row Indices from 1 to 23
-  const tableIndices = Array.from({length: 24}, (_, i) => i + 1);
+  const tableIndices = Array.from({ length: 24 }, (_, i) => i + 1);
 
   const getWidthForIndex = (n: number) => {
     switch (n) {
-      case 1: return 50;
-      case 2: return 150;
-      case 3: return 80; // Gender
-      case 4: return 180;
-      case 5: return 70;
+      case 1: return 25;
+      case 2: return 85;
+      case 3: return 38; // Gender
+      case 4: return 100;
+      case 5: return 30;
       default:
-        // Adjust indices after Gender (3)
         const adjustedN = n > 3 ? n - 1 : n;
         switch (adjustedN) {
           case 5:
@@ -173,7 +172,7 @@ export default function NewbornDeathReportScreen() {
           case 7:
           case 8:
           case 9:
-          case 10: return 60;
+          case 10: return 32;
           case 11:
           case 12:
           case 13:
@@ -182,12 +181,12 @@ export default function NewbornDeathReportScreen() {
           case 16:
           case 17:
           case 18:
-          case 19: return 80;
+          case 19: return 40;
           case 20:
           case 21:
-          case 22: return 60;
-          case 23: return 200;
-          default: return 60;
+          case 22: return 32;
+          case 23: return 120;
+          default: return 32;
         }
     }
   };
@@ -195,11 +194,11 @@ export default function NewbornDeathReportScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
-      <CustomHeader 
-        title="नवजात शिशु मृत्यु विवरण" 
+      <CustomHeader
+        title="नवजात शिशु मृत्यु विवरण"
         onBackPress={() => router.push("/dashboard/profile")}
         rightNode={
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleDownload}
             className="bg-emerald-50 p-2 rounded-xl"
           >
@@ -210,92 +209,92 @@ export default function NewbornDeathReportScreen() {
 
       <View className="flex-1">
         {/* Table Controls */}
-        <View className="flex-row px-4 py-4 gap-3 bg-white border-b border-gray-100">
-           <View className="flex-1 flex-row items-center bg-slate-50 px-4 py-2.5 rounded-2xl border border-slate-100">
-              <Search size={16} color="#64748B" />
-              <Text className="ml-2 text-slate-400 font-bold text-xs uppercase tracking-widest">Search Register...</Text>
-           </View>
-           <TouchableOpacity className="bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
-              <Filter size={20} color="#64748B" />
-           </TouchableOpacity>
+        <View className="flex-row px-4 py-3 gap-3 bg-white border-b border-gray-100">
+          <View className="flex-1 flex-row items-center bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
+            <Search size={14} color="#64748B" />
+            <Text className="ml-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest">Search Register...</Text>
+          </View>
+          <TouchableOpacity className="bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
+            <Filter size={20} color="#64748B" />
+          </TouchableOpacity>
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={true} className="flex-1">
           <View>
             {/* Hierarchical Header */}
             <View className="flex-row border-b border-gray-300 bg-slate-100">
-              <HeaderCell width={50} height={100}>क्र.सं.</HeaderCell>
-              <HeaderCell width={150} height={100}>मृतक नवजात शिशुको नाम</HeaderCell>
-              <HeaderCell width={80} height={100}>लिङ्ग (Gender)</HeaderCell>
+              <HeaderCell width={25} height={50}>क्र.सं.</HeaderCell>
+              <HeaderCell width={85} height={50}>मृतक नवजात शिशुको नाम</HeaderCell>
+              <HeaderCell width={38} height={50}>लिङ्ग</HeaderCell>
 
               <View>
-                <HeaderCell width={250} height={40}>आमाको</HeaderCell>
+                <HeaderCell width={130} height={25}>आमाको</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={180} height={60}>नाम, थर</HeaderCell>
-                  <HeaderCell width={70} height={60}>पूरा गरेको उमेर</HeaderCell>
+                  <HeaderCell width={100} height={25}>नाम, थर</HeaderCell>
+                  <HeaderCell width={30} height={25}>उमेर</HeaderCell>
                 </View>
               </View>
 
               <View>
-                <HeaderCell width={180} height={40}>नवजात शिशु जन्मेको मिति</HeaderCell>
+                <HeaderCell width={96} height={25}>जन्मेको मिति</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={60} height={60}>गते</HeaderCell>
-                  <HeaderCell width={60} height={60}>महिना</HeaderCell>
-                  <HeaderCell width={60} height={60}>साल</HeaderCell>
+                  <HeaderCell width={32} height={25}>गते</HeaderCell>
+                  <HeaderCell width={32} height={25}>महिना</HeaderCell>
+                  <HeaderCell width={32} height={25}>साल</HeaderCell>
                 </View>
               </View>
 
               <View>
-                <HeaderCell width={180} height={40}>बच्चा जन्मिएको स्थान*</HeaderCell>
+                <HeaderCell width={96} height={25}>जन्मस्थान*</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={60} height={60}>घर</HeaderCell>
-                  <HeaderCell width={60} height={60}>संस्था</HeaderCell>
-                  <HeaderCell width={60} height={60}>अन्य</HeaderCell>
+                  <HeaderCell width={32} height={25}>घर</HeaderCell>
+                  <HeaderCell width={32} height={25}>संस्था</HeaderCell>
+                  <HeaderCell width={32} height={25}>अन्य</HeaderCell>
                 </View>
               </View>
 
               <View>
-                <HeaderCell width={320} height={40}>बच्चा जन्मदाको अवस्था*</HeaderCell>
+                <HeaderCell width={160} height={25}>जन्मदाको अवस्था*</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={80} height={60}>समय नपुगेको</HeaderCell>
-                  <HeaderCell width={80} height={60}>कम तौल</HeaderCell>
-                  <HeaderCell width={80} height={60}>सामान्य</HeaderCell>
-                  <HeaderCell width={80} height={60}>अन्य</HeaderCell>
+                  <HeaderCell width={40} height={25}>समय</HeaderCell>
+                  <HeaderCell width={40} height={25}>कम तौल</HeaderCell>
+                  <HeaderCell width={40} height={25}>सामान्य</HeaderCell>
+                  <HeaderCell width={40} height={25}>अन्य</HeaderCell>
                 </View>
               </View>
 
-              <HeaderCell width={80} height={100}>मृत्यु हुँदा शिशुको उमेर (दिनमा)</HeaderCell>
+              <HeaderCell width={40} height={50}>मृत्यु उमेर</HeaderCell>
 
               <View>
-                <HeaderCell width={320} height={40}>मृत्युको सम्भाव्य कारण*</HeaderCell>
+                <HeaderCell width={160} height={25}>मृत्युको सम्भाव्य कारण*</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={80} height={60}>निसासिएको</HeaderCell>
-                  <HeaderCell width={80} height={60}>शिताङ्ग</HeaderCell>
-                  <HeaderCell width={80} height={60}>संक्रमण</HeaderCell>
-                  <HeaderCell width={80} height={60}>अन्य</HeaderCell>
+                  <HeaderCell width={40} height={25}>निसासिएको</HeaderCell>
+                  <HeaderCell width={40} height={25}>शितलहर</HeaderCell>
+                  <HeaderCell width={40} height={25}>संक्रमण</HeaderCell>
+                  <HeaderCell width={40} height={25}>अन्य</HeaderCell>
                 </View>
               </View>
 
               <View>
-                <HeaderCell width={180} height={40}>मृत्यु भएको स्थान*</HeaderCell>
+                <HeaderCell width={96} height={25}>मृत्युस्थान*</HeaderCell>
                 <View className="flex-row">
-                  <HeaderCell width={60} height={60}>घर</HeaderCell>
-                  <HeaderCell width={60} height={60}>संस्था</HeaderCell>
-                  <HeaderCell width={60} height={60}>अन्य</HeaderCell>
+                  <HeaderCell width={32} height={25}>घर</HeaderCell>
+                  <HeaderCell width={32} height={25}>संस्था</HeaderCell>
+                  <HeaderCell width={32} height={25}>अन्य</HeaderCell>
                 </View>
               </View>
 
-              <HeaderCell width={200} height={100}>कैफियत</HeaderCell>
-              <HeaderCell width={70} height={100} borderRight={false}>Action</HeaderCell>
+              <HeaderCell width={120} height={50}>कैफियत</HeaderCell>
+              <HeaderCell width={32} height={50} borderRight={false}>Action</HeaderCell>
             </View>
 
             {/* Static Numbers Row as in Image */}
             <View className="flex-row border-b border-gray-300 bg-slate-50">
-               {tableIndices.map((n, i) => (
-                  <View key={i} style={{ width: getWidthForIndex(n), height: 30 }} className="border-r border-gray-300 justify-center items-center">
-                    <Text className="text-slate-400 font-bold text-[10px]">{n}</Text>
-                  </View>
-               ))}
+              {tableIndices.map((n, i) => (
+                <View key={i} style={{ width: getWidthForIndex(n), height: 30 }} className="border-r border-gray-300 justify-center items-center">
+                  <Text className="text-slate-400 font-bold text-[10px]">{n}</Text>
+                </View>
+              ))}
             </View>
 
             {/* Data Rows */}
@@ -307,59 +306,54 @@ export default function NewbornDeathReportScreen() {
                 const dPlace = item.death_place?.toLowerCase();
 
                 return (
-                  <View key={item.id} className="flex-row border-b border-gray-200">
-                    <Cell width={50}>{index + 1}</Cell>
-                    <Cell width={150}>{item.baby_name || '-'}</Cell>
-                    <Cell width={80}>{item.gender === 'Male' ? 'छोरा' : item.gender === 'Female' ? 'छोरी' : '-'}</Cell>
-                    <Cell width={180}>{item.mother_name}</Cell>
-                    <Cell width={70}>-</Cell>
+                  <View key={item.id} style={{ height: 34 }} className="flex-row border-b border-gray-200 bg-white">
+                    <Cell width={25}>{index + 1}</Cell>
+                    <Cell width={85} align="text-left">{item.baby_name || '-'}</Cell>
+                    <Cell width={38}>{item.gender === 'Male' ? 'छोरा' : item.gender === 'Female' ? 'छोरी' : '-'}</Cell>
+                    <Cell width={100} align="text-left">{item.mother_name}</Cell>
+                    <Cell width={30}>-</Cell>
 
-                    <Cell width={60}>{item.birth_day}</Cell>
-                    <Cell width={60}>{item.birth_month}</Cell>
-                    <Cell width={60}>{item.birth_year}</Cell>
+                    <Cell width={32}>{item.birth_day}</Cell>
+                    <Cell width={32}>{item.birth_month}</Cell>
+                    <Cell width={32}>{item.birth_year}</Cell>
 
-                    {/* Birth Place */}
-                    <Cell width={60}>{bPlace === 'home' ? "✔" : ""}</Cell>
-                    <Cell width={60}>{bPlace === 'institution' ? "✔" : ""}</Cell>
-                    <Cell width={60}>{bPlace === 'other' ? (item.delivery_place_other || "✔") : ""}</Cell>
+                    <Cell width={32}>{bPlace === 'home' || bPlace === 'घर' ? "✔" : ""}</Cell>
+                    <Cell width={32}>{bPlace === 'institution' || bPlace === 'संस्था' ? "✔" : ""}</Cell>
+                    <Cell width={32}>{bPlace === 'other' || bPlace === 'अन्य' ? (item.delivery_place_other || "✔") : ""}</Cell>
 
-                    {/* Birth Condition */}
-                    <Cell width={80}>{bCond === 'preterm' ? "✔" : ""}</Cell>
-                    <Cell width={80}>{bCond === 'lowweight' ? "✔" : ""}</Cell>
-                    <Cell width={80}>{bCond === 'normal' ? "✔" : ""}</Cell>
-                    <Cell width={80}>{bCond === 'other' ? (item.birth_condition_other || "✔") : ""}</Cell>
+                    <Cell width={40}>{bCond === 'preterm' ? "✔" : ""}</Cell>
+                    <Cell width={40}>{bCond === 'lowweight' ? "✔" : ""}</Cell>
+                    <Cell width={40}>{bCond === 'normal' ? "✔" : ""}</Cell>
+                    <Cell width={40}>{bCond === 'other' ? (item.birth_condition_other || "✔") : ""}</Cell>
 
-                    {/* Death Age */}
-                    <Cell width={80}>{item.death_age_days}</Cell>
+                    <Cell width={40}>{item.death_age_days}</Cell>
 
-                    {/* Death Cause */}
-                    <Cell width={80}>{dCond === 'asphyxia' ? "✔" : ""}</Cell>
-                    <Cell width={80}>{dCond === 'hypothermia' ? "✔" : ""}</Cell>
-                    <Cell width={80}>{dCond === 'infection' ? "✔" : ""}</Cell>
-                    <Cell width={80}>{dCond === 'other' ? (item.cause_of_death_other || "✔") : ""}</Cell>
+                    <Cell width={40}>{dCond === 'asphyxia' ? "✔" : ""}</Cell>
+                    <Cell width={40}>{dCond === 'hypothermia' || dCond === 'shitang' ? "✔" : ""}</Cell>
+                    <Cell width={40}>{dCond === 'infection' ? "✔" : ""}</Cell>
+                    <Cell width={40}>{dCond === 'other' ? (item.cause_of_death_other || "✔") : ""}</Cell>
 
-                    {/* Death Place */}
-                    <Cell width={60}>{dPlace === 'home' ? "✔" : ""}</Cell>
-                    <Cell width={60}>{dPlace === 'institution' ? "✔" : ""}</Cell>
-                    <Cell width={60}>{dPlace === 'other' ? (item.death_place_other || "✔") : ""}</Cell>
+                    <Cell width={32}>{dPlace === 'home' || dPlace === 'घर' ? "✔" : ""}</Cell>
+                    <Cell width={32}>{dPlace === 'institution' || dPlace === 'संस्था' ? "✔" : ""}</Cell>
+                    <Cell width={32}>{dPlace === 'other' || dPlace === 'अन्य' ? (item.death_place_other || "✔") : ""}</Cell>
 
-                    <Cell width={200}>{item.remarks}</Cell>
-                    <View style={{ width: 70 }} className="h-full justify-center items-center py-3">
+                    <Cell width={120} align="text-left">{item.remarks}</Cell>
+                    <View style={{ width: 32 }} className="justify-center items-center">
                       <TouchableOpacity
                         onPress={() => handleDelete(item.id, item.mother_name)}
-                        className="bg-red-50 p-2 rounded-lg"
+                        className="bg-red-50 p-0.5 rounded-md"
                       >
-                        <Trash2 size={16} color="#EF4444" />
+                        <Trash2 size={9} color="#EF4444" />
                       </TouchableOpacity>
                     </View>
                   </View>
                 );
               })}
-              {data.length === 0 && (
-                <View className="py-20 items-center justify-center min-w-full">
+              {/* {data.length === 0 && (
+                <View className="py-20 items-center justify-center" style={{ width: 900 }}>
                   <Text className="text-slate-400 font-black italic">No records found in this register.</Text>
                 </View>
-              )}
+              )} */}
             </ScrollView>
           </View>
         </ScrollView>

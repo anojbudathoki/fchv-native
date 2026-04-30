@@ -8,6 +8,8 @@ import {
   StatusBar,
   Image,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { Svg, Path, Circle, Defs, LinearGradient as SvgGradient, Stop, Text as SvgText, Line, G, Rect } from 'react-native-svg';
@@ -518,14 +520,20 @@ export default function DashboardScreen() {
       {/* Header */}
       <TopHeader />
 
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={{
-          paddingBottom: 120,
-        }}
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={{
+            paddingBottom: 150,
+          }}
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         {/* Hero Greeting Card */}
         <View className="px-5 mt-4">
           <LinearGradient
@@ -885,7 +893,8 @@ export default function DashboardScreen() {
             </View>
           )}
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -893,21 +902,33 @@ export default function DashboardScreen() {
 const TodoItemRow = ({ todo, onToggle, onDelete, onEdit, isEditing, setEditingId }: any) => {
   const [text, setText] = useState(todo.task);
   const [lastTap, setLastTap] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleDoubleTap = () => {
+  const handleTap = () => {
     const now = Date.now();
-    if (lastTap && (now - lastTap) < 300) {
+    const DOUBLE_TAP_DELAY = 300;
+
+    if (lastTap && (now - lastTap) < DOUBLE_TAP_DELAY) {
+      // Double tap -> Edit
       setEditingId(todo.id);
+      setLastTap(0);
     } else {
+      // Single tap -> Toggle Full Info
       setLastTap(now);
+      setTimeout(() => {
+        // Only toggle if no double tap followed
+        if (Date.now() - now >= DOUBLE_TAP_DELAY) {
+          setIsExpanded(!isExpanded);
+        }
+      }, DOUBLE_TAP_DELAY);
     }
   };
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={handleDoubleTap}
-      className={`bg-white p-4 rounded-3xl mb-3 flex-row items-center border border-gray-100 ${todo.is_completed ? 'opacity-60' : 'shadow-sm'}`}
+      onPress={handleTap}
+      className={`bg-white p-4 rounded-3xl mb-3 flex-row items-start border border-gray-100 ${todo.is_completed ? 'opacity-60' : 'shadow-sm'}`}
     >
       <TouchableOpacity
         onPress={onToggle}
@@ -934,8 +955,8 @@ const TodoItemRow = ({ todo, onToggle, onDelete, onEdit, isEditing, setEditingId
           />
         ) : (
           <Text
-            className={`text-[#1E293B] text-base font-semibold ${todo.is_completed ? 'line-through text-gray-400' : ''}`}
-            numberOfLines={1}
+            className={`text-[#1E293B] text-base font-semibold leading-6 ${todo.is_completed ? 'line-through text-gray-400' : ''}`}
+            numberOfLines={isExpanded ? undefined : 1}
           >
             {todo.task}
           </Text>
