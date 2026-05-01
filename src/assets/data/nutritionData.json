@@ -1,0 +1,246 @@
+{
+  "pregnant": [
+    {
+      "id": "iron_folic",
+      "icon": "Pill",
+      "color": "#EF4444",
+      "bg": "#FEF2F2",
+      "en": {
+        "title": "Iron & Folic Acid",
+        "desc": "Take iron and folic acid daily to prevent anemia, infections, and birth defects, and to help your baby grow well.",
+        "dosage": "Take 1 tablet daily (30–60 mg iron + 400 µg folic acid)",
+        "tips": [
+          "Take it with orange juice or lemon water for better absorption.",
+          "Do not take it with tea, coffee, or milk."
+        ]
+      },
+      "np": {
+        "title": "आइरन र फोलिक एसिड",
+        "desc": "रगतको कमी (अल्पता) हुन नदिन, संक्रमण कम गर्न र बच्चाको स्वस्थ विकासका लागि हरेक दिन आइरन र फोलिक एसिड सेवन गर्नुहोस्।",
+        "dosage": "दैनिक १ चक्की सेवन गर्नुहोस् (३०–६० मि.ग्रा. आइरन + ४०० माइक्रोग्राम फोलिक एसिड)",
+        "tips": [
+          "राम्रोसँग पचाउनका लागि कागती पानी वा सुन्तलाको जुससँग खानुहोस्।",
+          "चिया, कफी वा दूधसँग सेवन नगर्नुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "calcium",
+      "icon": "Milk",
+      "color": "#3B82F6",
+      "bg": "#EFF6FF",
+      "en": {
+        "title": "Calcium",
+        "desc": "Calcium helps control blood pressure during pregnancy and builds strong bones and teeth for your baby.",
+        "dosage": "Take 1.5–2.0 g daily (usually in divided doses)",
+        "tips": [
+          "Eat milk, curd, and green leafy vegetables regularly.",
+          "Take calcium and iron tablets at least 2 hours apart."
+        ]
+      },
+      "np": {
+        "title": "क्याल्सियम",
+        "desc": "गर्भावस्थामा रक्तचाप सन्तुलित राख्न र बच्चाको हड्डी तथा दाँत बलियो बनाउन क्याल्सियमको आवश्यकता पर्दछ।",
+        "dosage": "दैनिक १.५–२.० ग्राम (छुट्याइएको मात्रामा) सेवन गर्नुहोस्।",
+        "tips": [
+          "दूध, दही र हरियो सागपात नियमित खानुहोस्।",
+          "क्याल्सियम र आइरन चक्की कम्तीमा २ घण्टाको फरकमा खानुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "diet",
+      "icon": "Salad",
+      "color": "#22C55E",
+      "bg": "#F0FDF4",
+      "en": {
+        "title": "Balanced Diet",
+        "desc": "Eat healthy and balanced meals every day. Your body needs extra nutrition during pregnancy.",
+        "dosage": "Eat one extra meal daily (approx. 300 extra calories)",
+        "tips": [
+          "Include grains, pulses, vegetables, and dairy products.",
+          "Eat eggs, seasonal fruits, and green vegetables often."
+        ]
+      },
+      "np": {
+        "title": "सन्तुलित भोजन",
+        "desc": "गर्भावस्थामा शरीरलाई थप पोषण चाहिने हुनाले दैनिक स्वस्थ र सन्तुलित खाना खानुहोस्।",
+        "dosage": "साविकभन्दा दिनमा एक पटक थप पोषिलो खाना खानुहोस् (थप ३०० क्यालोरी)।",
+        "tips": [
+          "खानाको थालीमा अन्न, दाल, तरकारी र दुधजन्य पदार्थ समावेश गर्नुहोस्।",
+          "अण्डा, मौसमी फलफूल र हरियो सागपात प्रशस्त खानुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "hydration",
+      "icon": "Droplets",
+      "color": "#06B6D4",
+      "bg": "#ECFEFF",
+      "en": {
+        "title": "Hydration",
+        "desc": "Drink plenty of water to prevent constipation, urinary infections, and dehydration.",
+        "dosage": "Drink at least 8–10 glasses (2–2.5 liters) daily",
+        "tips": [
+          "Drink clean boiled or filtered water.",
+          "Increase intake during hot weather or if you experience vomiting."
+        ]
+      },
+      "np": {
+        "title": "पर्याप्त पानी",
+        "desc": "कब्जियत, पिसाबको संक्रमण र जलवियोजन हुन नदिन प्रशस्त पानी पिउनुहोस्।",
+        "dosage": "दिनमा कम्तीमा ८–१० गिलास (२–२.५ लिटर) सफा पानी पिउनुहोस्।",
+        "tips": [
+          "सधैं उमालेको वा फिल्टर गरिएको सफा पानी मात्र पिउनुहोस्।",
+          "गर्मी धेरै हुँदा वा वान्ता भएमा थप पानी पिउनुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "protein",
+      "icon": "Beef",
+      "color": "#F97316",
+      "bg": "#FFF7ED",
+      "en": {
+        "title": "Protein Intake",
+        "desc": "Protein supports your baby’s brain development and helps repair your body tissues.",
+        "dosage": "Aim for an extra 25 g of protein daily",
+        "tips": [
+          "Eat pulses, beans, eggs, meat, or fish regularly.",
+          "Combining grains and lentils (like Dal-Bhat) provides complete protein."
+        ]
+      },
+      "np": {
+        "title": "प्रोटिनयुक्त खाना",
+        "desc": "बच्चाको दिमाग र शरीरको विकासका लागि तथा आमालाई बलियो राख्न प्रोटिनको ठूलो भूमिका हुन्छ।",
+        "dosage": "हरेक दिन थप २५ ग्राम प्रोटिन प्राप्त हुने गरी खाना खानुहोस्।",
+        "tips": [
+          "दाल, गेडागुडी, अण्डा, मासु वा माछा नियमित रूपमा खानुहोस्।",
+          "दाल र भात सँगै मिसाएर खाँदा पूर्ण प्रोटिन पाइन्छ।"
+        ]
+      }
+    }
+  ],
+  "child": [
+    {
+      "id": "breastfeeding",
+      "icon": "Baby",
+      "color": "#EC4899",
+      "bg": "#FDF2F8",
+      "en": {
+        "title": "Exclusive Breastfeeding",
+        "desc": "Give only breast milk for the first 6 months. It provides perfect nutrition and immunity.",
+        "dosage": "On-demand feeding, at least 8–12 times in 24 hours",
+        "tips": [
+          "Start breastfeeding within 1 hour of birth.",
+          "Do not give water, honey, or formula unless medically advised."
+        ]
+      },
+      "np": {
+        "title": "पूर्ण स्तनपान",
+        "desc": "बच्चा जन्मेको ६ महिनासम्म आमाको दूध मात्र खुवाउनुहोस्। यसले पूर्ण पोषण र रोगसँग लड्ने शक्ति दिन्छ।",
+        "dosage": "बच्चाले चाहेको बेला (दिन र रात गरी कम्तीमा ८–१२ पटक) खुवाउनुहोस्।",
+        "tips": [
+          "बच्चा जन्मेको १ घण्टाभित्रै स्तनपान सुरु गराउनुहोस्।",
+          "दूध बाहेक पानी, मह वा अन्य कुनै पनि कुरा नदिनुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "complementary",
+      "icon": "Soup",
+      "color": "#F97316",
+      "bg": "#FFF7ED",
+      "en": {
+        "title": "Complementary Feeding",
+        "desc": "After 6 months, introduce soft nutritious foods while continuing breastfeeding for up to 2 years.",
+        "dosage": "2–3 times (6–8 months), 3–4 times (9–24 months)",
+        "tips": [
+          "Start with thick porridge (lito) or well-mashed food.",
+          "Add a little ghee or oil to increase energy density."
+        ]
+      },
+      "np": {
+        "title": "थप आहार (पोषिलो लिटो)",
+        "desc": "६ महिना पूरा भएपछि आमाको दूधको साथमा नरम र पोषिलो थप खाना खुवाउन सुरु गर्नुहोस्।",
+        "dosage": "६–८ महिनामा दिनको २–३ पटक र ९–२४ महिनामा ३–४ पटक खुवाउनुहोस्।",
+        "tips": [
+          "बाक्लो लिटो वा राम्ररी मिचेको अन्नबाट खाना सुरु गर्नुहोस्।",
+          "खानाको तागत बढाउन थोरै घिउ वा तेल मिसाउनुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "vitamin_a",
+      "icon": "Carrot",
+      "color": "#EAB308",
+      "bg": "#FEFCE8",
+      "en": {
+        "title": "Vitamin A Supplementation",
+        "desc": "Vitamin A is essential for eyesight, growth, and protection against severe infections.",
+        "dosage": "One capsule every 6 months (for children 6 months to 5 years)",
+        "tips": [
+          "Ensure your child receives it during national campaigns or health post visits.",
+          "Feed foods like carrots, pumpkin, and leafy greens."
+        ]
+      },
+      "np": {
+        "title": "भिटामिन ए",
+        "desc": "बच्चाको आँखा, वृद्धि विकास र रोग प्रतिरोध क्षमता बढाउन भिटामिन ए आवश्यक हुन्छ।",
+        "dosage": "६ महिनादेखि ५ वर्षसम्मका बालबालिकालाई हरेक ६ महिनामा एक पटक दिनुहोस्।",
+        "tips": [
+          "राष्ट्रिय अभियान वा स्वास्थ्य संस्थाको जाँचको समयमा नबिर्सिई खुवाउनुहोस्।",
+          "गाजर, फर्सी, पाकेको आँप र हरियो सागपात नियमित दिनुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "protein_iron",
+      "icon": "Wheat",
+      "color": "#8B5CF6",
+      "bg": "#F5F3FF",
+      "en": {
+        "title": "Protein & Iron for Growth",
+        "desc": "Iron prevents anemia, while protein builds muscles and brain power in growing children.",
+        "dosage": "Include iron-rich foods in the daily diet",
+        "tips": [
+          "Give eggs, meat, lentils, and fortified grains.",
+          "Add vitamin C (lemon/orange) to meals for better iron absorption."
+        ]
+      },
+      "np": {
+        "title": "प्रोटिन र आइरन",
+        "desc": "बच्चालाई रगतको कमी हुन नदिन र शरीर बलियो बनाउन प्रोटिन तथा आइरनयुक्त खाना चाहिन्छ।",
+        "dosage": "हरेक दिनको खानामा आइरन पाइने खानेकुरा समावेश गर्नुहोस्।",
+        "tips": [
+          "अण्डा, मासु, गेडागुडी र अन्नहरू मिसाएर खुवाउनुहोस्।",
+          "आइरन राम्रोसँग सोस्नका लागि खानासँग कागती वा सुन्तलाको रस दिनुहोस्।"
+        ]
+      }
+    },
+    {
+      "id": "zinc",
+      "icon": "Dna",
+      "color": "#14B8A6",
+      "bg": "#F0FDFA",
+      "en": {
+        "title": "Zinc & ORS (Jeevan Jal)",
+        "desc": "Zinc reduces the duration and severity of diarrhea and helps prevent future episodes.",
+        "dosage": "Give daily for 10–14 days during and after diarrhea",
+        "tips": [
+          "Dissolve the tablet in clean water or breast milk.",
+          "Continue breastfeeding and give plenty of ORS (Jeevan Jal)."
+        ]
+      },
+      "np": {
+        "title": "जिंक चक्की र जीवनजल",
+        "desc": "झाडापखाला लाग्दा जिंक चक्की दिनाले बच्चा छिटो निको हुन्छ र भविष्यमा पनि संक्रमण कम गर्छ।",
+        "dosage": "झाडापखाला लागेको बेला १० देखि १४ दिनसम्म नियमित दिनुहोस्।",
+        "tips": [
+          "चक्कीलाई आमाको दूध वा सफा पानीमा घोलेर खुवाउनुहोस्।",
+          "निरन्तर स्तनपान गराउनुहोस् र पटक-पटक जीवनजल दिनुहोस्।"
+        ]
+      }
+    }
+  ]
+}

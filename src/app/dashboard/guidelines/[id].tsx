@@ -7,25 +7,32 @@ import {
   Image,
   Animated,
   PanResponder,
-  Dimensions,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { ArrowLeft, CheckCircle2 } from "lucide-react-native";
-import { useLanguage } from "../../context/LanguageContext";
-import learnContent from "../../assets/data/learnContent.json";
-import { FileText, Activity, Heart, Baby, HeartPulse } from "lucide-react-native";
+import { CheckCircle2 } from "lucide-react-native";
+import { useLanguage } from "@/context/LanguageContext";
+import CustomHeader from "@/components/CustomHeader";
+import learnContent from "@/assets/data/learnContent.json";
+import { FileText, Activity, Heart, Baby, HeartPulse, Stethoscope, Users, Droplet, Syringe, Brain } from "lucide-react-native";
+import AppSegmentedControl from "@/components/common/AppSegmentedControl";
 
 const SWIPE_THRESHOLD = 60;
 
 const CONFIG: Record<string, any> = {
-  maternal_health: { icon: HeartPulse, color: "#10B981", bg: "bg-emerald-100", image: require("../../assets/images/maternal_care.png") },
+  maternal_health: { icon: HeartPulse, color: "#10B981", bg: "bg-emerald-100", image: require("@/assets/images/maternal_care.png") },
   first_trimester_detailed: { icon: Heart, color: "#F43F5E", bg: "bg-rose-100" },
   second_trimester_detailed: { icon: Heart, color: "#8B5CF6", bg: "bg-violet-100" },
   third_trimester_detailed: { icon: Activity, color: "#EC4899", bg: "bg-pink-100" },
-  child_nutrition: { icon: FileText, color: "#3B82F6", bg: "bg-blue-100", image: require("../../assets/images/child_nutrition.png") },
-  anc: { icon: Activity, color: "#EC4899", bg: "bg-pink-100", image: require("../../assets/images/anc.png") },
-  pnc: { icon: Heart, color: "#8B5CF6", bg: "bg-violet-100", image: require("../../assets/images/pnc.png") },
-  baby_care: { icon: Baby, color: "#06B6D4", bg: "bg-cyan-100", image: require("../../assets/images/newborn_care.png") },
+  child_nutrition: { icon: FileText, color: "#3B82F6", bg: "bg-blue-100", image: require("@/assets/images/child_nutrition.png") },
+  checkups: { icon: Activity, color: "#E11D48", bg: "bg-pink-100", image: require("@/assets/images/anc.png") },
+  anc: { icon: Activity, color: "#EC4899", bg: "bg-pink-100", image: require("@/assets/images/anc.png") },
+  pnc: { icon: Heart, color: "#8B5CF6", bg: "bg-violet-100", image: require("@/assets/images/pnc.png") },
+  baby_care: { icon: Baby, color: "#06B6D4", bg: "bg-cyan-100", image: require("@/assets/images/newborn_care.png") },
+  birth_prep: { icon: Stethoscope, color: "#3B82F6", bg: "bg-blue-100" },
+  family_planning: { icon: Users, color: "#8B5CF6", bg: "bg-purple-100" },
+  breastfeeding: { icon: Droplet, color: "#22C55E", bg: "bg-green-100" },
+  vaccination: { icon: Syringe, color: "#3B82F6", bg: "bg-blue-100" },
+  mental_health: { icon: Brain, color: "#8B5CF6", bg: "bg-purple-100" },
 };
 
 const TRIMESTER_COLORS = [
@@ -34,7 +41,7 @@ const TRIMESTER_COLORS = [
   { accent: "#10B981", border: "#10B981", dot: "#10B981", activeText: "#10B981", activeBg: "#10B981" },
 ];
 
-export default function LearnDetailsScreen() {
+export default function GuidelineDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { language, t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
@@ -65,6 +72,11 @@ export default function LearnDetailsScreen() {
     });
   }, [fadeAnim, slideAnim]);
 
+  const isMaternalHealth = id === "maternal_health";
+  const isCheckups = id === "checkups";
+  const isTabsView = isMaternalHealth || isCheckups;
+  const maxTabs = isMaternalHealth ? 2 : (isCheckups ? 1 : 0);
+
   // PanResponder for swipe gestures — operates at JS level, no conflict with React Navigation
   const panResponder = useRef(
     PanResponder.create({
@@ -73,7 +85,7 @@ export default function LearnDetailsScreen() {
         return Math.abs(gestureState.dx) > Math.abs(gestureState.dy * 1.5) && Math.abs(gestureState.dx) > 15;
       },
       onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dx < -SWIPE_THRESHOLD && activeTabRef.current < 2) {
+        if (gestureState.dx < -SWIPE_THRESHOLD && activeTabRef.current < maxTabs) {
           switchTab(activeTabRef.current + 1);
         } else if (gestureState.dx > SWIPE_THRESHOLD && activeTabRef.current > 0) {
           switchTab(activeTabRef.current - 1);
@@ -82,16 +94,16 @@ export default function LearnDetailsScreen() {
     })
   ).current;
 
-  const dataPrefix = learnContent[id as keyof typeof learnContent];
+  const dataPrefix = isCheckups ? null : (learnContent as any)[id as string];
   const langKey = language === "np" ? "np" : "en";
   const content: any = dataPrefix ? dataPrefix[langKey as keyof typeof dataPrefix] : null;
-  const config = CONFIG[id as keyof typeof CONFIG] || CONFIG.maternal_health;
+  const config = CONFIG[id as string] || CONFIG.maternal_health;
 
-  if (!content) {
+  if (!content && !isCheckups) {
     return (
       <View className="flex-1 bg-white items-center justify-center">
         <Text className="text-gray-500">{t("learn_details.content_not_found")}</Text>
-        <TouchableOpacity onPress={() => router.push("/dashboard/learn")} className="mt-4 px-6 py-2 bg-blue-500 rounded-full">
+        <TouchableOpacity onPress={() => router.push("/dashboard/guidelines")} className="mt-4 px-6 py-2 bg-blue-500 rounded-full">
           <Text className="text-white font-bold">{t("learn_details.go_back")}</Text>
         </TouchableOpacity>
       </View>
@@ -114,35 +126,46 @@ export default function LearnDetailsScreen() {
     });
   };
 
-  const isMaternalHealth = id === "maternal_health";
-  const trimesterData: any[] = isMaternalHealth
+  const tabData: any[] = isMaternalHealth
     ? [
         (learnContent as any)["first_trimester_detailed"]?.[langKey],
         (learnContent as any)["second_trimester_detailed"]?.[langKey],
         (learnContent as any)["third_trimester_detailed"]?.[langKey],
       ]
+    : isCheckups
+    ? [
+        (learnContent as any)["anc"]?.[langKey],
+        (learnContent as any)["pnc"]?.[langKey],
+      ]
     : [];
 
-  const tabTitles = [
-    t("learn_details.trimesters.first"),
-    t("learn_details.trimesters.second"),
-    t("learn_details.trimesters.third"),
-  ];
+  const tabTitles = isMaternalHealth
+    ? [
+        t("learn_details.trimesters.first"),
+        t("learn_details.trimesters.second"),
+        t("learn_details.trimesters.third"),
+      ]
+    : isCheckups
+    ? [
+        t("learn_page.guidelines.anc_checkup") || "ANC",
+        t("learn_page.guidelines.pnc_checkup") || "PNC",
+      ]
+    : [];
 
-  const activeTrimester = trimesterData[activeTab];
-  const activeColor = TRIMESTER_COLORS[activeTab];
+  const activeTabData = tabData[activeTab];
+  const activeColor = TRIMESTER_COLORS[activeTab] || TRIMESTER_COLORS[0];
+
+  const pageTitle = isTabsView 
+    ? activeTabData?.title || (isMaternalHealth ? t("learn_page.hero_title_np") : t("learn_page.guidelines.checkups"))
+    : content?.title || t("learn_details.details");
 
   return (
     <View className="flex-1 bg-white pb-10">
-      {/* Header */}
-      <View className="flex-row items-center px-4 pt-12 pb-4 bg-white border-b border-gray-100">
-        <TouchableOpacity onPress={() => router.push("/dashboard/learn")} className="p-2 rounded-full z-10 active:opacity-50">
-          <ArrowLeft size={24} color="#1F2937" />
-        </TouchableOpacity>
-        <Text className="text-lg font-bold text-gray-800 ml-3">
-          {t("learn_details.details")}
-        </Text>
-      </View>
+      <CustomHeader 
+        title={pageTitle}
+        onBackPress={() => router.push("/dashboard/guidelines")}
+        className="pt-12 pb-4 px-5 border-b border-gray-100 bg-white"
+      />
 
       <ScrollView
         className="flex-1 px-5"
@@ -160,8 +183,21 @@ export default function LearnDetailsScreen() {
             </View>
           )}
         </View>
+        
+        {/* Title and Description */}
+        {(!isTabsView && content?.title) && (
+          <Text className="text-2xl font-bold text-gray-800 mb-2 ml-1 mt-2">
+            {content.title}
+          </Text>
+        )}
+        {(!isTabsView && content?.description) && (
+          <Text className="text-[14px] text-gray-600 mb-6 ml-1 leading-6">
+            {content.description}
+          </Text>
+        )}
+
         {/* Key Points */}
-        {content.key_points && content.key_points.length > 0 && (
+        {(!isTabsView && content?.key_points && content.key_points.length > 0) && (
           <>
             <Text className="text-md font-bold text-gray-800 mb-4 ml-1">
               {t("learn_details.key_points")}
@@ -178,53 +214,96 @@ export default function LearnDetailsScreen() {
           </>
         )}
 
-        {isMaternalHealth && trimesterData.length > 0 ? (
+        {isTabsView && tabData.length > 0 ? (
           <View>
-            <Text className="text-md font-bold text-gray-800 mb-4 ml-1">
-              {t("learn_details.detailed_trimester_guide")}
-            </Text>
+            {isMaternalHealth && (
+              <Text className="text-md font-bold text-gray-800 mb-4 ml-1">
+                {t("learn_details.detailed_trimester_guide")}
+              </Text>
+            )}
 
             {/* Tab Bar */}
-            <View className="flex-row p-1 rounded-xl mb-6">
-              {tabTitles.map((title, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => switchTab(index)}
-                  activeOpacity={0.7}
-                  className={`flex-1 py-3 items-center border-b-2`}
-                  style={{
-                    borderBottomColor: activeTab === index ? TRIMESTER_COLORS[index].accent : 'transparent'
-                  }}
-                >
-                  <Text
-                    className={`font-bold text-[12px]`}
-                    style={{
-                      color: activeTab === index ? TRIMESTER_COLORS[index].accent : '#6B7280'
-                    }}
-                  >
-                    {title}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            <View className="mb-6 px-1">
+              {isCheckups ? (
+                <AppSegmentedControl
+                  values={tabTitles}
+                  segmentIndex={activeTab}
+                  setSegmentIndex={switchTab}
+                  size="large"
+                />
+              ) : (
+                <View className="flex-row p-1 rounded-xl">
+                  {tabTitles.map((title, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => switchTab(index)}
+                      activeOpacity={0.7}
+                      className={`flex-1 py-3 items-center border-b-2`}
+                      style={{
+                        borderBottomColor: activeTab === index ? activeColor.accent : 'transparent'
+                      }}
+                    >
+                      <Text
+                        className={`font-bold text-[12px]`}
+                        style={{
+                          color: activeTab === index ? activeColor.accent : '#6B7280'
+                        }}
+                      >
+                        {title}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
             </View>
 
             {/* Swipeable Tab Content */}
             <View {...panResponder.panHandlers}>
-              {activeTrimester ? (
+              {activeTabData ? (
                 <Animated.View
                   style={{
                     opacity: fadeAnim,
                     transform: [{ translateX: slideAnim }],
                   }}
                 >
-                  <Text className="text-md font-bold text-gray-800 mb-2 ml-1">
-                    {activeTrimester.title}
-                  </Text>
-                  <Text className="text-[13px] text-gray-600 mb-6 ml-1 leading-6">
-                    {activeTrimester.description}
-                  </Text>
+                  {isCheckups && activeTabData.title && (
+                    <Text className="text-xl font-bold text-gray-800 mb-2 ml-1">
+                      {activeTabData.title}
+                    </Text>
+                  )}
+                  {isCheckups && activeTabData.description && (
+                    <Text className="text-[14px] text-gray-600 mb-6 ml-1 leading-6">
+                      {activeTabData.description}
+                    </Text>
+                  )}
+                  {isMaternalHealth && activeTabData.title && (
+                    <Text className="text-md font-bold text-gray-800 mb-2 ml-1">
+                      {activeTabData.title}
+                    </Text>
+                  )}
+                  {isMaternalHealth && activeTabData.description && (
+                    <Text className="text-[13px] text-gray-600 mb-6 ml-1 leading-6">
+                      {activeTabData.description}
+                    </Text>
+                  )}
 
-                  {activeTrimester.sections?.map((section: any, idx: number) => (
+                  {isCheckups && activeTabData.key_points && activeTabData.key_points.length > 0 && (
+                    <View className="mb-6 mt-2">
+                      <Text className="text-md font-bold text-gray-800 mb-3 ml-1">
+                        {t("learn_details.key_points")}
+                      </Text>
+                      <View className="gap-3">
+                        {activeTabData.key_points.map((point: string, index: number) => (
+                          <View key={index} className="flex-row bg-white border border-gray-100 p-4 rounded-xl">
+                            <CheckCircle2 size={22} color={activeColor.accent} className="mt-[2px]" />
+                            <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">{renderMarkdown(point)}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  )}
+
+                  {activeTabData.sections?.map((section: any, idx: number) => (
                     <View key={`section-${activeTab}-${idx}`} className="mb-6">
                       <Text className="text-[15px] font-bold text-gray-800 mb-3 ml-1">
                         {(section.title || section.category || "").replace(/###\s*/g, "")}
@@ -233,9 +312,9 @@ export default function LearnDetailsScreen() {
                         {section.points?.map((point: string, pIdx: number) => (
                           <View
                             key={`point-${activeTab}-${idx}-${pIdx}`}
-                            className={`flex-row bg-white border border-gray-200 p-2 rounded-xl`}
+                            className={`flex-row bg-white border border-gray-100 p-3.5 rounded-xl`}
                           >
-                            <View className={`w-2 h-2 rounded-lg bg-green-500 mt-2`} />
+                            <View className={`w-2 h-2 rounded-lg mt-2`} style={{ backgroundColor: activeColor.accent }} />
                             <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">
                               {renderMarkdown(point)}
                             </Text>
@@ -252,7 +331,7 @@ export default function LearnDetailsScreen() {
               )}
             </View>
           </View>
-        ) : !isMaternalHealth ? (
+        ) : !isTabsView ? (
           <View>
             {content.sections?.map((section: any, idx: number) => (
               <View key={`section-${idx}`} className="mt-2 mb-6">

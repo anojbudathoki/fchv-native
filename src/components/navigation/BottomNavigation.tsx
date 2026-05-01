@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Platform, Keyboard, Dimensions } from "react-native";
-import { Home, Activity, Plus, BarChart3, BookOpen } from "lucide-react-native";
+import { Home, Activity, Plus, BarChart3, BookOpen, Calendar, FileText } from "lucide-react-native";
 import { useRouter, usePathname } from "expo-router";
 import Colors from "../../constants/Colors";
 
@@ -32,10 +32,10 @@ export default function BottomNavigation() {
 
   const tabs = [
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
-    { id: "service", label: "Service", icon: Activity, path: "/dashboard/visit-list" },
-    { id: "registration", label: "Registry", icon: Plus, path: "/dashboard/record", isAction: true },
-    { id: "report", label: "Report", icon: BarChart3, path: "/dashboard/report" },
-    { id: "guide", label: "Guideline", icon: BookOpen, path: "/dashboard/learn" },
+    { id: "visit", label: "Visit", icon: Calendar, path: "/dashboard/visit-list" },
+    { id: "record", label: "Register", icon: Plus, path: "/dashboard/record", isAction: true },
+    { id: "report", label: "Report", icon: FileText, path: "/dashboard/report" },
+    { id: "guide", label: "Guideline", icon: BookOpen, path: "/dashboard/guidelines" },
   ];
 
   const isActive = (path: string | null) => {

@@ -33,10 +33,10 @@ export default function InputField({
           <Text className="text-gray-400 font-bold text-[11px] uppercase">{subLabel}</Text>
         )}
       </View>
-      
+
       <View className="flex-row items-center border-b border-gray-200 h-14 pb-1">
         {leftIcon && <View className="mr-2">{leftIcon}</View>}
-        
+
         <TextInput
           className="flex-1 text-[#1E293B] text-lg h-full font-bold"
           placeholderTextColor="#cbd5e1"

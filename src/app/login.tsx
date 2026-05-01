@@ -8,7 +8,7 @@ import {
   Dimensions,
   ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import  { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Lock, Mail } from "lucide-react-native";
 import Svg, { Path } from "react-native-svg";
@@ -49,7 +49,7 @@ export default function LoginScreen() {
   return (
     <View className="flex-1 bg-white">
       <StatusBar style="light" />
-      
+
       {/* Top Section with Wave - Using App Colors (Green) */}
       <View style={{ height: 280 }}>
         <View className="absolute top-0 left-0 right-0 bottom-0 bg-primary" />
@@ -81,21 +81,10 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Welcome Text */}
-          <View className="mt-6">
-            <View className="flex-row items-center">
-              <Text className="text-[30px] font-bold text-text-secondary">Welcome Back </Text>
-            </View>
-            <Text className="text-gray-400 font-medium text-base mt-2">
-               Please login to your account to continue.
-            </Text>
-          </View>
 
-          {/* Form Content */}
           <View className="flex-1 mt-8">
             <InputField
-              label={t("login.health_id_label")}
-              placeholder={t("login.health_id_placeholder")}
+              placeholder={"Enter Valid Phone Number."}
               value={phone}
               onChangeText={(text) => {
                 setPhone(text);
@@ -105,8 +94,7 @@ export default function LoginScreen() {
             />
 
             <InputField
-              label={t("login.password_label")}
-              placeholder={t("login.password_placeholder")}
+              placeholder={"Enter Valid Password."}
               secureTextEntry
               value={pin}
               onChangeText={(text) => {

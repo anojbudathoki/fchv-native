@@ -169,4 +169,32 @@ CREATE TABLE IF NOT EXISTS hmis_child_death (
     updated_at TEXT NOT NULL,
     FOREIGN KEY(mother_id) REFERENCES mother(id)
 );
+CREATE TABLE IF NOT EXISTS hmis_infant_monitoring (
+    id TEXT PRIMARY KEY,
+    mother_id TEXT,
+    mother_name TEXT,
+    baby_name TEXT,
+    baby_birth_day INTEGER,
+    baby_birth_month INTEGER,
+    baby_birth_year INTEGER,
+    tole TEXT,
+    birth_place TEXT, -- 'home', 'institution', 'trained_worker'
+    fchv_present INTEGER DEFAULT 0,
+    asphyxia_management INTEGER DEFAULT 0,
+    serial_no INTEGER,
+    umbilical_care INTEGER DEFAULT 0,
+    chest_to_chest INTEGER DEFAULT 0,
+    breastfeeding_1hr INTEGER DEFAULT 0,
+    baby_weight TEXT, -- 'normal', 'low', 'very_low'
+    pnc_check_24hr INTEGER DEFAULT 0,
+    pnc_check_3day INTEGER DEFAULT 0,
+    pnc_check_7_14day INTEGER DEFAULT 0,
+    pnc_check_42day INTEGER DEFAULT 0,
+    remarks TEXT,
+    is_synced INTEGER NOT NULL DEFAULT 0,
+    is_deleted INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY(mother_id) REFERENCES mother(id)
+);
 `;

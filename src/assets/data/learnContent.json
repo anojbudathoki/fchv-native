@@ -109,6 +109,350 @@
       ]
     }
   },
+  "breastfeeding": {
+    "en": {
+      "title": "Breastfeeding Guide",
+      "description": "Breast milk is the best food for your baby during the first 6 months. It provides complete nutrition and protects your baby from illnesses.",
+      "key_points": [
+        "Start breastfeeding within 1 hour after birth.",
+        "Give only breast milk for the first 6 months. Do not give water, honey, or other liquids.",
+        "Breastfeed whenever the baby wants, at least 8 to 12 times in 24 hours.",
+        "Continue breastfeeding up to 2 years or more, with solid foods starting after 6 months."
+      ],
+      "sections": [
+        {
+          "title": "1. The First Milk (Colostrum)",
+          "points": [
+            "**Golden Milk:** Feed the thick yellow milk that comes in the first few days. It is extremely rich in nutrients.",
+            "**First Vaccine:** This milk acts as the baby's first vaccine, protecting them from infections and diseases."
+          ]
+        },
+        {
+          "title": "2. Exclusive Breastfeeding (0-6 Months)",
+          "points": [
+            "**Complete Nutrition:** Breast milk contains all the vitamins and nutrients your baby needs for the first 6 months.",
+            "**No Water Needed:** Breast milk is more than 80% water. Even in hot weather, extra water is not needed and may cause infection."
+          ]
+        },
+        {
+          "title": "3. Proper Latch and Positioning",
+          "points": [
+            "**Comfortable Position:** Support the baby's head and whole body. Make sure the baby is facing your breast.",
+            "**Good Latch:** Ensure the baby's mouth is wide open and covers a large part of the dark area (areola) around the nipple.",
+            "**Empty One Side First:** Let the baby finish feeding from one breast before offering the other to ensure they get the rich 'hindmilk'."
+          ]
+        },
+        {
+          "title": "4. Benefits for the Mother",
+          "points": [
+            "**Faster Recovery:** Breastfeeding helps the uterus return to its size and reduces bleeding after birth.",
+            "**Bonding:** It creates a deep emotional bond between the mother and the baby.",
+            "**Long-term Health:** It reduces the mother's risk of breast and ovarian cancer and type 2 diabetes."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "स्तनपान मार्गदर्शन",
+      "description": "बच्चा जन्मेको पहिलो ६ महिनासम्म आमाको दूध सबैभन्दा उत्तम खाना हो। यसले बच्चालाई पूर्ण पोषण दिनुका साथै विभिन्न रोगहरूबाट जोगाउँछ।",
+      "key_points": [
+        "बच्चा जन्मेको १ घण्टाभित्रै स्तनपान सुरु गराउनुहोस्।",
+        "पहिलो ६ महिनासम्म आमाको दूध मात्र खुवाउनुहोस्। पानी, मह वा अन्य कुनै पनि तरल पदार्थ नदिनुहोस्।",
+        "बच्चाले मागेको बेला (दिन र रात गरी कम्तीमा ८ देखि १२ पटक) स्तनपान गराउनुहोस्।",
+        "६ महिना पूरा भएपछि थप पोषिलो खानाका साथै २ वर्ष वा सोभन्दा बढी समयसम्म स्तनपानलाई निरन्तरता दिनुहोस्।"
+      ],
+      "sections": [
+        {
+          "title": "१. पहिलो दूध (बिगौती दूध)",
+          "points": [
+            "**सुनौलो दूध:** सुत्केरी भएको सुरुका केही दिनसम्म आउने बाक्लो र पहेँलो बिगौती दूध अनिवार्य खुवाउनुहोस्। यो अत्यन्तै पोषिलो हुन्छ।",
+            "**पहिलो खोप:** बिगौती दूधले बच्चाको लागि 'पहिलो खोप' को काम गर्छ, जसले संक्रमण र रोगहरू विरुद्ध लड्ने शक्ति दिन्छ।"
+          ]
+        },
+        {
+          "title": "२. पूर्ण स्तनपान (०-६ महिना)",
+          "points": [
+            "**पूर्ण पोषण:** आमाको दूधमा ६ महिनासम्मको बच्चालाई चाहिने सबै प्रकारका भिटामिन र पोषक तत्वहरू हुन्छन्।",
+            "**पानी नचाहिने:** आमाको दूधमा पर्याप्त पानी हुने भएकाले धेरै गर्मीमा पनि बच्चालाई बाहिरको पानी चाहिँदैन। बाहिरको पानी दिँदा संक्रमण हुने डर हुन्छ।"
+          ]
+        },
+        {
+          "title": "३. स्तनपान गराउने सही तरिका र आसन",
+          "points": [
+            "**सजिलो आसन:** स्तनपान गराउँदा बच्चाको टाउको र पूरै शरीरलाई हातले आड दिनुहोस्। बच्चाको अनुहार स्तनतर्फ फर्किएको हुनुपर्छ।",
+            "**सही मिलावट (Latch):** बच्चाको मुख राम्ररी खोल्न लगाई मुन्टो वरिपरिको कालो भाग (Areola) को धेरैजसो हिस्सा मुखभित्र पारेको सुनिश्चित गर्नुहोस्।",
+            "**पालैपालो खुवाउनुहोस्:** पहिले एउटा स्तनको दूध पूर्ण रूपमा खुवाएर मात्र अर्को स्तनको दूध खुवाउनुहोस्।"
+          ]
+        },
+        {
+          "title": "४. आमालाई हुने फाइदाहरू",
+          "points": [
+            "**छिटो स्वास्थ्य लाभ:** स्तनपानले सुत्केरीपछिको रक्तस्राव कम गर्न र पाठेघरलाई साविककै अवस्थामा फर्काउन मद्दत गर्छ।",
+            "**आत्मीय सम्बन्ध:** यसले आमा र बच्चाबीच भावनात्मक सम्बन्ध अझ गाढा बनाउँछ।",
+            "**स्वास्थ्य लाभ:** स्तनपानले आमालाई भविष्यमा हुन सक्ने स्तन क्यान्सर, डिम्बाशयको क्यान्सर र मधुमेहको जोखिमबाट बचाउन मद्दत गर्छ।"
+          ]
+        }
+      ]
+    }
+  },
+  "vaccination": {
+    "en": {
+      "title": "Vaccination Schedule & Guide",
+      "description": "Vaccines protect your child from life-threatening diseases. Following the schedule ensures your child builds strong immunity at the right time.",
+      "key_points": [
+        "Complete all recommended vaccines before your child reaches 15 months of age.",
+        "Always bring the immunization card (Khopa Card) to every health visit.",
+        "Mild fever, fussiness, or slight pain after vaccination is normal.",
+        "Do not skip or delay vaccines due to a minor cough, cold, or low-grade fever."
+      ],
+      "sections": [
+        {
+          "title": "1. Why is Vaccination Important?",
+          "points": [
+            "**Life-Saving Protection:** Vaccines prevent diseases like polio, measles, tuberculosis (TB), and tetanus.",
+            "**Community Health:** When your child is vaccinated, it helps stop the spread of diseases to other children.",
+            "**Stronger Immunity:** It helps the body's natural defense system fight off germs more effectively."
+          ]
+        },
+        {
+          "title": "2. Who Needs Vaccination?",
+          "points": [
+            "**Infants and Children:** Every child must receive scheduled vaccines from birth up to 15 months.",
+            "**Pregnant Women:** Pregnant women need the Tetanus-Diphtheria (Td) vaccine to protect both mother and newborn."
+          ]
+        },
+        {
+          "title": "3. National Immunization Schedule",
+          "points": [
+            "**At Birth:** BCG (for TB) and OPV (Polio) '0' dose.",
+            "**At 6, 10, and 14 Weeks:** Pentavalent, PCV, OPV, and IPV injections.",
+            "**At 9 Months:** First dose of Measles-Rubella (MR) and PCV booster.",
+            "**At 15 Months:** Second dose of Measles-Rubella (MR) and Typhoid vaccine."
+          ]
+        },
+        {
+          "title": "4. Care and Safety Tips",
+          "points": [
+            "**Safe Handling:** Ensure vaccines are stored in a vaccine carrier or cold box (Cold Chain maintenance).",
+            "**Managing Side Effects:** If there is mild swelling, do not rub the area. Offer extra breast milk or fluids.",
+            "**Seek Urgent Care:** Visit a health facility immediately if the child has a very high fever, fits (convulsions), or cries inconsolably for hours."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "खोप तालिका र मार्गदर्शन",
+      "description": "खोपले तपाईंको बच्चालाई खतरनाक र ज्यान लिने रोगहरूबाट बचाउँछ। सही समयमा खोप लगाउनाले बच्चामा रोगसँग लड्ने शक्ति (प्रतिरक्षा प्रणाली) बलियो हुन्छ।",
+      "key_points": [
+        "बच्चा १५ महिनाको हुनु अगावै नेपाल सरकारले तोकेका सबै खोपहरू लगाइसक्नुहोस्।",
+        "हरेक पटक स्वास्थ्य संस्था जाँदा बच्चाको 'खोप कार्ड' अनिवार्य रूपमा लिएर जानुहोस्।",
+        "खोप लगाएपछि हल्का ज्वरो आउनु वा सुई लगाएको ठाउँमा सामान्य दुखाइ हुनु स्वाभाविक हो।",
+        "सामान्य रुघाखोकी वा हल्का ज्वरो आएको बेला खोप लगाउन ढिला नगर्नुहोस्।"
+      ],
+      "sections": [
+        {
+          "title": "१. खोप किन लगाउने?",
+          "points": [
+            "**सुरक्षा:** खोपले पोलियो, दादुरा-रुबेला, क्षयरोग (TB) र धनुष्टंकार जस्ता कडा रोगहरूबाट बचाउँछ।",
+            "**सामुदायिक सुरक्षा:** तपाईंको बच्चालाई खोप लगाउँदा समुदायका अन्य बालबालिकाहरूमा पनि रोग सर्ने जोखिम कम हुन्छ।",
+            "**बलियो प्रतिरक्षा:** खोपले बच्चाको शरीरमा रोग विरुद्ध लड्ने क्षमताको विकास गर्छ।"
+          ]
+        },
+        {
+          "title": "२. खोप कसले लगाउने?",
+          "points": [
+            "**नवजात शिशु र बालबालिका:** जन्मेदेखि १५ महिनासम्मका प्रत्येक बालबालिकाले तालिका अनुसार खोप लगाउनुपर्छ।",
+            "**गर्भवती महिला:** आमा र गर्भको बच्चालाई धनुष्टंकार र भ्यागुते रोगबाट बचाउन गर्भवती महिलाले टिटानस-डिफ्थेरिया (Td) खोप लगाउनुपर्छ।"
+          ]
+        },
+        {
+          "title": "३. खोप तालिका (राष्ट्रिय खोप तालिका अनुसार)",
+          "points": [
+            "**जन्मेको बेला:** बि.सी.जी. (BCG) र पोलियो थोपा (OPV) को '०' मात्रा।",
+            "**६, १०, र १४ हप्तामा:** पेन्टाभ्यालेन्ट, पि.सी.भी. (PCV), ओ.पि.भी. (OPV) र एफ.आई.पि.भी. (fIPV)।",
+            "**९ महिनामा:** दादुरा-रुबेला (MR) पहिलो मात्रा र पि.सी.भी. (PCV) बुस्टर मात्रा।",
+            "**१५ महिनामा:** दादुरा-रुबेला (MR) दोस्रो मात्रा र टाइफाइडको खोप।"
+          ]
+        },
+        {
+          "title": "४. ध्यान दिनुपर्ने कुराहरू",
+          "points": [
+            "**खोपको गुणस्तर:** खोप सधैं चिसो बाकस (Vaccine Carrier) मा राखेको हुनुपर्छ।",
+            "**असरको व्यवस्थापन:** सुई लगाएको ठाउँमा सुन्निएको छ भने नमिच्नुहोस्। बच्चालाई बढी स्तनपान वा झोलिलो खानेकुरा दिनुहोस्।",
+            "**तुरुन्त अस्पताल जाने अवस्था:** यदि बच्चालाई धेरै कडा ज्वरो आएमा, थुरथुर कामेमा (fits), वा लगातार रोइरहेमा तुरुन्त नजिकैको स्वास्थ्य संस्थामा लैजानुहोस्।"
+          ]
+        }
+      ]
+    }
+  },
+  "family_planning": {
+    "en": {
+      "title": "Family Planning",
+      "description": "Family planning helps you and your partner decide the number of children you want and the right spacing between births for a healthy family.",
+      "key_points": [
+        "Wait at least 2 years after birth before planning the next baby.",
+        "Family planning helps keep both mother and child healthy.",
+        "Many safe, effective, and free methods are available at the health post.",
+        "Discuss together and choose the best method as a couple."
+      ],
+      "sections": [
+        {
+          "title": "1. Short-Term Methods",
+          "points": [
+            "**Pills:** Take the pill every day at the same time.",
+            "**Condoms:** Use condoms to prevent pregnancy and protect from sexually transmitted infections (STIs).",
+            "**Injectables (Depo-Provera):** Visit the health facility every 3 months for the injection."
+          ]
+        },
+        {
+          "title": "2. Long-Acting Methods",
+          "points": [
+            "**Implants:** A small rod placed under the skin of the arm that works for up to 5 years.",
+            "**IUCD (Copper T):** A small device placed inside the womb that can prevent pregnancy for up to 12 years."
+          ]
+        },
+        {
+          "title": "3. Permanent Methods",
+          "points": [
+            "**Minilap (Female Sterilization):** Choose this permanent method if you do not want more children.",
+            "**Vasectomy (Male Sterilization):** A simple, safe, and permanent method for men."
+          ]
+        },
+        {
+          "title": "4. Myths vs Facts",
+          "points": [
+            "**Myth:** Contraceptives make you infertile. **Fact:** Most methods are reversible, and fertility usually returns after stopping.",
+            "**Myth:** Family planning is only for women. **Fact:** Men also have an equal role and can use condoms or vasectomy."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "परिवार नियोजन",
+      "description": "परिवार नियोजनले तपाईं र तपाईंको जीवनसाथीलाई स्वस्थ परिवारको लागि कति सन्तान जन्माउने र दुई बच्चाबीच कति अन्तर राख्ने भनेर निर्णय गर्न मद्दत गर्छ।",
+      "key_points": [
+        "अर्को बच्चाको योजना बनाउनु अघि कम्तीमा २ वर्ष पर्खनुहोस्।",
+        "परिवार नियोजनले आमा र बच्चा दुवैलाई स्वस्थ राख्न मद्दत गर्छ।",
+        "स्वास्थ्य संस्थामा धेरै सुरक्षित, प्रभावकारी र नि:शुल्क साधनहरू उपलब्ध छन्।",
+        "दम्पतीले सँगै छलफल गरी आफ्नो लागि सबैभन्दा उपयुक्त साधन छान्नुहोस्।"
+      ],
+      "sections": [
+        {
+          "title": "१. छोटो अवधिका साधनहरू",
+          "points": [
+            "**पिल्स (खाने चक्की):** हरेक दिन एउटै समयमा चक्की खानुहोस्।",
+            "**कन्डम:** अनिच्छित गर्भ र यौनजन्य सङ्क्रमण (STIs) बाट बच्न कन्डमको प्रयोग गर्नुहोस्।",
+            "**सुई (डिपो-प्रोभेरा):** सुई लगाउन हरेक ३ महिनामा स्वास्थ्य संस्था जानुहोस्।"
+          ]
+        },
+        {
+          "title": "२. लामो अवधिका साधनहरू",
+          "points": [
+            "**इम्प्लान्ट:** पाखुराको छालामुनि राखिने सानो रड हो, जसले ५ वर्षसम्म काम गर्छ।",
+            "**कपर टी (IUCD):** पाठेघरभित्र राखिने सानो साधन हो, जसले १२ वर्षसम्म गर्भ रहन दिँदैन।"
+          ]
+        },
+        {
+          "title": "३. स्थायी साधनहरू",
+          "points": [
+            "**मिनिल्याप (महिला बन्ध्याकरण):** थप सन्तान नचाहेमा यो स्थायी साधन रोज्नुहोस्।",
+            "**भ्यासेक्टोमी (पुरुष बन्ध्याकरण):** पुरुषका लागि सरल, सुरक्षित र स्थायी साधन हो।"
+          ]
+        },
+        {
+          "title": "४. भ्रम र यथार्थ",
+          "points": [
+            "**भ्रम:** परिवार नियोजनका साधनले बाँझोपन गराउँछ। **यथार्थ:** धेरैजसो साधनहरू अस्थायी हुन्छन् र प्रयोग गर्न छोडेपछि पुनः गर्भधारण गर्ने क्षमता फर्किन्छ।",
+            "**भ्रम:** परिवार नियोजन महिलाहरूका लागि मात्र हो। **यथार्थ:** यसमा पुरुषको पनि समान भूमिका हुन्छ। उनीहरूले कन्डम प्रयोग गर्न वा भ्यासेक्टोमी (स्थायी बन्ध्याकरण) गराउन सक्छन्।"
+          ]
+        }
+      ]
+    }
+  },
+  "birth_prep": {
+    "en": {
+      "title": "Birth Preparedness Card",
+      "description": "Birth preparedness helps keep you and your baby safe during delivery. Make a plan early so you can reach the hospital on time and get quick care in emergencies.",
+      "key_points": [
+        "Choose a good health facility for delivery.",
+        "Save money for transport, hospital fees, and emergencies.",
+        "Arrange a trusted vehicle or ambulance early.",
+        "Identify people who can donate blood if needed."
+      ],
+      "sections": [
+        {
+          "title": "1. Essential Items to Pack (Hospital Bag)",
+          "points": [
+            "**For Mother:** Keep your ANC card, clean clothes, sanitary pads, soap, and warm clothes ready.",
+            "**For Baby:** Keep a clean baby wrapper, cap, socks, and warm clothes ready."
+          ]
+        },
+        {
+          "title": "2. Financial & Transport Planning",
+          "points": [
+            "**Savings:** Start saving money early for delivery costs and emergencies.",
+            "**Transport:** Keep phone numbers of drivers and ambulance services. Make sure you can go to the hospital even at night."
+          ]
+        },
+        {
+          "title": "3. Identifying Support People",
+          "points": [
+            "**Companion:** Decide who will go with you to the hospital and stay with you during labor.",
+            "**Home Support:** Arrange someone to care for your home and children while you are away."
+          ]
+        },
+        {
+          "title": "4. Danger Signs (Go to Hospital Immediately)",
+          "points": [
+            "If you have heavy bleeding or severe abdominal pain, go to the hospital immediately.",
+            "If you have severe headache, blurred vision, or swelling of face and hands, seek help quickly.",
+            "If water breaks before labor starts or baby movement decreases, visit the hospital immediately."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "जन्म तयारी कार्ड",
+      "description": "जन्म तयारीले सुत्केरीको समयमा तपाईं र तपाईंको बच्चालाई सुरक्षित राख्न मद्दत गर्छ। समयमै अस्पताल पुग्न र आपतकालीन अवस्थामा छिटो उपचार पाउन पहिल्यै योजना बनाउनुहोस्।",
+      "key_points": [
+        "सुत्केरी गराउन राम्रो स्वास्थ्य संस्था छान्नुहोस्।",
+        "यातायात, अस्पताल खर्च र आपतकालीन अवस्थाका लागि पैसा बचत गर्नुहोस्।",
+        "पहिल्यै भरपर्दो गाडी वा एम्बुलेन्सको व्यवस्था गर्नुहोस्।",
+        "आवश्यक परे रगत दिन सक्ने व्यक्तिहरू पहिचान गर्नुहोस्।"
+      ],
+      "sections": [
+        {
+          "title": "१. अस्पताल जाँदा झोलामा राख्नुपर्ने आवश्यक सामग्रीहरू",
+          "points": [
+            "**आमाका लागि:** ANC कार्ड, सफा लुगा, स्यानिटरी प्याड, साबुन र न्यानो लुगा तयार राख्नुहोस्।",
+            "**बच्चाका लागि:** बच्चालाई बेर्ने सफा कपडा, टोपी, मोजा र न्यानो लुगा तयार राख्नुहोस्।"
+          ]
+        },
+        {
+          "title": "२. आर्थिक र यातायातको योजना",
+          "points": [
+            "**बचत:** सुत्केरी खर्च र आपतकालीन अवस्थाका लागि सुरुदेखि नै पैसा बचत गर्नुहोस्।",
+            "**यातायात:** ड्राइभर र एम्बुलेन्स सेवाका फोन नम्बरहरू साथमा राख्नुहोस्। राति पनि अस्पताल जान सक्ने गरी व्यवस्था मिलाउनुहोस्।"
+          ]
+        },
+        {
+          "title": "३. सहयोग गर्ने व्यक्तिहरूको पहिचान",
+          "points": [
+            "**सहयोगी:** अस्पतालमा तपाईंसँग को जाने र सुत्केरी व्यथाको बेला को साथमा बस्ने भनेर निर्णय गर्नुहोस्।",
+            "**घरको हेरचाह:** तपाईं अस्पताल जाँदा घर र बच्चाहरू हेर्ने व्यक्तिको व्यवस्था गर्नुहोस्।"
+          ]
+        },
+        {
+          "title": "४. खतराका लक्षणहरू (तुरुन्त अस्पताल जानुहोस्)",
+          "points": [
+            "धेरै रगत बगेमा वा पेट अत्यधिक दुखेमा तुरुन्त अस्पताल जानुहोस्।",
+            "कडा टाउको दुखेमा, आँखा धमिलो भएमा वा अनुहार र हात सुन्निएमा तुरुन्त स्वास्थ्य सहायता लिनुहोस्।",
+            "व्यथा सुरु हुनु अघि पानी बगेमा वा बच्चा कम चलेमा तुरुन्त अस्पताल जानुहोस्।"
+          ]
+        }
+      ]
+    }
+  },
   "first_aid": {
     "en": {
       "title": "First Aid Basics",
@@ -131,50 +475,6 @@
       ]
     }
   },
-  "anc": {
-    "en": {
-      "title": "Antenatal Care (ANC)",
-      "description": "Antenatal care (ANC) allows health-care providers to identify and mitigate risk factors during pregnancy. WHO's comprehensive ANC model recommends a minimum of eight contacts to reduce perinatal mortality and improve women's experience of care.",
-      "key_points": [
-        "First contact should generally occur within the first 12 weeks of gestation.",
-        "Receive tetanus toxoid (TT) vaccination to prevent neonatal tetanus.",
-        "Get screened for infections and conditions like gestational diabetes and pre-eclampsia.",
-        "Regularly check blood pressure and fetal growth."
-      ]
-    },
-    "np": {
-      "title": "गर्भावस्था जाँच (ANC)",
-      "description": "एन्टिनेटल केयर (ANC) ले स्वास्थ्य सेवा प्रदायकहरूलाई गर्भावस्थामा हुन सक्ने जोखिम पहिचान गर्न र कम गर्न मद्दत गर्दछ। WHO को नयाँ मोडेलले आमा र बच्चाको मृत्युदर घटाउन कम्तिमा ८ पटक जाँच गर्न सिफारिस गर्दछ।",
-      "key_points": [
-        "पहिलो जाँच सामान्यतया गर्भावस्थाको पहिलो १२ हप्ता भित्र हुनुपर्छ।",
-        "नवजात शिशुमा हुने टिटानस रोक्न टिटानस टक्साइड (TT) खोप लिनुहोस्।",
-        "संक्रमण, डायविटिज र उच्च रक्तचाप (pre-eclampsia) को जाँच गराउनुहोस्।",
-        "रक्तचाप र गर्भको शिशुको वृद्धिको नियमित परीक्षण गर्नुहोस्।"
-      ]
-    }
-  },
-  "pnc": {
-    "en": {
-      "title": "Postnatal Care (PNC)",
-      "description": "The postnatal period is a critical phase in the lives of mothers and newborn babies. Most maternal and infant deaths occur in the first month after birth. WHO emphasizes delivering quality postnatal care to identify and treat complications promptly.",
-      "key_points": [
-        "Receive PNC checks at 24 hours, days 3, 7-14, and six weeks post-delivery.",
-        "Monitor for severe bleeding, fever, and signs of infection.",
-        "Support and encourage exclusive breastfeeding techniques.",
-        "Screen and provide support for postpartum depression or mood disorders."
-      ]
-    },
-    "np": {
-      "title": "सुत्केरी स्याहार (PNC)",
-      "description": "सुत्केरीपछिको समय आमा र नवजात शिशुको जीवनमा अत्यन्तै महत्त्वपूर्ण हुन्छ। अधिकांश मातृ र शिशु मृत्यु जन्मपछिको पहिलो महिनामा हुन्छ। WHO ले जटिलताहरू चाँडै पहिचान गरी उपचार गर्न गुणस्तरीय सुत्केरी स्याहारमा जोड दिन्छ।",
-      "key_points": [
-        "सुत्केरी भएको २४ घण्टा, तेस्रो दिन, ७ देखि १४ दिन, र छैटौं हप्तामा PNC जाँच गराउनुहोस्।",
-        "अत्यधिक रगत बग्ने, ज्वरो आउने र संक्रमणका लक्षणहरूको निगरानी राख्नुहोस्।",
-        "पूर्ण स्तनपान गराउन सहयोग र प्रोत्साहन गर्नुहोस्।",
-        "सुत्केरीपछिको डिप्रेसन (Postpartum depression) को जाँच गरी आवश्यक सहयोग प्रदान गर्नुहोस्।"
-      ]
-    }
-  },
   "baby_care": {
     "en": {
       "title": "Newborn & Baby Care",
@@ -184,6 +484,38 @@
         "Keep the umbilical cord clean and dry; do not apply unverified substances.",
         "Ensure standard vaccinations are provided on schedule starting from birth.",
         "Observe for danger signs like poor feeding, fast breathing, or severe jaundice."
+      ],
+      "sections": [
+        {
+          "title": "1. Keeping the Baby Warm",
+          "points": [
+            "**Skin-to-Skin:** Immediately after birth, place the baby on the mother's bare chest. This provides the best natural warmth.",
+            "**Wrap Well:** Wrap the baby in warm, dry, and clean clothes. Always cover the baby's head with a soft cap."
+          ]
+        },
+        {
+          "title": "2. Breastfeeding",
+          "points": [
+            "**First Milk (Colostrum):** Breastfeed within the first hour. The thick, yellowish first milk is like the baby's first vaccine.",
+            "**Exclusive Breastfeeding:** Give ONLY breastmilk for the first 6 months. No water, no honey, no formula."
+          ]
+        },
+        {
+          "title": "3. Cord & Eye Care",
+          "points": [
+            "**Umbilical Cord:** Keep the cord stump clean and completely dry. **Do NOT** apply ash, cow dung, oil, or any unprescribed ointment.",
+            "**Eye Care:** Wipe the eyes gently with a clean, moist cloth. If you see pus or redness, visit the health post."
+          ]
+        },
+        {
+          "title": "4. Danger Signs (Seek Immediate Help)",
+          "points": [
+            "Baby stops feeding or feeds poorly.",
+            "Baby feels excessively hot (fever) or unusually cold.",
+            "Fast breathing (more than 60 breaths per minute) or difficulty breathing.",
+            "Yellow skin, especially on the palms and soles (Severe Jaundice)."
+          ]
+        }
       ]
     },
     "np": {
@@ -194,6 +526,38 @@
         "नाइटोलाई सफा र सुख्खा राख्नुहोस्; जथाभावी मलम वा अन्य कुरा नलाउनुहोस्।",
         "जन्मनेबित्तिकै सुरु गरी तोकिएको समयमै लगाउनुपर्ने खोपहरू लगाउनुहोस्।",
         "दूध नचुस्ने, छिटोछिटो सास फेर्ने, वा कडा जन्डिस जस्ता खतराका लक्षणहरूमा ध्यान दिनुहोस्।"
+      ],
+      "sections": [
+        {
+          "title": "१. बच्चालाई न्यानो राख्ने",
+          "points": [
+            "**छातीमा टाँसेर राख्ने:** जन्मेको तुरुन्तै बच्चालाई आमाको नाङ्गो छातीमा टाँसेर (Skin-to-Skin) राख्नुहोस्। यसले बच्चालाई सबैभन्दा राम्रो प्राकृतिक न्यानो दिन्छ।",
+            "**राम्रोसँग बेर्ने:** बच्चालाई न्यानो, सुख्खा र सफा कपडाले बेर्नुहोस्। सधैं नरम टोपी लगाइदिनुहोस्।"
+          ]
+        },
+        {
+          "title": "२. स्तनपान",
+          "points": [
+            "**पहिलो दूध (बिगौती दूध):** जन्मेको एक घण्टाभित्र स्तनपान गराउनुहोस्। पहिलो बाक्लो र पहेँलो दूध बच्चाको पहिलो खोप जस्तै हो।",
+            "**पूर्ण स्तनपान:** पहिलो ६ महिनासम्म आमाको दूध मात्र खुवाउनुहोस्। पानी, मह वा बाहिरको दूध नखुवाउनुहोस्।"
+          ]
+        },
+        {
+          "title": "३. नाइटो र आँखाको स्याहार",
+          "points": [
+            "**नाइटोको स्याहार:** नाइटोलाई सफा र पूर्ण रूपमा सुख्खा राख्नुहोस्। नाइटोमा खरानी, गोबर, तेल वा कुनै पनि मलम **नलगाउनुहोस्**।",
+            "**आँखाको स्याहार:** सफा र ओसिलो कपडाले आँखा बिस्तारै पुछ्नुहोस्। यदि पिप वा धेरै रातो देखिएमा स्वास्थ्य संस्था लैजानुहोस्।"
+          ]
+        },
+        {
+          "title": "४. खतराका लक्षणहरू (तुरुन्तै अस्पताल लैजानुहोस्)",
+          "points": [
+            "बच्चाले दूध चुस्न छाडेमा वा कम चुसेमा।",
+            "बच्चा धेरै तातो (ज्वरो) वा असाधारण रूपमा चिसो भएमा।",
+            "छिटो-छिटो सास फेरेमा (प्रति मिनेट ६० पटक भन्दा बढी) वा सास फेर्न गाह्रो भएमा।",
+            "हत्केला र पैताला सहित शरीर धेरै पहेँलो भएमा (कडा जन्डिस)।"
+          ]
+        }
       ]
     }
   },
@@ -464,6 +828,250 @@
             "**व्यथा नलागी पानी बगेमा:** डेलिभरी हुने बेला नभए पनि वा व्यथा नलागे पनि योनिबाट पानी बग्न थाल्यो भने तुरुन्तै अस्पताल लैजानुहोस्।",
             "**आँखा धमिलो हुने/टाउको दुख्ने:** यो उच्च रक्तचापको लक्षण हुन सक्छ र ज्यानै जाने खतरा हुन्छ।",
             "**धेरै सुन्निनु:** गोडा मात्र होइन, अनुहार र हातहरू धेरै सुन्निएको छ भने तुरुन्तै जचाउनु पर्छ।"
+          ]
+        }
+      ]
+    }
+  },
+  "mental_health": {
+    "en": {
+      "title": "Mental Health During Pregnancy",
+      "description": "Your mental and emotional well-being is just as important as your physical health. It is natural to experience a wide range of emotions during pregnancy.",
+      "key_points": [
+        "A healthy mind supports the healthy development of your baby.",
+        "Feeling anxious, sad, or overwhelmed at times is a normal part of the journey.",
+        "Don't hesitate to ask for support from family, friends, or health workers.",
+        "Prioritizing rest and relaxation is essential for both mother and baby."
+      ],
+      "sections": [
+        {
+          "title": "1. Why Mental Health Matters",
+          "points": [
+            "**Baby’s Development:** High levels of chronic stress can affect the baby's growth and may increase the risk of preterm birth.",
+            "**Mother’s Health:** Good mental health helps you cope with physical changes and prepare for the transition to motherhood.",
+            "**Bonding:** When a mother feels supported and calm, it is easier to build a strong emotional bond with the baby."
+          ]
+        },
+        {
+          "title": "2. How to Maintain Emotional Well-being",
+          "points": [
+            "**Rest and Sleep:** Aim for at least 8 hours of sleep at night and take short rests during the day.",
+            "**Healthy Lifestyle:** Eat balanced meals and engage in light physical activity like walking.",
+            "**Communicate:** Regularly share your thoughts, fears, and joys with your partner or family members.",
+            "**Relaxation Techniques:** Practice deep breathing, meditation, or listen to soothing music to lower stress."
+          ]
+        },
+        {
+          "title": "3. Signs You May Need Extra Support",
+          "points": [
+            "**Persistent Sadness:** Feeling low or crying frequently without a clear reason for more than two weeks.",
+            "**Excessive Anxiety:** Constant worrying, racing thoughts, or being unable to sleep due to fear.",
+            "**Loss of Interest:** No longer finding joy in activities you usually enjoy or feeling 'numb'.",
+            "**Physical Symptoms:** Unusual fatigue, frequent headaches, or significant changes in appetite unrelated to morning sickness."
+          ]
+        },
+        {
+          "title": "4. What to Do If You Feel Overwhelmed",
+          "points": [
+            "**Speak Up:** Do not bottle up your feelings; talk to someone you trust about how you really feel.",
+            "**Professional Help:** Consult a doctor, nurse, or counselor at your health facility for guidance.",
+            "**Peer Support:** Connecting with other pregnant women can help you realize you are not alone.",
+            "**Self-Compassion:** Be kind to yourself—pregnancy is a major life change and it's okay to not be okay."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "गर्भावस्थामा मानसिक स्वास्थ्य",
+      "description": "तपाईंको शारीरिक स्वास्थ्य जत्तिकै मानसिक र भावनात्मक स्वास्थ्य पनि महत्त्वपूर्ण हुन्छ। गर्भावस्थामा विभिन्न भावनाहरू उत्पन्न हुनु स्वाभाविक हो।",
+      "key_points": [
+        "स्वस्थ मनले बच्चाको सही शारीरिक र मानसिक विकासमा मद्दत गर्दछ।",
+        "कहिलेकाहीँ चिन्ता लाग्नु, दुःखी हुनु वा तनाव महसुस हुनु सामान्य हो।",
+        "अप्ठ्यारो परेको बेला परिवार, साथीभाइ वा स्वास्थ्यकर्मीसँग निधक्क भएर सहयोग माग्नुहोस्।",
+        "आराम र मानसिक शान्ति आमा र बच्चा दुवैको लागि अनिवार्य छ।"
+      ],
+      "sections": [
+        {
+          "title": "१. मानसिक स्वास्थ्य किन महत्त्वपूर्ण छ?",
+          "points": [
+            "**बच्चाको विकास:** धेरै तनावले बच्चाको वृद्धि विकासमा असर पुऱ्याउनुका साथै समय अगावै बच्चा जन्मिने जोखिम बढाउन सक्छ।",
+            "**आमाको स्वास्थ्य:** राम्रो मानसिक स्वास्थ्यले गर्भावस्थामा हुने शारीरिक र हर्मोनजन्य परिवर्तनहरूलाई सहन मद्दत गर्दछ।",
+            "**आत्मीय सम्बन्ध:** मन शान्त र खुसी हुँदा आमाले आफ्नो बच्चासँग अझ प्रगाढ सम्बन्ध गाँस्न सक्नुहुन्छ।"
+          ]
+        },
+        {
+          "title": "२. मानसिक स्वास्थ्यलाई कसरी राम्रो बनाउने?",
+          "points": [
+            "**पर्याप्त निद्रा:** रातमा कम्तीमा ८ घण्टा सुत्ने र दिउँसोको समयमा पनि केही बेर आराम गर्ने गर्नुहोस्।",
+            "**स्वस्थ जीवनशैली:** सन्तुलित र पोषिलो खाना खानुहोस् र चिकित्सकको सल्लाह अनुसार हल्का हिँडडुल गर्नुहोस्।",
+            "**भावना साटासाट:** आफ्ना मनका कुरा, डर वा चिन्ताहरू आफ्नो श्रीमान् वा परिवारका सदस्यहरूसँग खुलेर राख्नुहोस्।",
+            "**तनाव कम गर्ने उपाय:** मनलाई शान्त राख्न संगीत सुन्ने, राम्रा पुस्तक पढ्ने वा ध्यान र श्वासप्रश्वासको अभ्यास गर्नुहोस्।"
+          ]
+        },
+        {
+          "title": "३. मानसिक स्वास्थ्य कमजोर हुँदा देखिने लक्षणहरू",
+          "points": [
+            "**लगातारको उदासी:** विना कारण धेरै दुःखी हुने, एक्लै बस्न मन लाग्ने वा बारम्बार रुन आउने।",
+            "**अत्यधिक चिन्ता:** सधैं केही नराम्रो होला कि भनेर डराउने वा चिन्ताका कारण निद्रा नलाग्ने।",
+            "**रुचि हराउनु:** पहिले मन पर्ने कामहरूमा रुचि नहुने वा बच्चा र परिवारप्रति लगाव कम भएको महसुस हुने।",
+            "**शारीरिक समस्या:** धेरै थकान हुने, बारम्बार टाउको दुख्ने वा खानामा अरुचि हुने।"
+          ]
+        },
+        {
+          "title": "४. धेरै गाह्रो महसुस भएमा के गर्ने?",
+          "points": [
+            "**मनका कुरा नछुपाउनुहोस्:** आफ्ना भावनाहरू नलुकाई आफूले विश्वास गरेको व्यक्तिलाई खुलेर भन्नुहोस्।",
+            "**विज्ञको सल्लाह लिनुहोस्:** गाह्रो महसुस भएमा स्वास्थ्य संस्थामा गएर स्वास्थ्यकर्मी वा परामर्शदातासँग कुरा गर्नुहोस्।",
+            "**अनुभव साटासाट:** अन्य गर्भवती महिलाहरूसँग कुराकानी गर्दा तपाईंलाई एक्लो महसुस हुँदैन र सहयोग मिल्छ।",
+            "**आफूलाई माया गर्नुहोस्:** गर्भावस्था चुनौतीपूर्ण समय हो, त्यसैले आफूले सकेको गर्ने र आफूलाई दोष नदिने गर्नुहोस्।"
+          ]
+        }
+      ]
+    }
+  },
+  "anc": {
+    "en": {
+      "title": "Antenatal Care (ANC) Visits",
+      "description": "ANC visits are essential medical checkups during pregnancy. They ensure the mother and baby are healthy and help detect any potential risks early.",
+      "key_points": [
+        "A minimum of 8 ANC visits are recommended during pregnancy.",
+        "ANC visits help monitor the baby's growth and mother's health.",
+        "Early detection of complications can save the lives of both mother and baby.",
+        "Regular visits ensure you get necessary supplements like Iron, Calcium, and Tetanus vaccines."
+      ],
+      "sections": [
+        {
+          "title": "1. Why are ANC Visits Important?",
+          "points": [
+            "**Health Monitoring:** To check blood pressure, weight, and the baby's heartbeat.",
+            "**Risk Prevention:** Identifies danger signs like high blood pressure, severe anemia, or abnormal baby positioning early.",
+            "**Vital Supplements:** You receive essential Iron, Folic Acid, Calcium, and Tetanus (Td) vaccinations."
+          ]
+        },
+        {
+          "title": "2. When and How Many Times?",
+          "points": [
+            "**Total Visits:** The WHO and Nepal Government recommend at least 8 ANC visits.",
+            "**Schedule:** 1st visit (12 weeks), 2nd (20 weeks), 3rd (26 weeks), 4th (30 weeks), 5th (34 weeks), 6th (36 weeks), 7th (38 weeks), 8th (40 weeks).",
+            "**First Checkup:** The first visit should happen as soon as you find out you are pregnant."
+          ]
+        },
+        {
+          "title": "3. Benefits of Regular Visits",
+          "points": [
+            "**Safer Delivery:** Helps plan for a safe institutional delivery with a skilled birth attendant.",
+            "**Better Health:** Both mother and baby stay strong throughout the pregnancy.",
+            "**Counseling:** Get valuable advice on nutrition, danger signs, and breastfeeding."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "गर्भपर्वती जाँच (ANC Visits)",
+      "description": "गर्भावस्थामा गरिने नियमित स्वास्थ्य जाँचलाई ANC भनिन्छ। यसले आमा र गर्भमा रहेको बच्चाको स्वास्थ्य अवस्था ठीक छ भन्ने कुरा निश्चित गर्छ।",
+      "key_points": [
+        "गर्भावस्थामा कम्तीमा ८ पटक स्वास्थ्य संस्थामा गएर जाँच गराउनुपर्छ।",
+        "नियमित जाँचले बच्चाको वृद्धि विकास र आमाको स्वास्थ्य निगरानी गर्न मद्दत गर्छ।",
+        "कुनै जटिलता भएमा समयमै पत्ता लाग्छ, जसले आमा र बच्चाको ज्यान बचाउन सक्छ।",
+        "जाँचको क्रममा आइरन, क्याल्सियम, र टिटानस (Td) जस्ता अत्यावश्यक सुई तथा औषधिहरू पाइन्छ।"
+      ],
+      "sections": [
+        {
+          "title": "१. ANC जाँच किन महत्त्वपूर्ण छ?",
+          "points": [
+            "**स्वास्थ्य निगरानी:** आमाको तौल, रक्तचाप (Blood Pressure) र पेटमा रहेको बच्चाको धड्कन जाँच्न।",
+            "**खतराको पहिचान:** उच्च रक्तचाप, कडा रक्तअल्पता (Anemia), वा बच्चाको असामान्य अवस्था जस्ता खतराका चिन्हहरू समयमै पत्ता लगाउन।",
+            "**अत्यावश्यक औषधि:** आइरन, फोलिक एसिड, क्याल्सियम चक्की र टिटानस (Td) विरुद्धको खोप प्राप्त गर्न।"
+          ]
+        },
+        {
+          "title": "२. कहिले र कति पटक जाँच गराउने?",
+          "points": [
+            "**जम्मा जाँच:** विश्व स्वास्थ्य संगठन र नेपाल सरकारले कम्तीमा ८ पटक गर्भजाँच गराउन सिफारिस गरेका छन्।",
+            "**जाँचको तालिका:** पहिलो (१२ हप्तामा), दोस्रो (२० हप्ता), तेस्रो (२६ हप्ता), चौथो (३० हप्ता), पाँचौँ (३४ हप्ता), छैटौँ (३६ हप्ता), सातौँ (३८ हप्ता), आठौँ (४० हप्ता)।",
+            "**पहिलो जाँच:** गर्भ रहेको थाहा पाउने बित्तिकै सकेसम्म छिटो पहिलो पटक स्वास्थ्य संस्था जानुपर्छ।"
+          ]
+        },
+        {
+          "title": "३. नियमित जाँचका फाइदाहरू",
+          "points": [
+            "**सुरक्षित सुत्केरी:** तालिम प्राप्त स्वास्थ्यकर्मीको निगरानीमा सुरक्षित सुत्केरी गराउने योजना बनाउन मद्दत गर्छ।",
+            "**राम्रो स्वास्थ्य:** आमा र बच्चा दुवै गर्भावस्थाभरि स्वस्थ र सुरक्षित रहन्छन्।",
+            "**परामर्श:** पोषण, खतराका चिन्हहरू र स्तनपानको बारेमा महत्त्वपूर्ण जानकारी पाइन्छ।"
+          ]
+        }
+      ]
+    }
+  },
+  "pnc": {
+    "en": {
+      "title": "Postnatal Care (PNC) Visits",
+      "description": "PNC visits are health checkups done after delivery. The first 42 days (6 weeks) after birth are a critical time for the health and survival of both the mother and the newborn.",
+      "key_points": [
+        "A minimum of 4 PNC visits are recommended after delivery.",
+        "It prevents severe complications like heavy bleeding and infections.",
+        "It provides support for successful breastfeeding and newborn care.",
+        "Regular visits ensure a faster and safer physical and emotional recovery."
+      ],
+      "sections": [
+        {
+          "title": "1. Why are PNC Visits Important?",
+          "points": [
+            "**Preventing Complications:** Most maternal and newborn deaths occur within the first few days after birth. PNC helps catch danger signs early.",
+            "**Monitoring Recovery:** Checks if the mother's body is healing properly and the uterus is contracting normally.",
+            "**Newborn Health:** Checks the baby's breathing, temperature, umbilical cord, and weight."
+          ]
+        },
+        {
+          "title": "2. When and How Many Times?",
+          "points": [
+            "**Total Visits:** At least 4 PNC visits are recommended.",
+            "**Schedule:** 1st visit (within 24 hours of birth), 2nd (on the 3rd day), 3rd (on the 7th day), 4th (at 28 days or 6 weeks).",
+            "**Immediate Care:** The first visit is the most critical and should happen before leaving the birthing center."
+          ]
+        },
+        {
+          "title": "3. Benefits of Regular Visits",
+          "points": [
+            "**Breastfeeding Support:** Health workers can help resolve breastfeeding issues like poor latch or cracked nipples.",
+            "**Mental Health Check:** Helps identify signs of postpartum depression and provides emotional support.",
+            "**Family Planning Advice:** You can receive counseling on when to start using contraception to properly space your next pregnancy."
+          ]
+        }
+      ]
+    },
+    "np": {
+      "title": "सुत्केरी जाँच (PNC Visits)",
+      "description": "सुत्केरी भइसकेपछि आमा र बच्चाको गरिने स्वास्थ्य जाँचलाई PNC भनिन्छ। बच्चा जन्मेपछिको ४२ दिन (६ हप्ता) आमा र बच्चा दुवैको ज्यान बचाउनका लागि अत्यन्तै संवेदनशील समय हो।",
+      "key_points": [
+        "सुत्केरी भइसकेपछि कम्तीमा ४ पटक स्वास्थ्य संस्थामा गएर जाँच गराउनुपर्छ।",
+        "यसले अत्यधिक रक्तस्राव र संक्रमण जस्ता गम्भीर खतराहरूबाट बचाउँछ।",
+        "स्तनपान गराउन र नवजात शिशुको सही स्याहार गर्न मद्दत पुग्छ।",
+        "नियमित जाँचले आमाको शारीरिक र मानसिक स्वास्थ्य छिटो सुधार हुन मद्दत गर्छ।"
+      ],
+      "sections": [
+        {
+          "title": "१. PNC जाँच किन महत्त्वपूर्ण छ?",
+          "points": [
+            "**खतराबाट बचाउन:** सुत्केरी र नवजात शिशुको मृत्यु धेरैजसो जन्मेको पहिलो केही दिनभित्रै हुने गर्छ। PNC ले खतराका चिन्हहरू समयमै पहिचान गर्न मद्दत गर्छ।",
+            "**स्वास्थ्य सुधारको निगरानी:** आमाको पाठेघर खुम्चिँदै गएको छ वा छैन र घाउ निको भइरहेको छ कि छैन भनेर जाँच गर्न।",
+            "**शिशुको स्वास्थ्य:** बच्चाको श्वासप्रश्वास, तापक्रम, नाइटोको घाउ, र तौल सामान्य छ वा छैन भनेर हेर्न।"
+          ]
+        },
+        {
+          "title": "२. कहिले र कति पटक जाँच गराउने?",
+          "points": [
+            "**जम्मा जाँच:** कम्तीमा ४ पटक सुत्केरी जाँच गराउनुपर्छ।",
+            "**जाँचको तालिका:** पहिलो जाँच (बच्चा जन्मेको २४ घण्टाभित्र), दोस्रो जाँच (तेस्रो दिनमा), तेस्रो जाँच (सातौँ दिनमा), चौथो जाँच (२८औँ दिन वा ६ हप्तामा)।",
+            "**तत्कालको जाँच:** सुत्केरी भएको पहिलो २४ घण्टा सबैभन्दा जोखिमपूर्ण हुने भएकाले स्वास्थ्य संस्थाबाट घर जानुअघि यो जाँच गराउनैपर्छ।"
+          ]
+        },
+        {
+          "title": "३. नियमित जाँचका फाइदाहरू",
+          "points": [
+            "**स्तनपानमा सहयोग:** बच्चाले दूध चुस्न नसकेमा वा आमाको स्तनमा घाउ भएमा स्वास्थ्यकर्मीबाट सही सल्लाह पाइन्छ।",
+            "**मानसिक स्वास्थ्यको ख्याल:** सुत्केरीपछिको डिप्रेसन (Postpartum Depression) पहिचान गर्न र भावनात्मक सहयोग प्रदान गर्न मद्दत गर्छ।",
+            "**परिवार नियोजनको सल्लाह:** अर्को बच्चा कहिले जन्माउने वा कुन साधन प्रयोग गर्ने भन्ने बारेमा सुरक्षित परामर्श पाइन्छ।"
           ]
         }
       ]

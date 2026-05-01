@@ -136,6 +136,35 @@
   },
   "learn_page": {
     "title": "Educational Resources",
+    "header": "Health Guidelines",
+    "search_placeholder": "Search...",
+    "hero_title_np": "Safe Motherhood",
+    "hero_subtitle": "Safe Motherhood",
+    "categories": {
+      "birth_prep": "Birth Preparedness",
+      "nutrition": "Nutrition Guide",
+      "family_planning": "Family Planning",
+      "newborn": "Newborn Care"
+    },
+    "recently_viewed": "Recently Viewed",
+    "view_all": "View All",
+    "videos": {
+      "v1_title": "Importance of Vitamin A",
+      "v1_meta": "3 min • Health Message",
+      "v2_title": "Vaccination Schedule",
+      "v2_meta": "5 MB • PDF",
+      "v3_title": "Breastfeeding Guide",
+      "v3_meta": "2 min • Video"
+    },
+    "all_guidelines": "All Guidelines",
+    "guidelines": {
+      "breastfeeding": "Breastfeeding Guide",
+      "vaccination": "Vaccination Schedule",
+      "anc_checkup": "ANC Visits",
+      "checkups": "Health Checkup",
+      "pnc_checkup": "PNC Visits",
+      "mental_health": "Mental Health"
+    },
     "maternal_health": {
       "title": "Maternal Health Guide",
       "subtitle": "Complete guide for safe pregnancy"
@@ -177,5 +206,17 @@
   "header": {
     "fchv": "FCHV",
     "community_connect": "Community Connect"
+  },
+  "nutrition_page": {
+    "title": "Nutrition Guide",
+    "subtitle": "WHO Verified Recommendations",
+    "tabs": {
+      "pregnant": "Pregnant Women",
+      "child": "Children (0-5)"
+    },
+    "dosage_label": "Recommended Dosage",
+    "tips_label": "Practical Tips",
+    "source": "Source: World Health Organization (WHO)",
+    "who_badge": "WHO Verified"
   }
 }

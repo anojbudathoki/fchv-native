@@ -136,6 +136,33 @@
   },
   "learn_page": {
     "title": "शैक्षिक स्रोतहरू",
+    "header": "स्वास्थ्य निर्देशिका",
+    "search_placeholder": "खोज्नुहोस्...",
+    "hero_title_np": "सुरक्षित मातृत्व",
+    "hero_subtitle": "सुरक्षित मातृत्व",
+    "categories": {
+      "birth_prep": "जन्म तयारी",
+      "nutrition": "पोषण मार्गदर्शन",
+      "family_planning": "परिवार नियोजन",
+      "newborn": "नवजात शिशु हेरचाह"
+    },
+    "recently_viewed": "भर्खरै हेरिएका",
+    "view_all": "सबै हेर्नुहोस्",
+    "videos": {
+      "v1_title": "भिटामिन ए को महत्व",
+      "v1_meta": "३ मिनेट • स्वास्थ्य सन्देश",
+      "v2_title": "खोप तालिका",
+      "v2_meta": "५ MB • PDF",
+      "v3_title": "स्तनपान गाइड",
+      "v3_meta": "२ मिनेट • भिडियो"
+    },
+    "all_guidelines": "सबै निर्देशिकाहरू",
+    "guidelines": {
+      "breastfeeding": "स्तनपान मार्गदर्शन",
+      "vaccination": "खोप तालिका",
+      "checkups": "ANC तथा PNC जाँच",
+      "mental_health": "मानसिक स्वास्थ्य"
+    },
     "maternal_health": {
       "title": "मातृ स्वास्थ्य मार्गदर्शन",
       "subtitle": "सुरक्षित गर्भावस्थाको पूर्ण गाइड"
@@ -177,5 +204,17 @@
   "header": {
     "fchv": "एफ.सी.एच.भी.",
     "community_connect": "सामुदायिक सम्बन्ध"
+  },
+  "nutrition_page": {
+    "title": "पोषण मार्गदर्शन",
+    "subtitle": "WHO प्रमाणित सिफारिसहरू",
+    "tabs": {
+      "pregnant": "गर्भवती महिला",
+      "child": "बालबालिका (०-५)"
+    },
+    "dosage_label": "सिफारिस गरिएको मात्रा",
+    "tips_label": "व्यावहारिक सुझावहरू",
+    "source": "स्रोत: विश्व स्वास्थ्य संगठन (WHO)",
+    "who_badge": "WHO प्रमाणित"
   }
 }

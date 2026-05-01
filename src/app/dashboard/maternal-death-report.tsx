@@ -11,7 +11,7 @@ import {
   Share
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
-import { ChevronLeft, Download, Filter, Search, Trash2 } from "lucide-react-native";
+import { Download, Filter, Search, Trash2 } from "lucide-react-native";
 import "../../global.css";
 import { getAllMaternalDeaths, deleteMaternalDeath } from "../../hooks/database/models/MaternalDeathModel";
 import { MaternalDeathStoreType } from "../../hooks/database/types/maternalDeathModal";
