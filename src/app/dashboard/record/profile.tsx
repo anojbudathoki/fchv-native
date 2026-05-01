@@ -14,15 +14,12 @@ import {
   User,
   Activity,
   Calendar,
-  CheckCircle2,
   Edit,
   Trash2,
   Baby,
   Pill,
   Heart,
   FileText,
-  Clock,
-  MapPin,
   Info
 } from "lucide-react-native";
 import "../../../global.css";
@@ -40,6 +37,23 @@ import { ChildDeathStoreType } from "../../../hooks/database/types/childDeathMod
 import Colors from "../../../constants/Colors";
 import CustomHeader from "../../../components/CustomHeader";
 import { useToast } from "../../../context/ToastContext";
+
+// Helper components moved outside to prevent re-renders on every parent state change
+const SectionTitle = ({ title, icon: Icon, color }: any) => (
+  <View className="flex-row items-center mb-4 mt-2 px-1">
+    <View className={`w-8 h-8 rounded-lg items-center justify-center mr-3 ${color}`}>
+      <Icon size={16} color="white" />
+    </View>
+    <Text className="text-slate-800 font-semibold text-base">{title}</Text>
+  </View>
+);
+
+const VisitBadge = ({ label, val }: any) => (
+  <View className={`px-3 py-2 rounded-xl flex-row items-center mr-2 mb-2 border ${val ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
+    <View className={`w-1.5 h-1.5 rounded-full ${val ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+    <Text className={`ml-2 text-[12px] ${val ? 'text-emerald-700 font-semibold' : 'text-slate-400 font-medium'}`}>{label}</Text>
+  </View>
+);
 
 export default function HmisRecordProfileScreen() {
   const router = useRouter();
@@ -137,22 +151,6 @@ export default function HmisRecordProfileScreen() {
     );
   }
 
-  const SectionTitle = ({ title, icon: Icon, color }: any) => (
-    <View className="flex-row items-center mb-4 mt-2 px-1">
-      <View className={`w-8 h-8 rounded-lg items-center justify-center mr-3 ${color}`}>
-        <Icon size={16} color="white" />
-      </View>
-      <Text className="text-slate-800 font-semibold text-base">{title}</Text>
-    </View>
-  );
-
-  const VisitBadge = ({ label, val }: any) => (
-    <View className={`px-3 py-2 rounded-xl flex-row items-center mr-2 mb-2 border ${val ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
-      <View className={`w-1.5 h-1.5 rounded-full ${val ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-      <Text className={`ml-2 text-[12px] ${val ? 'text-emerald-700 font-semibold' : 'text-slate-400 font-medium'}`}>{label}</Text>
-    </View>
-  );
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
@@ -177,39 +175,43 @@ export default function HmisRecordProfileScreen() {
         }
       />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Simplified Profile Header */}
-        <View className="px-5 pt-6 pb-4">
-          <View className="flex-row items-center">
-            <View className="w-16 h-16 rounded-2xl bg-blue-50 items-center justify-center border border-blue-100">
-              <User size={32} color={Colors.primary} />
-            </View>
-            <View className="ml-4 flex-1">
-              <View className="flex-row items-center mb-1">
-                <Text className="text-slate-500 font-medium text-xs uppercase tracking-wider">Serial No. {record.serial_no}</Text>
-              </View>
-              <Text className="text-slate-900 text-2xl font-semibold leading-tight">
-                {record.mother_name}
-              </Text>
-              <Text className="text-slate-500 font-medium text-sm mt-1">{record.mother_age} Years • Maternal Health</Text>
-            </View>
+      {/* Fixed Identity Section: This stays at the top while details scroll below */}
+      <View className="px-5 pt-6 pb-4 bg-white border-b border-slate-50">
+        <View className="flex-row items-center">
+          <View className="w-16 h-16 rounded-2xl bg-blue-50 items-center justify-center border border-blue-100">
+            <User size={32} color={Colors.primary} />
           </View>
-
-          {/* Clean Info Grid */}
-          <View className="flex-row mt-8 bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
-            <View className="flex-1 p-4 items-center border-r border-slate-100">
-              <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">LMP Date</Text>
-              <Text className="text-slate-700 font-semibold text-base">{record.lmp_day}/{record.lmp_month}/{record.lmp_year}</Text>
+          <View className="ml-4 flex-1">
+            <View className="flex-row items-center mb-1">
+              <Text className="text-slate-500 font-medium text-xs uppercase tracking-wider">Serial No. {record.serial_no}</Text>
             </View>
-            <View className="flex-1 p-4 items-center">
-              <Text className="text-primary text-[10px] font-bold uppercase tracking-widest mb-1.5">EDD Date</Text>
-              <Text className="text-slate-700 font-semibold text-base">{record.edd_day}/{record.edd_month}/{record.edd_year}</Text>
-            </View>
+            <Text className="text-slate-900 text-2xl font-semibold leading-tight">
+              {record.mother_name}
+            </Text>
+            <Text className="text-slate-500 font-medium text-sm mt-1">{record.mother_age} Years • Maternal Health</Text>
           </View>
         </View>
 
-        <View className="px-5 py-2 gap-y-6">
-          
+        {/* Clean Info Grid */}
+        <View className="flex-row mt-6 bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden">
+          <View className="flex-1 p-4 items-center border-r border-slate-100">
+            <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1.5">LMP Date</Text>
+            <Text className="text-slate-700 font-semibold text-base">{record.lmp_day}/{record.lmp_month}/{record.lmp_year}</Text>
+          </View>
+          <View className="flex-1 p-4 items-center">
+            <Text className="text-primary text-[10px] font-bold uppercase tracking-widest mb-1.5">EDD Date</Text>
+            <Text className="text-slate-700 font-semibold text-base">{record.edd_day}/{record.edd_month}/{record.edd_year}</Text>
+          </View>
+        </View>
+      </View>
+
+      <ScrollView 
+        className="flex-1" 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }} // Extra padding to ensure content isn't "stuck" behind BottomNavigation
+      >
+        <View className="px-5 py-6 gap-y-6">
+
           {/* Quick Stats Row */}
           <View className="flex-row gap-4">
             <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shadow-slate-200/50">
@@ -280,7 +282,7 @@ export default function HmisRecordProfileScreen() {
                 <Text className="text-slate-800 font-semibold">{record.newborn_condition || "Unrecorded"}</Text>
               </View>
             </View>
-            
+
             <View className="flex-row flex-wrap">
               <VisitBadge label="<24 hr" val={record.pnc_check_24hr} />
               <VisitBadge label="Day 3" val={record.pnc_check_3day} />
@@ -304,23 +306,23 @@ export default function HmisRecordProfileScreen() {
             <SectionTitle title="Mortality Reports" icon={Activity} color="bg-red-500" />
             <View className="gap-y-3">
               {[
-                { 
-                  title: "मातृ मृत्यु विवरण", 
+                {
+                  title: "मातृ मृत्यु विवरण",
                   subtitle: "(गर्भवती अवस्था, प्रसव अवस्था तथा सुत्केरी भएको ४२ दिन भित्र मृत्यु भएका महिलाको लागि मात्र)",
-                  key: 'maternal', 
-                  exists: !!existingDeathRecord 
+                  key: 'maternal',
+                  exists: !!existingDeathRecord
                 },
-                { 
-                  title: "नवजात शिशु मृत्यु विवरण", 
+                {
+                  title: "नवजात शिशु मृत्यु विवरण",
                   subtitle: "(जन्मेको २८ दिन भित्र मृत्यु भएका नवजात शिशुको लागि मात्र)",
-                  key: 'newborn', 
-                  exists: !!existingNewbornDeathRecord 
+                  key: 'newborn',
+                  exists: !!existingNewbornDeathRecord
                 },
-                { 
-                  title: "२८ दिन देखि ५९ महिना सम्मका बच्चाहरूको मृत्यु विवरण", 
+                {
+                  title: "२८ दिन देखि ५९ महिना सम्मका बच्चाहरूको मृत्यु विवरण",
                   subtitle: "(बालबालिका मृत्यु विवरण)",
-                  key: 'child', 
-                  exists: !!existingChildDeathRecord 
+                  key: 'child',
+                  exists: !!existingChildDeathRecord
                 },
               ].map((item, idx) => (
                 <TouchableOpacity
@@ -339,9 +341,8 @@ export default function HmisRecordProfileScreen() {
                       setChildDeathModalVisible(true);
                     }
                   }}
-                  className={`p-4 rounded-2xl border ${
-                    item.exists ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'
-                  }`}
+                  className={`p-4 rounded-2xl border ${item.exists ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'
+                    }`}
                 >
                   <View className="flex-row items-center justify-between">
                     <View className="flex-1 mr-3">
@@ -352,8 +353,8 @@ export default function HmisRecordProfileScreen() {
                     </View>
                     <View className={`px-3 py-1 rounded-lg ${item.exists ? 'bg-emerald-100' : 'bg-white border border-slate-200'}`}>
                       <Text className={`text-[10px] font-bold uppercase ${item.exists ? 'text-emerald-600' : 'text-slate-400'}`}>
-                        {['newborn', 'child'].includes(item.key) 
-                          ? (item.exists ? 'Add More +' : 'Report') 
+                        {['newborn', 'child'].includes(item.key)
+                          ? (item.exists ? 'Add More +' : 'Report')
                           : (item.exists ? 'Submitted' : 'Report')}
                       </Text>
                     </View>
@@ -400,10 +401,7 @@ export default function HmisRecordProfileScreen() {
             />
           </>
         )}
-
-        <View className="h-10" />
       </ScrollView>
     </SafeAreaView>
   );
 }
-
