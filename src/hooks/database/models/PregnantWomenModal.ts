@@ -13,12 +13,14 @@ export async function createPregnancy(
 
   await db.runAsync(
     `INSERT INTO pregnancy 
-      (id, mother_id, lmp_date, expected_delivery_date, is_current, gravida, parity, selected, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, mother_id, lmp_date, expected_delivery_date, caretakers_name, caretakers_phone, is_current, gravida, parity, selected, is_synced, is_deleted, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       mother_id = excluded.mother_id,
       lmp_date = excluded.lmp_date,
       expected_delivery_date = excluded.expected_delivery_date,
+      caretakers_name = excluded.caretakers_name,
+      caretakers_phone = excluded.caretakers_phone,
       is_current = excluded.is_current,
       gravida = excluded.gravida,
       parity = excluded.parity,
@@ -31,6 +33,8 @@ export async function createPregnancy(
       payload.mother_id,
       payload.lmp_date,
       payload.expected_delivery_date ?? null,
+      payload.caretakers_name ?? null,
+      payload.caretakers_phone ?? null,
       payload.is_current ? 1 : 0,
       payload.gravida ?? null,
       payload.parity ?? null,
@@ -47,6 +51,8 @@ export async function createPregnancy(
     mother_id: payload.mother_id,
     lmp_date: payload.lmp_date,
     expected_delivery_date: payload.expected_delivery_date ?? null,
+    caretakers_name: payload.caretakers_name ?? null,
+    caretakers_phone: payload.caretakers_phone ?? null,
     is_current: payload.is_current ? 1 : 0,
     gravida: payload.gravida ?? null,
     parity: payload.parity ?? null,
@@ -75,6 +81,16 @@ export async function unSyncedPregnancies(): Promise<CreatePregnancyPayload[]> {
     selected: row.selected === 1,
     is_synced: false
   }));
+}
+
+export async function getPregnancyByMotherId(motherId: string): Promise<PregnancyStoreType | null> {
+  const db = await getDb();
+  return await db.getFirstAsync<PregnancyStoreType>(
+    `SELECT * FROM pregnancy 
+     WHERE mother_id = ? AND is_deleted = 0 
+     ORDER BY created_at DESC LIMIT 1`,
+    [motherId]
+  );
 }
 
 export async function deletePregnancy(id: string): Promise<void> {
@@ -219,15 +235,14 @@ export async function getPregnantWomenList(): Promise<PregnantWomenListItem[]> {
     SELECT 
       p.id,
       p.mother_id,
-      m.name,
+      (m.first_name || ' ' || m.last_name) as name,
       m.husband_name,
-      m.age,
-      m.address as ward,
-      m.phone,
+      m.phone_number as phone,
       p.lmp_date,
       p.expected_delivery_date as edd,
       p.gravida,
-      p.parity
+      p.parity,
+      p.created_at
     FROM pregnancy p
     INNER JOIN mother m ON p.mother_id = m.id
     WHERE p.is_deleted = 0 AND p.is_current = 1 AND m.is_deleted = 0
@@ -246,8 +261,8 @@ export async function getPregnancyById(id: string): Promise<any> {
   const query = `
     SELECT 
       p.*,
-      m.name as mother_name,
-      m.phone as mother_phone
+      (m.first_name || ' ' || m.last_name) as mother_name,
+      m.phone_number as mother_phone
     FROM pregnancy p
     INNER JOIN mother m ON p.mother_id = m.id
     WHERE p.id = ? AND p.is_deleted = 0
@@ -289,6 +304,14 @@ export async function updatePregnancy(
     sets.push("selected = ?");
     values.push(payload.selected ? 1 : 0);
   }
+  if (payload.caretakers_name !== undefined) {
+    sets.push("caretakers_name = ?");
+    values.push(payload.caretakers_name);
+  }
+  if (payload.caretakers_phone !== undefined) {
+    sets.push("caretakers_phone = ?");
+    values.push(payload.caretakers_phone);
+  }
   if (payload.is_synced !== undefined) {
     sets.push("is_synced = ?");
     values.push(payload.is_synced ? 1 : 0);
@@ -297,5 +320,24 @@ export async function updatePregnancy(
   values.push(id);
   const sql = `UPDATE pregnancy SET ${sets.join(", ")} WHERE id = ?`;
   await db.runAsync(sql, values);
+}
+
+export async function getPregnancyTrend(): Promise<{ month: number; year: number; count: number }[]> {
+  const db = await getDb();
+  // Using substr for more robust date extraction since strftime can be picky about formats
+  const query = `
+    SELECT 
+      CAST(substr(COALESCE(created_at, lmp_date), 6, 2) AS INTEGER) - 1 as month,
+      CAST(substr(COALESCE(created_at, lmp_date), 1, 4) AS INTEGER) as year,
+      COUNT(*) as count
+    FROM pregnancy 
+    WHERE is_deleted = 0
+      AND COALESCE(created_at, lmp_date) IS NOT NULL
+      AND month >= 0 AND month <= 11
+      AND year > 2000
+    GROUP BY year, month
+  `;
+  const rows = await db.getAllAsync<any>(query);
+  return rows;
 }
 
