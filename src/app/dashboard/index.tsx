@@ -21,7 +21,7 @@ import {
   ClipboardList,
   CheckCircle,
 } from "lucide-react-native";
-
+import { useTranslation } from "react-i18next";
 import { useTodo } from "../../hooks/useTodo";
 import TopHeader from "@/components/layout/TopHeader";
 import { useOnlineStatus } from "../../hooks/useOnlineStatus";
@@ -64,6 +64,7 @@ const parseDate = (dateStr: string | undefined | null): Date | null => {
 };
 
 export default function DashboardScreen() {
+  const { t } = useTranslation();
   const { isConnected } = useOnlineStatus();
   const [motherCount, setMotherCount] = useState(0);
   const [pregnancyCount, setPregnancyCount] = useState(0);
@@ -75,11 +76,11 @@ export default function DashboardScreen() {
   const monthsNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const now = new Date();
   const initialTrend = Array.from({ length: 12 }, (_, i) => {
-    return { label: monthsNames[i], value: i > now.getMonth() ? null : 0 };
+    return { label: monthsNames[i], value: 0 };
   });
 
-  const [pregnancyTrend, setPregnancyTrend] = useState<{ label: string; value: number | null }[]>(initialTrend);
-  const [childTrend, setChildTrend] = useState<{ label: string; value: number | null }[]>(initialTrend);
+  const [pregnancyTrend, setPregnancyTrend] = useState<{ label: string; value: number }[]>(initialTrend);
+  const [childTrend, setChildTrend] = useState<{ label: string; value: number }[]>(initialTrend);
 
   const scrollRef = useRef<ScrollView>(null);
   const todoInputRef = useRef<TextInput>(null);
@@ -117,7 +118,7 @@ export default function DashboardScreen() {
           setChildDeathCount(cDeaths);
 
           const monthsNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-          const trend: { year: number; month: number; label: string; pregnant: number | null; child: number | null }[] = [];
+          const trend: { year: number; month: number; label: string; pregnant: number; child: number }[] = [];
 
           const now = new Date();
           const currentYear = now.getFullYear();
@@ -126,8 +127,8 @@ export default function DashboardScreen() {
               year: currentYear,
               month: i,
               label: monthsNames[i],
-              pregnant: i > now.getMonth() ? null : 0,
-              child: i > now.getMonth() ? null : 0,
+              pregnant: 0,
+              child: 0,
             });
           }
 
@@ -182,30 +183,31 @@ export default function DashboardScreen() {
           >
           {/* Greeting */}
           <View style={{ paddingHorizontal: 20, marginTop: 16, marginBottom: 20 }}>
-            <Text style={{ color: "#1E293B", fontSize: 22, fontWeight: "800" }}>Namaste, Laxmi</Text>
+            <Text style={{ color: "#1E293B", fontSize: 22, fontWeight: "600" }}>{t("dashboard.greeting_title")}</Text>
             <Text style={{ color: "#94A3B8", fontSize: 13, fontWeight: "500", marginTop: 4 }}>
-              Here is your health tracking trend
+              {t("dashboard.greeting_sub")}
             </Text>
           </View>
 
           {/* Stats Cards - 2 per row */}
           <View style={{ paddingHorizontal: 16, gap: 10 }}>
             <View style={{ flexDirection: "row", gap: 10 }}>
-              <StatCard icon={Users} iconColor="#E11D48" iconBg="#FFF1F2" value={motherCount} label="Mothers" delay={0} />
-              <StatCard icon={Smile} iconColor="#3B82F6" iconBg="#EFF6FF" value={pregnancyCount} label="Pregnant" delay={100} />
+              <StatCard path="/dashboard/record" icon={Users} iconColor="#E11D48" iconBg="#FFF1F2" value={motherCount} label={t("dashboard.stats_labels.mothers")} delay={0} />
+              <StatCard path="/dashboard/pregnancies" icon={Smile} iconColor="#3B82F6" iconBg="#EFF6FF" value={pregnancyCount} label={t("dashboard.stats_labels.pregnant")} delay={100} />
             </View>
             <View style={{ flexDirection: "row", gap: 10 }}>
-              <StatCard icon={Baby} iconColor="#10B981" iconBg="#ECFDF5" value={childCount} label="Children" delay={200} />
-              <StatCard icon={Heart} iconColor="#F43F5E" iconBg="#FFF1F2" value={maternalDeathCount} label="Mat. Death" delay={300} />
+              <StatCard path="/dashboard/report/child-monitoring-report" icon={Baby} iconColor="#10B981" iconBg="#ECFDF5" value={childCount} label={t("dashboard.stats_labels.children")} delay={200} />
+              <StatCard path="/dashboard/report/maternal-death-report" icon={Heart} iconColor="#F43F5E" iconBg="#FFF1F2" value={maternalDeathCount} label={t("dashboard.stats_labels.mat_death")} delay={300} />
             </View>
             <View style={{ flexDirection: "row", gap: 10 }}>
-              <StatCard icon={Baby} iconColor="#64748B" iconBg="#F1F5F9" value={childDeathCount} label="Child Death" delay={400} />
+              <StatCard path="/dashboard/report/newborn-death-report" icon={Baby} iconColor="#64748B" iconBg="#F1F5F9" value={childDeathCount} label={t("dashboard.stats_labels.child_death")} delay={400} />
               <StatCard
+                path="/dashboard/todos"
                 icon={ClipboardList}
                 iconColor="#8B5CF6"
                 iconBg="#F5F3FF"
                 value={todos.filter((t) => !t.is_completed).length}
-                label="Pending Tasks"
+                label={t("dashboard.stats_labels.pending_tasks")}
                 delay={500}
               />
             </View>
@@ -232,9 +234,9 @@ export default function DashboardScreen() {
             >
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20, paddingHorizontal: 20 }}>
                 <View>
-                  <Text style={{ color: "#1E293B", fontSize: 15, fontWeight: "800" }}>Pregnancy Trends</Text>
+                  <Text style={{ color: "#1E293B", fontSize: 15, fontWeight: "800" }}>{t("dashboard.charts.pregnancy_title")}</Text>
                   <Text style={{ color: "#94A3B8", fontSize: 10, fontWeight: "600", marginTop: 2, textTransform: "uppercase", letterSpacing: 1 }}>
-                    Monthly registrations
+                    {t("dashboard.charts.pregnancy_sub")}
                   </Text>
                 </View>
                 <View style={{ backgroundColor: "#EEF2FF", width: 36, height: 36, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
@@ -261,9 +263,9 @@ export default function DashboardScreen() {
             >
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20, paddingHorizontal: 20 }}>
                 <View>
-                  <Text style={{ color: "#1E293B", fontSize: 15, fontWeight: "800" }}>Child Birth Trends</Text>
+                  <Text style={{ color: "#1E293B", fontSize: 15, fontWeight: "800" }}>{t("dashboard.charts.child_title")}</Text>
                   <Text style={{ color: "#94A3B8", fontSize: 10, fontWeight: "600", marginTop: 2, textTransform: "uppercase", letterSpacing: 1 }}>
-                    Monthly births
+                    {t("dashboard.charts.child_sub")}
                   </Text>
                 </View>
                 <View style={{ backgroundColor: "#ECFDF5", width: 36, height: 36, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
@@ -294,7 +296,7 @@ export default function DashboardScreen() {
                 paddingHorizontal: 2,
               }}
             >
-              <Text style={{ color: "#1E293B", fontSize: 15, fontWeight: "800" }}>My Tasks</Text>
+              <Text style={{ color: "#1E293B", fontSize: 15, fontWeight: "800" }}>{t("dashboard.tasks.title")}</Text>
               <View
                 style={{
                   backgroundColor: "#ECFDF5",
@@ -314,7 +316,7 @@ export default function DashboardScreen() {
                     letterSpacing: 1,
                   }}
                 >
-                  {todos.filter((t) => !t.is_completed).length} Pending
+                  {todos.filter((t) => !t.is_completed).length} {t("dashboard.tasks.pending")}
                 </Text>
               </View>
             </View>
@@ -337,7 +339,7 @@ export default function DashboardScreen() {
                 <TextInput
                   ref={todoInputRef}
                   style={{ flex: 1, color: "#1E293B", fontWeight: "500", fontSize: 13 }}
-                  placeholder="Add a new task..."
+                  placeholder={t("dashboard.tasks.add_placeholder")}
                   placeholderTextColor="#CBD5E1"
                   value={newTodo}
                   onChangeText={setNewTodo}
@@ -362,7 +364,7 @@ export default function DashboardScreen() {
                   borderRadius: 12,
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "#3B82F6",
+                  backgroundColor: "#1E293B",
                 }}
               >
                 <Plus size={20} color="white" strokeWidth={2.5} />
@@ -396,7 +398,7 @@ export default function DashboardScreen() {
               >
                 <CheckCircle size={26} color="#E2E8F0" strokeWidth={1.5} />
                 <Text style={{ color: "#94A3B8", fontWeight: "500", fontSize: 12, marginTop: 8 }}>
-                  All caught up!
+                  {t("dashboard.tasks.all_caught_up")}
                 </Text>
               </View>
             )}

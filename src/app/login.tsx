@@ -57,7 +57,7 @@ export default function LoginScreen() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingTop: 15 }}
           bounces={false}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -74,10 +74,8 @@ export default function LoginScreen() {
                 resizeMode="contain"
               />
             </View>
-
-            {/* Title */}
             <Text
-              className="text-center font-semibold text-3xl leading-10 mb-2"
+              className="font-semibold text-center text-2xl leading-7 mb-2"
               style={{ color: "#0B2545" }}
             >
               {t("login.title")}

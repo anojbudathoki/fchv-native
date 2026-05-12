@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
-import { CheckCircle, Trash2 } from "lucide-react-native";
+import { Check, Trash2 } from "lucide-react-native";
 
 interface TodoItemProps {
   todo: {
@@ -42,43 +42,43 @@ const TodoItem = ({
 
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={0.7}
       onPress={handleTap}
       style={{
         backgroundColor: "white",
-        padding: 14,
-        borderRadius: 14,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        borderRadius: 12,
         marginBottom: 10,
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 1,
         borderColor: "#F1F5F9",
-        opacity: !!todo.is_completed ? 0.5 : 1,
-        elevation: !!todo.is_completed ? 0 : 1,
+        opacity: !!todo.is_completed ? 0.6 : 1,
       }}
     >
       <TouchableOpacity
         onPress={onToggle}
         style={{
-          width: 34,
-          height: 34,
-          borderRadius: 10,
+          width: 24,
+          height: 24,
+          borderRadius: 12,
           alignItems: "center",
           justifyContent: "center",
           marginRight: 12,
-          backgroundColor: !!todo.is_completed ? "#10B981" : "#F8FAFC",
-          borderWidth: !!todo.is_completed ? 0 : 1,
-          borderColor: "#E2E8F0",
+          backgroundColor: !!todo.is_completed ? "#10B981" : "transparent",
+          borderWidth: !!todo.is_completed ? 0 : 2,
+          borderColor: !!todo.is_completed ? "transparent" : "#CBD5E1",
         }}
       >
-        <CheckCircle size={16} color={!!todo.is_completed ? "white" : "#CBD5E1"} strokeWidth={2} />
+        {!!todo.is_completed && <Check size={14} color="white" strokeWidth={3} />}
       </TouchableOpacity>
 
       <View style={{ flex: 1 }}>
         {isEditing ? (
           <TextInput
             autoFocus
-            style={{ color: "#1E293B", fontSize: 14, fontWeight: "600", padding: 0 }}
+            style={{ color: "#0F172A", fontSize: 15, fontWeight: "500", padding: 0 }}
             value={text}
             onChangeText={setText}
             onBlur={() => {
@@ -94,8 +94,8 @@ const TodoItem = ({
           <Text
             style={{
               color: !!todo.is_completed ? "#94A3B8" : "#1E293B",
-              fontSize: 14,
-              fontWeight: "600",
+              fontSize: 15,
+              fontWeight: "500",
               textDecorationLine: !!todo.is_completed ? "line-through" : "none",
             }}
             numberOfLines={expanded ? undefined : 1}
@@ -108,13 +108,11 @@ const TodoItem = ({
       <TouchableOpacity
         onPress={onDelete}
         style={{
-          padding: 6,
+          padding: 8,
           marginLeft: 8,
-          backgroundColor: "#FFF1F2",
-          borderRadius: 16,
         }}
       >
-        <Trash2 size={13} color="#F43F5E" strokeWidth={2} />
+        <Trash2 size={18} color="#CBD5E1" strokeWidth={2} />
       </TouchableOpacity>
     </TouchableOpacity>
   );

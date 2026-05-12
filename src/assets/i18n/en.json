@@ -10,7 +10,7 @@
     "login_sub": "Enter your credentials",
     "forgot_password": "Forgot Password?",
     "help_text": "Need help? Contact local health post",
-    "title": "Female Community\nHealth Volunteer",
+    "title": "Female Community Health \n Volunteer",
     "terms_text": "By logging in, you agree to our",
     "terms_link": "Terms of Practice",
     "error_required": "User ID and Password are required.",
@@ -43,6 +43,28 @@
       "children_05": "Children (0-5)",
       "family_planning": "Family Planning",
       "follow_ups": "Follow-ups"
+    },
+    "greeting_title": "Namaste, Laxmi",
+    "greeting_sub": "Here is your health tracking trend",
+    "stats_labels": {
+      "mothers": "Mothers",
+      "pregnant": "Pregnant",
+      "children": "Children",
+      "mat_death": "Mat. Death",
+      "child_death": "Child Death",
+      "pending_tasks": "Pending Tasks"
+    },
+    "charts": {
+      "pregnancy_title": "Pregnancy Trends",
+      "pregnancy_sub": "Monthly registrations",
+      "child_title": "Child Birth Trends",
+      "child_sub": "Monthly births"
+    },
+    "tasks": {
+      "title": "My Tasks",
+      "pending": "Pending",
+      "add_placeholder": "Add a new task...",
+      "all_caught_up": "All caught up!"
     },
     "drawer": {
       "profile": "My Profile",

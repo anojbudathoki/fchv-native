@@ -19,7 +19,7 @@ const TopHeader = () => {
           />
         </View>
         <View>
-          <Text className="text-[#1E293B] text-[17px] font-black leading-none">
+          <Text className="text-[#1E293B] text-[17px] font-bold leading-none">
             {t('header.fchv')}
           </Text>
           <Text className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">

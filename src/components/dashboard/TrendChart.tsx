@@ -1,10 +1,10 @@
 import React from "react";
-import { View, Dimensions } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import LineChart from "react-native-chart-kit/dist/line-chart/LineChart";
 
 interface TrendData {
   label: string;
-  value: number | null;
+  value: number;
 }
 
 interface TrendChartProps {
@@ -14,84 +14,94 @@ interface TrendChartProps {
 }
 
 const TrendChart = ({ data, color, label }: TrendChartProps) => {
-  const screenWidth = Dimensions.get("window").width - 40; // taking full width of the card
+  const screenWidth = Dimensions.get("window").width - 40;
+  const currentMonthIndex = new Date().getMonth();
 
-  // Filter out future months that have null values
-  const validData = data.filter((d) => d.value !== null);
-  
-  // If no valid data, fallback to a single point to prevent crashes
-  const displayData = validData.length > 0 ? validData : [{ label: "Jan", value: 0 }];
+  const plottedValues = data
+    .slice(0, currentMonthIndex + 1)
+    .map((d) => d.value);
 
-  const validValues = displayData.map((d) => d.value as number);
-  const maxValue = validValues.length > 0 ? Math.max(...validValues) : 0;
-  
-  let chartSegments = 4;
-  if (maxValue === 0) {
-    chartSegments = 1;
-  } else if (maxValue < 4) {
-    chartSegments = maxValue;
+  const maxValue = Math.max(...plottedValues, 0);
+  const yMax = Math.max(10, maxValue);
+  const chartSegments = 5;
+
+  const datasets: any[] = [
+    {
+      data: plottedValues,
+      color: () => color,
+      strokeWidth: 3,
+    },
+    // Invisible dataset spanning full 12 months -> keeps all x-axis labels
+    {
+      data: data.map(() => 0),
+      color: () => "rgba(0,0,0,0)",
+      strokeWidth: 0,
+      withDots: false,
+    },
+  ];
+
+  if (maxValue < yMax) {
+    datasets.push({
+      data: [yMax],
+      color: () => "rgba(0,0,0,0)",
+      strokeWidth: 0,
+      withDots: false,
+    });
   }
 
-  // Prepare data for react-native-chart-kit
   const chartData = {
-    labels: displayData.map((d) => d.label),
-    datasets: [
-      {
-        data: validValues,
-        color: (opacity = 1) => color,
-        strokeWidth: 4, // Make line slightly thicker for nice appearance
-      },
-    ],
+    labels: data.map((d) => d.label), 
+    datasets,
   };
 
+ 
   const chartConfig = {
     backgroundColor: "#ffffff",
     backgroundGradientFrom: "#ffffff",
     backgroundGradientTo: "#ffffff",
     decimalPlaces: 0,
     color: (opacity = 1) => color,
-    labelColor: (opacity = 1) => `rgba(100, 116, 139, 1)`,
+    labelColor: () => "#64748B",
     propsForLabels: {
-      fontSize: 10,
-      fontWeight: "bold",
+      fontSize: 9,
+      fontWeight: "600" as const,
     },
     style: {
       borderRadius: 16,
     },
     propsForDots: {
-      r: "4",
+      r: "3.5",
       strokeWidth: "2",
       stroke: "#ffffff",
+      fill: color,
     },
     propsForBackgroundLines: {
       strokeDasharray: "4",
-      stroke: "#e2e8f0", // slightly darker so it's visible
+      stroke: "#e2e8f0",
+      strokeWidth: 1,
     },
     fillShadowGradient: color,
-    fillShadowGradientOpacity: 0.2,
+    fillShadowGradientOpacity: 0.15,
   };
 
   return (
-    <View style={{ alignItems: "center" }}>
+    <View>
       <LineChart
         data={chartData}
         width={screenWidth}
-        height={180}
+        height={200}
         chartConfig={chartConfig}
         bezier
-        style={{
-          marginVertical: 8,
-          paddingRight: 20, // Add a bit of padding to right so last label doesn't cut
-          marginLeft: -10, // Adjust left margin to ensure left numbers and line aren't cut off
-        }}
+        style={{ marginVertical: 4, borderRadius: 12 }}
         segments={chartSegments}
         withInnerLines={true}
-        withOuterLines={true} // Enabled to show the left vertical line
+        withOuterLines={true}
         withVerticalLines={false}
         withHorizontalLines={true}
         withDots={true}
         withShadow={true}
         fromZero={true}
+        yAxisInterval={1}
       />
     </View>
   );

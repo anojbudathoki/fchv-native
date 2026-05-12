@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from "react";
-import { View, Text, Animated } from "react-native";
-import { useFocusEffect } from "expo-router";
+import { View, Text, Animated, TouchableOpacity } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
 
 interface StatCardProps {
   icon: any;
@@ -9,14 +9,17 @@ interface StatCardProps {
   value: number | string;
   label: string;
   delay: number;
+  path: string;
 }
 
-const StatCard = ({ icon: Icon, iconColor, iconBg, value, label, delay }: StatCardProps) => {
+const StatCard = ({ icon: Icon, iconColor, iconBg, value, label, delay, path }: StatCardProps) => {
+  const router = useRouter();
   return (
-    <View
+    <TouchableOpacity
       style={{
         flex: 1,
       }}
+      onPress={() => router.push(path)}
     >
       <View
         style={{
@@ -55,7 +58,7 @@ const StatCard = ({ icon: Icon, iconColor, iconBg, value, label, delay }: StatCa
           {label}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
