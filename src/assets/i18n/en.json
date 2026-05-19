@@ -10,7 +10,7 @@
     "login_sub": "Enter your credentials",
     "forgot_password": "Forgot Password?",
     "help_text": "Need help? Contact local health post",
-    "title": "Female Community\nHealth Volunteer",
+    "title": "Female Community Health \n Volunteer",
     "terms_text": "By logging in, you agree to our",
     "terms_link": "Terms of Practice",
     "error_required": "User ID and Password are required.",
@@ -43,6 +43,54 @@
       "children_05": "Children (0-5)",
       "family_planning": "Family Planning",
       "follow_ups": "Follow-ups"
+    },
+    "greeting_title": "Namaste, Laxmi",
+    "greeting_sub": "Here is your health tracking trend",
+    "quick_actions": {
+      "register_mother": "Register Mother",
+      "register_child": "Register Child"
+    },
+    "sections": {
+      "community_pulse": "Community Pulse",
+      "recent_activity": "Recent Activity",
+      "tasks_today": "Tasks Today",
+      "view_all": "View All"
+    },
+    "stats_labels": {
+      "mothers": "Mothers",
+      "pregnant": "Pregnant",
+      "children": "Children",
+      "high_risk": "High Risk",
+      "mat_death": "Mat. Death",
+      "child_death": "Child Death",
+      "mother_deaths": "Mother Deaths",
+      "child_deaths": "Child Deaths",
+      "pending_tasks": "Pending Tasks"
+    },
+    "charts": {
+      "monthly_trend": "Monthly Trend",
+      "last_3_months": "Last 3 Months",
+      "pregnancy_title": "Pregnancy Trends",
+      "pregnancy_sub": "Monthly registrations",
+      "child_title": "Child Birth Trends",
+      "child_sub": "Monthly births"
+    },
+    "health_summary": {
+      "under_29_days": "Under 29 Days",
+      "29_to_59_months": "Up to 59 Months"
+    },
+    "activity": {
+      "new_mother": "New Mother",
+      "new_pregnancy": "New Pregnancy",
+      "child_added": "Child Added",
+      "today": "Today",
+      "no_activity": "No recent activity found."
+    },
+    "tasks": {
+      "title": "My Tasks",
+      "pending": "Pending",
+      "add_placeholder": "Add a new task...",
+      "all_caught_up": "All caught up!"
     },
     "drawer": {
       "profile": "My Profile",
@@ -98,7 +146,11 @@
       "lmp_label": "LMP",
       "lmp_sub": "Last Menstrual Period",
       "edd_label": "EDD",
-      "edd_sub": "Expected Due Date"
+      "edd_sub": "Expected Due Date",
+      "risk_label": "Risk Level",
+      "risk_high": "High",
+      "risk_moderate": "Moderate",
+      "risk_normal": "Normal"
     },
     "healthcare": {
       "title": "Healthcare Metrics",
@@ -378,6 +430,10 @@
   },
   "reports": {
     "title": "Reports",
+    "pregnancy": {
+      "title": "Pregnancy register report",
+      "subtitle": "Pregnancy register report"
+    },
     "service_recipients": {
       "title": "Total service recipients count",
       "subtitle": "Total service recipients count"
@@ -400,6 +456,27 @@
     },
     "instructions_title": "Recording instructions:",
     "instructions_content": "The reports available in this section are for recording your monthly performance and service delivery. You can select a report to view and print details.",
+    "subtitle": "Manage community health reports",
+    "tabs": {
+      "all": "All",
+      "child": "Children",
+      "mother": "Mothers",
+      "dead_mother": "Dead Mother",
+      "dead_child": "Dead Child",
+      "pregnancy": "Pregnancies"
+    },
+    "search_by_name_ward": "Search by name or ward...",
+    "status": {
+      "normal": "Normal",
+      "high_risk": "High Risk",
+      "moderate": "Moderate",
+      "pending": "Pending",
+      "deceased": "Deceased"
+    },
+    "no_results": "No results found",
+    "try_different": "Try a different search term",
+    "no_records_category": "No records in this category",
+    "loading_reports": "Loading reports...",
     "common": {
       "sn": "S.N.",
       "remarks": "Remarks",
@@ -738,5 +815,98 @@
       "select_one": "Please select at least one method",
       "enter_custom": "Please enter the custom method"
     }
+  },
+  "todo_tasks": {
+    "title": "Tasks",
+    "pending_tasks_today": "{{count}} pending tasks today",
+    "pending": "Pending",
+    "done": "Done",
+    "urgent": "Urgent",
+    "patient": "Patient: {{name}}",
+    "anytime": "Anytime",
+    "completed": "Completed",
+    "general": "General",
+    "no_tasks": "No tasks found",
+    "add_task": "Add New Task",
+    "task_title": "Task Title",
+    "task_title_ph": "e.g. Visit Sunita - Prenatal Check",
+    "description": "Description",
+    "description_ph": "Add details about this task...",
+    "date": "Date",
+    "select_date": "Select Date",
+    "time": "Time",
+    "select_time": "Select Time",
+    "patient_label": "Patient (Optional)",
+    "patient_ph": "e.g. Sunita",
+    "location": "Location",
+    "location_ph": "e.g. Hetauda",
+    "priority": "Priority",
+    "create_task": "Create Task",
+    "priority_levels": {
+      "NORMAL": "NORMAL",
+      "MEDIUM": "MEDIUM",
+      "URGENT": "URGENT"
+    }
+  },
+  "record_page": {
+    "title": "Maternal Record",
+    "subtitle": "FCHV Maternal Health",
+    "new_entry": "New Entry",
+    "loading": "Loading records...",
+    "search_placeholder": "Search by mother's name...",
+    "no_records": "No records found",
+    "age": "Age:",
+    "reg": "Reg:",
+    "lmp_date": "LMP Date",
+    "edd_date": "EDD Date",
+    "na": "N/A"
+  },
+  "bottom_nav": {
+    "home": "Home",
+    "report": "Report",
+    "tasks": "Tasks",
+    "guidelines": "Guidelines"
+  },
+  "profile_settings": {
+    "title": "My Profile",
+    "name": "Laxmi Shrestha",
+    "fchv_id": "FCHV ID",
+    "ward_region": "Ward 4, Kathmandu Region",
+    "preferences": "Preferences & Settings",
+    "language": "Language",
+    "language_sub": "Choose your preferred language",
+    "data_sync": "Data Sync",
+    "last_synced": "Last synced: Today, 10:30 AM",
+    "sync_now": "Sync Now",
+    "syncing": "Syncing...",
+    "db_inspector": "Database Inspector",
+    "db_inspector_sub": "View local SQLite storage",
+    "logout": "Log Out",
+    "logout_msg": "Unsynced data is safe locally.",
+    "footer": "FCHV Saathi v1.0.0 • Ministry of Health, Nepal",
+    "logout_alert_title": "Log Out",
+    "logout_alert_msg": "Are you sure you want to log out? Ensure all data is synced.",
+    "cancel": "Cancel",
+    "sync_success_title": "Sync Successful",
+    "sync_success_msg": "All offline data has been synced with the server.",
+    "export_data": "Export Record",
+    "export_data_sub": "Export local database records as JSON",
+    "export_success": "Data Exported",
+    "export_success_msg": "Your database records were exported successfully.",
+    "export_error_title": "Export Failed",
+    "export_error_msg": "Could not export local database records."
+  },
+  "child_page": {
+    "title": "Child Registration",
+    "subtitle": "Manage children's health records",
+    "add_new": "Add New",
+    "search_placeholder": "Search by name...",
+    "unnamed_baby": "Unnamed Baby",
+    "mother": "Mother",
+    "unknown": "Unknown",
+    "bs": "(B.S.)",
+    "no_records": "No Records Found",
+    "no_results_msg": "We couldn't find any children matching your search. Try a different name.",
+    "no_records_msg": "Start by registering a new child using the + button above."
   }
 }

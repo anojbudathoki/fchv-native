@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput } from "react-native";
-import { CheckCircle, Trash2 } from "lucide-react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, TouchableOpacity, TextInput, Animated } from "react-native";
+import { Check, Trash2 } from "lucide-react-native";
 
 interface TodoItemProps {
   todo: {
@@ -27,6 +27,15 @@ const TodoItem = ({
   const [lastTap, setLastTap] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
+  const checkAnim = useRef(new Animated.Value(todo.is_completed ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.spring(checkAnim, {
+      toValue: todo.is_completed ? 1 : 0,
+      useNativeDriver: false,
+    }).start();
+  }, [todo.is_completed]);
+
   const handleTap = () => {
     const now = Date.now();
     if (lastTap && now - lastTap < 300) {
@@ -40,45 +49,68 @@ const TodoItem = ({
     }
   };
 
+  const bgColor = checkAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["transparent", "#10B981"]
+  });
+
+  const borderColor = checkAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#CBD5E1", "transparent"]
+  });
+
+  const displayTaskTitle = (() => {
+    try {
+      const parsed = JSON.parse(todo.task);
+      if (parsed && parsed.title) return parsed.title;
+    } catch (e) {}
+    return todo.task;
+  })();
+
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={0.7}
       onPress={handleTap}
       style={{
         backgroundColor: "white",
-        padding: 14,
-        borderRadius: 14,
-        marginBottom: 10,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        borderRadius: 16,
+        marginBottom: 8,
         flexDirection: "row",
         alignItems: "center",
-        borderWidth: 1,
-        borderColor: "#F1F5F9",
-        opacity: !!todo.is_completed ? 0.5 : 1,
-        elevation: !!todo.is_completed ? 0 : 1,
+        opacity: !!todo.is_completed ? 0.6 : 1,
       }}
     >
       <TouchableOpacity
         onPress={onToggle}
-        style={{
-          width: 34,
-          height: 34,
-          borderRadius: 10,
-          alignItems: "center",
-          justifyContent: "center",
-          marginRight: 12,
-          backgroundColor: !!todo.is_completed ? "#10B981" : "#F8FAFC",
-          borderWidth: !!todo.is_completed ? 0 : 1,
-          borderColor: "#E2E8F0",
-        }}
+        activeOpacity={0.8}
+        style={{ marginRight: 14 }}
       >
-        <CheckCircle size={16} color={!!todo.is_completed ? "white" : "#CBD5E1"} strokeWidth={2} />
+        <Animated.View
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 8,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: bgColor,
+            borderWidth: 2,
+            borderColor: borderColor,
+            transform: [{ scale: checkAnim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [1, 1.2, 1] }) }]
+          }}
+        >
+          <Animated.View style={{ opacity: checkAnim, transform: [{ scale: checkAnim }] }}>
+            <Check size={14} color="white" strokeWidth={3} />
+          </Animated.View>
+        </Animated.View>
       </TouchableOpacity>
 
       <View style={{ flex: 1 }}>
         {isEditing ? (
           <TextInput
             autoFocus
-            style={{ color: "#1E293B", fontSize: 14, fontWeight: "600", padding: 0 }}
+            style={{ color: "#0F172A", fontSize: 15, fontWeight: "600", padding: 0 }}
             value={text}
             onChangeText={setText}
             onBlur={() => {
@@ -94,13 +126,13 @@ const TodoItem = ({
           <Text
             style={{
               color: !!todo.is_completed ? "#94A3B8" : "#1E293B",
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: "600",
               textDecorationLine: !!todo.is_completed ? "line-through" : "none",
             }}
             numberOfLines={expanded ? undefined : 1}
           >
-            {todo.task}
+            {displayTaskTitle}
           </Text>
         )}
       </View>
@@ -108,13 +140,11 @@ const TodoItem = ({
       <TouchableOpacity
         onPress={onDelete}
         style={{
-          padding: 6,
+          padding: 8,
           marginLeft: 8,
-          backgroundColor: "#FFF1F2",
-          borderRadius: 16,
         }}
       >
-        <Trash2 size={13} color="#F43F5E" strokeWidth={2} />
+        <Trash2 size={18} color="#E2E8F0" strokeWidth={2} />
       </TouchableOpacity>
     </TouchableOpacity>
   );

@@ -9,3 +9,5 @@ node_modules/
 # native prebuild folders
 android/
 ios/
+
+CODEBASE.md
