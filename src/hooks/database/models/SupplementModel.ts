@@ -7,6 +7,7 @@ export interface SupplementStoreType {
   iron_pregnancy: number;
   iron_post_delivery: number;
   vitamin_a_post_delivery: number;
+  calcium: number;
   is_synced: number;
   is_deleted: number;
   created_at: string;
@@ -27,6 +28,7 @@ export async function saveSupplement(payload: {
   iron_pregnancy?: number;
   iron_post_delivery?: number;
   vitamin_a_post_delivery?: number;
+  calcium?: number;
 }): Promise<SupplementStoreType> {
   const db = await getDb();
   const now = new Date().toISOString();
@@ -40,16 +42,18 @@ export async function saveSupplement(payload: {
     const newIronPreg = payload.iron_pregnancy !== undefined ? payload.iron_pregnancy : existing.iron_pregnancy;
     const newIronPost = payload.iron_post_delivery !== undefined ? payload.iron_post_delivery : existing.iron_post_delivery;
     const newVitA = payload.vitamin_a_post_delivery !== undefined ? payload.vitamin_a_post_delivery : existing.vitamin_a_post_delivery;
+    const newCalcium = payload.calcium !== undefined ? payload.calcium : existing.calcium;
 
     await db.runAsync(
       `UPDATE supplements SET 
         iron_pregnancy = ?,
         iron_post_delivery = ?,
         vitamin_a_post_delivery = ?,
+        calcium = ?,
         updated_at = ?,
         is_synced = 0
        WHERE id = ?`,
-      [newIronPreg, newIronPost, newVitA, now, existing.id]
+      [newIronPreg, newIronPost, newVitA, newCalcium, now, existing.id]
     );
 
     return {
@@ -57,6 +61,7 @@ export async function saveSupplement(payload: {
       iron_pregnancy: newIronPreg,
       iron_post_delivery: newIronPost,
       vitamin_a_post_delivery: newVitA,
+      calcium: newCalcium,
       updated_at: now,
       is_synced: 0
     };
@@ -64,15 +69,16 @@ export async function saveSupplement(payload: {
     // Insert
     await db.runAsync(
       `INSERT INTO supplements (
-        id, mother_id, iron_pregnancy, iron_post_delivery, vitamin_a_post_delivery, 
+        id, mother_id, iron_pregnancy, iron_post_delivery, vitamin_a_post_delivery, calcium,
         is_synced, is_deleted, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, 0, 0, ?, ?)`,
       [
         id, 
         payload.mother_id, 
         payload.iron_pregnancy || 0, 
         payload.iron_post_delivery || 0, 
         payload.vitamin_a_post_delivery || 0, 
+        payload.calcium || 0,
         now, 
         now
       ]
@@ -84,6 +90,7 @@ export async function saveSupplement(payload: {
       iron_pregnancy: payload.iron_pregnancy || 0,
       iron_post_delivery: payload.iron_post_delivery || 0,
       vitamin_a_post_delivery: payload.vitamin_a_post_delivery || 0,
+      calcium: payload.calcium || 0,
       is_synced: 0,
       is_deleted: 0,
       created_at: now,

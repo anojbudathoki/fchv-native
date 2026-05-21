@@ -42,9 +42,9 @@ export default function ChangeLanguageScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <NavigationLayout 
-        onBackPress={() => router.push("/dashboard/profile")} 
-        title="Language Selector" 
+      <NavigationLayout
+        onBackPress={() => router.push("/dashboard/fchv-profile")}
+        title="Language Selector"
       />
       <ScrollView
         className="flex-1 px-5"

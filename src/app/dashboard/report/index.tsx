@@ -22,11 +22,7 @@ import {
 } from "lucide-react-native";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useLanguage } from "../../../context/LanguageContext";
-import Animated, {
-  FadeIn,
-  FadeInDown,
-} from "react-native-reanimated";
-import "../../../global.css";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import Colors from "../../../constants/Colors";
 
 // Database models
@@ -34,21 +30,15 @@ import {
   getAllMothersList,
   MotherListDbItem,
 } from "../../../hooks/database/models/MotherModel";
-import {
-  getAllInfantMonitorings,
-} from "../../../hooks/database/models/InfantMonitoringModel";
+import { getAllInfantMonitorings } from "../../../hooks/database/models/InfantMonitoringModel";
 import { InfantMonitoringStoreType } from "../../../hooks/database/types/infantMonitoringModal";
 import {
   getPregnantWomenList,
   PregnantWomenListItem,
 } from "../../../hooks/database/models/PregnantWomenModal";
-import {
-  getAllMaternalDeaths,
-} from "../../../hooks/database/models/MaternalDeathModel";
+import { getAllMaternalDeaths } from "../../../hooks/database/models/MaternalDeathModel";
 import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDeathModal";
-import {
-  getAllNewbornDeaths,
-} from "../../../hooks/database/models/NewbornDeathModel";
+import { getAllNewbornDeaths } from "../../../hooks/database/models/NewbornDeathModel";
 import { NewbornDeathStoreType } from "../../../hooks/database/types/newbornDeathModal";
 import TopHeader from "@/components/layout/TopHeader";
 import { getWardById } from "../../../utils/locationHelper";
@@ -96,10 +86,7 @@ function StatusBadge({
   status: UnifiedRecord["status"];
   label: string;
 }) {
-  const styles: Record<
-    string,
-    { bg: string; text: string; border: string }
-  > = {
+  const styles: Record<string, { bg: string; text: string; border: string }> = {
     normal: {
       bg: "bg-emerald-50",
       text: "text-emerald-700",
@@ -125,9 +112,7 @@ function StatusBadge({
   const s = styles[status] || styles.normal;
 
   return (
-    <View
-      className={`px-3 py-1 rounded-full ${s.bg} border ${s.border}`}
-    >
+    <View className={`px-3 py-1 rounded-full ${s.bg} border ${s.border}`}>
       <Text className={`text-[11px] font-bold ${s.text}`}>{label}</Text>
     </View>
   );
@@ -172,7 +157,11 @@ function RecordCard({
         );
       default:
         // mother
-        if (record.image && record.image !== "https://vectorified.com/images/no-profile-picture-icon-13.png") {
+        if (
+          record.image &&
+          record.image !==
+            "https://vectorified.com/images/no-profile-picture-icon-13.png"
+        ) {
           return (
             <Image
               source={{ uri: record.image }}
@@ -195,8 +184,18 @@ function RecordCard({
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return dateStr;
       const months = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
       ];
       return `${months[date.getMonth()]} ${String(date.getDate()).padStart(2, "0")}, ${date.getFullYear()}`;
     } catch {
@@ -206,7 +205,9 @@ function RecordCard({
 
   return (
     <AnimatedTouchableOpacity
-      entering={FadeInDown.delay(index * 60).duration(400).springify()}
+      entering={FadeInDown.delay(index * 60)
+        .duration(400)
+        .springify()}
       activeOpacity={0.7}
       onPress={onPress}
       className="bg-white rounded-2xl px-4 py-4 mb-3 flex-row items-center border border-slate-100"
@@ -225,13 +226,21 @@ function RecordCard({
           </Text>
           <StatusBadge status={record.status} label={record.statusLabel} />
         </View>
-        <Text className="text-[13px] text-slate-500 font-medium" numberOfLines={1}>
+        <Text
+          className="text-[13px] text-slate-500 font-medium"
+          numberOfLines={1}
+        >
           {record.ward ? `Ward No. ${getWardById(record.ward)}` : ""}
-          {record.subtitle ? (record.ward ? ` • ${record.subtitle}` : record.subtitle) : ""}
+          {record.subtitle
+            ? record.ward
+              ? ` • ${record.subtitle}`
+              : record.subtitle
+            : ""}
         </Text>
         {record.registrationDate ? (
           <Text className="text-[12px] text-slate-400 font-medium mt-0.5">
-            {language === "np" ? "दर्ता:" : "Reg:"} {formatDate(record.registrationDate)}
+            {language === "np" ? "दर्ता:" : "Reg:"}{" "}
+            {formatDate(record.registrationDate)}
           </Text>
         ) : null}
       </View>
@@ -276,24 +285,33 @@ export default function ReportScreen() {
   const [mothers, setMothers] = useState<MotherListDbItem[]>([]);
   const [children, setChildren] = useState<InfantMonitoringStoreType[]>([]);
   const [pregnancies, setPregnancies] = useState<PregnantWomenListItem[]>([]);
-  const [maternalDeaths, setMaternalDeaths] = useState<MaternalDeathStoreType[]>([]);
+  const [maternalDeaths, setMaternalDeaths] = useState<
+    MaternalDeathStoreType[]
+  >([]);
   const [childDeaths, setChildDeaths] = useState<NewbornDeathStoreType[]>([]);
 
   // Mother name lookup for child / death records
-  const [motherNameMap, setMotherNameMap] = useState<Record<string, string>>({});
+  const [motherNameMap, setMotherNameMap] = useState<Record<string, string>>(
+    {},
+  );
 
   // Fetch all data
   const fetchAllData = useCallback(async () => {
     try {
       setLoading(true);
-      const [motherList, childList, pregnancyList, maternalDeathList, childDeathList] =
-        await Promise.all([
-          getAllMothersList(),
-          getAllInfantMonitorings(),
-          getPregnantWomenList(),
-          getAllMaternalDeaths(),
-          getAllNewbornDeaths(),
-        ]);
+      const [
+        motherList,
+        childList,
+        pregnancyList,
+        maternalDeathList,
+        childDeathList,
+      ] = await Promise.all([
+        getAllMothersList(),
+        getAllInfantMonitorings(),
+        getPregnantWomenList(),
+        getAllMaternalDeaths(),
+        getAllNewbornDeaths(),
+      ]);
 
       setMothers(motherList);
       setChildren(childList);
@@ -317,7 +335,7 @@ export default function ReportScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchAllData();
-    }, [fetchAllData])
+    }, [fetchAllData]),
   );
 
   const getUnifiedRecords = useCallback((): UnifiedRecord[] => {
@@ -346,7 +364,8 @@ export default function ReportScreen() {
       children.forEach((c) => {
         records.push({
           id: c.id,
-          name: c.baby_name || (language === "np" ? "अज्ञात बालक" : "Unnamed Baby"),
+          name:
+            c.baby_name || (language === "np" ? "अज्ञात बालक" : "Unnamed Baby"),
           ward: "",
           registrationDate: c.created_at || "",
           status: "normal",
@@ -360,7 +379,10 @@ export default function ReportScreen() {
     // Pregnancies
     if (activeTab === "all" || activeTab === "pregnancy") {
       pregnancies.forEach((p) => {
-        const riskMap: Record<string, { status: UnifiedRecord["status"]; label: string }> = {
+        const riskMap: Record<
+          string,
+          { status: UnifiedRecord["status"]; label: string }
+        > = {
           high: {
             status: "high_risk",
             label: t("reports.status.high_risk"),
@@ -400,7 +422,9 @@ export default function ReportScreen() {
           status: "deceased",
           statusLabel: t("reports.status.deceased"),
           type: "dead_mother",
-          subtitle: md.mother_age ? `${t("pregnant_form.basic_info.age_label")}: ${md.mother_age}` : "",
+          subtitle: md.mother_age
+            ? `${t("pregnant_form.basic_info.age_label")}: ${md.mother_age}`
+            : "",
         });
       });
     }
@@ -410,7 +434,9 @@ export default function ReportScreen() {
       childDeaths.forEach((cd) => {
         records.push({
           id: cd.id || "",
-          name: cd.baby_name || (language === "np" ? "अज्ञात बालक" : "Unnamed Child"),
+          name:
+            cd.baby_name ||
+            (language === "np" ? "अज्ञात बालक" : "Unnamed Child"),
           ward: "",
           registrationDate: cd.created_at || "",
           status: "deceased",
@@ -422,7 +448,16 @@ export default function ReportScreen() {
     }
 
     return records;
-  }, [activeTab, mothers, children, pregnancies, maternalDeaths, childDeaths, motherNameMap, language]);
+  }, [
+    activeTab,
+    mothers,
+    children,
+    pregnancies,
+    maternalDeaths,
+    childDeaths,
+    motherNameMap,
+    language,
+  ]);
 
   const filteredRecords = useCallback(() => {
     const records = getUnifiedRecords();
@@ -433,7 +468,7 @@ export default function ReportScreen() {
       (r) =>
         r.name.toLowerCase().includes(q) ||
         r.ward.toLowerCase().includes(q) ||
-        (r.subtitle || "").toLowerCase().includes(q)
+        (r.subtitle || "").toLowerCase().includes(q),
     );
   }, [getUnifiedRecords, search]);
 
@@ -477,7 +512,13 @@ export default function ReportScreen() {
   const getTabCount = (key: TabKey): number => {
     switch (key) {
       case "all":
-        return mothers.length + children.length + pregnancies.length + maternalDeaths.length + childDeaths.length;
+        return (
+          mothers.length +
+          children.length +
+          pregnancies.length +
+          maternalDeaths.length +
+          childDeaths.length
+        );
       case "mother":
         return mothers.length;
       case "child":
@@ -513,9 +554,7 @@ export default function ReportScreen() {
         entering={FadeInDown.delay(100).duration(500)}
         className="px-5 mt-3 mb-2"
       >
-        <View
-          className="flex-row items-center bg-slate-50 px-4 h-[52px] rounded-2xl border border-slate-100"
-        >
+        <View className="flex-row items-center bg-slate-50 px-4 h-[52px] rounded-2xl border border-slate-100">
           <Search size={20} color="#94A3B8" />
           <TextInput
             className="flex-1 ml-3 text-[15px] text-slate-800 font-medium"
@@ -554,13 +593,14 @@ export default function ReportScreen() {
                   tabLayouts.current[tab.key] = layout;
                   if (tab.key === activeTab && tabScrollRef.current) {
                     const scrollX = Math.max(0, layout.x - 100);
-                    tabScrollRef.current.scrollTo({ x: scrollX, animated: true });
+                    tabScrollRef.current.scrollTo({
+                      x: scrollX,
+                      animated: true,
+                    });
                   }
                 }}
                 className={`px-4 py-2.5 rounded-full flex-row items-center ${
-                  isActive
-                    ? "bg-slate-900"
-                    : "bg-white border border-slate-200"
+                  isActive ? "bg-slate-900" : "bg-white border border-slate-200"
                 }`}
               >
                 <Text
@@ -594,7 +634,11 @@ export default function ReportScreen() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100, paddingTop: 4 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: 100,
+          paddingTop: 4,
+        }}
       >
         {loading ? (
           <View className="py-20 items-center justify-center">
@@ -612,9 +656,7 @@ export default function ReportScreen() {
               <User size={40} color="#CBD5E1" strokeWidth={1.5} />
             </View>
             <Text className="text-slate-400 font-bold text-base">
-              {search
-                ? t("reports.no_results")
-                : t("reports.common.no_data")}
+              {search ? t("reports.no_results") : t("reports.common.no_data")}
             </Text>
             <Text className="text-slate-300 text-sm mt-1">
               {search

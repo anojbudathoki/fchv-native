@@ -1,5 +1,4 @@
 import "react-native-gesture-handler";
-import React from "react";
 import "../global.css";
 import "../i18n/config"; // Import i18n config
 import { Slot } from "expo-router";
@@ -14,8 +13,8 @@ import { doSync } from "@/api/services/sync/sync";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 export default function RootLayout() {
-   // Mounts the network listener for data synchronization
-   const { isConnected } = useOnlineStatus();
+  // Mounts the network listener for data synchronization
+  const { isConnected } = useOnlineStatus();
 
   // useEffect(() => {
   //   if(isConnected){
@@ -25,7 +24,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     import("@/hooks/database/db").then(({ initDatabase }) => {
-      initDatabase().catch(err => console.error("DB Init Error:", err));
+      initDatabase().catch((err) => console.error("DB Init Error:", err));
     });
   }, []);
 

@@ -48,7 +48,8 @@
     "greeting_sub": "Here is your health tracking trend",
     "quick_actions": {
       "register_mother": "Register Mother",
-      "register_child": "Register Child"
+      "register_child": "Register Child",
+      "add_adolescent": "Adolescent Girls IFA"
     },
     "sections": {
       "community_pulse": "Community Pulse",
@@ -65,7 +66,8 @@
       "child_death": "Child Death",
       "mother_deaths": "Mother Deaths",
       "child_deaths": "Child Deaths",
-      "pending_tasks": "Pending Tasks"
+      "pending_tasks": "Pending Tasks",
+      "adolescents": "Iron-consuming adolescents"
     },
     "charts": {
       "monthly_trend": "Monthly Trend",
@@ -394,6 +396,7 @@
       "iron_preg": "Iron (Pregnancy)",
       "iron_pnc": "Iron (Post-delivery)",
       "vit_a": "Vitamin 'A' (Post-delivery)",
+      "calcium": "Calcium",
       "done": "Done",
       "pending": "Pending",
       "add_title": "Add Supplement",
@@ -889,12 +892,57 @@
     "cancel": "Cancel",
     "sync_success_title": "Sync Successful",
     "sync_success_msg": "All offline data has been synced with the server.",
-    "export_data": "Export Record",
-    "export_data_sub": "Export local database records as JSON",
-    "export_success": "Data Exported",
+    "export_data": "Export Reports as PDF",
+    "export_data_sub": "Download all or individual tables",
+    "exporting": "Downloading PDF report...",
+    "export_success": "Downloaded successfully",
     "export_success_msg": "Your database records were exported successfully.",
     "export_error_title": "Export Failed",
-    "export_error_msg": "Could not export local database records."
+    "export_error_msg": "Could not export database data.",
+    "download_reports": "Download Reports",
+    "download_all": "Download All Reports",
+    "report_pregnancy": "Pregnancy Records",
+    "report_maternal_death": "Maternal Death",
+    "report_newborn_death": "Newborn Death",
+    "report_child_death": "Child Death (28d–59m)",
+    "report_infant_care": "Infant Care",
+    "report_adolescent_ifa": "Iron-consuming adolescent"
+  },
+  "adolescent_page": {
+    "title": "Adolescent Girls IFA",
+    "subtitle": "Iron Folic Acid (IFA) distribution records",
+    "add_new": "Add New",
+    "search_placeholder": "Search by name...",
+    "age_group": "Age Group",
+    "years": "Years",
+    "phase1_done": "Phase 1: Completed",
+    "phase1_pending": "Phase 1: In Progress",
+    "phase2_done": "Phase 2: Completed",
+    "phase2_pending": "Phase 2: In Progress",
+    "no_records": "No Records Found",
+    "no_results_msg": "We couldn't find any adolescent girls matching your search.",
+    "no_records_msg": "Start by adding a new adolescent girl distribution record.",
+    "edit_title": "Edit Adolescent Record",
+    "new_title": "New Adolescent Record",
+    "errors": {
+      "name_required": "Adolescent name is required"
+    },
+    "form": {
+      "name": "Adolescent's Name",
+      "name_placeholder": "Enter Full Name",
+      "age_group": "Age Group (उमेर समूह)",
+      "years": "Years",
+      "phase1": "Phase 1 (Shrawan - Ashwin)",
+      "phase2": "Phase 2 (Magh - Chaitra)",
+      "weekly_check": "Weekly IFA Intake Check - Phase 1",
+      "weekly_check_phase2": "Weekly IFA Intake Check - Phase 2",
+      "select_all": "Select All",
+      "deselect_all": "Deselect All",
+      "phase1_total": "13 Weeks Intake Completed?",
+      "phase2_total": "26 Weeks Total Completed?",
+      "yes": "YES",
+      "no": "NO"
+    }
   },
   "child_page": {
     "title": "Child Registration",

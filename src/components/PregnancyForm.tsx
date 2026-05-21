@@ -173,7 +173,7 @@ export default function PregnancyForm({ id }: { id?: string, onSwitchToMother?: 
           placeholder={isLoading ? t("pregnancy_form.loading_mothers") : t("pregnancy_form.choose_mother")}
           selectedValue={selectedMotherId}
           disabled={Boolean(id && id !== "undefined" && id !== "")}
-          isSearchable={true}
+          isSearchable={false}
           options={motherOptions}
           onValueChange={(val) => { setSelectedMotherId(val); setErrors({ ...errors, motherId: "" }); }}
           error={errors.motherId}

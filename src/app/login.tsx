@@ -15,7 +15,6 @@ import { StatusBar } from "expo-status-bar";
 import { Lock, User, Eye, EyeOff } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useLanguage } from "../context/LanguageContext";
-import "../global.css";
 import { API_LIST } from "@/api/API_LIST";
 import { httpClient } from "@/api/client/httpClient";
 import storage from "@/utils/storage";
@@ -40,7 +39,9 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     // Validation
     if (!phone.trim() || !pin.trim()) {
-      setErrorMessage(t("login.error_required") || "Username and password are required.");
+      setErrorMessage(
+        t("login.error_required") || "Username and password are required.",
+      );
       return;
     }
 
@@ -50,7 +51,7 @@ export default function LoginScreen() {
     try {
       const response = await httpClient.post<LoginResponse>(
         API_LIST.token.post,
-        { username: phone.trim(), password: pin }
+        { username: phone.trim(), password: pin },
       );
 
       const { access, refresh } = response.data;
@@ -65,12 +66,19 @@ export default function LoginScreen() {
       if (error?.response) {
         const status = error.response.status;
         if (status === 401 || status === 400) {
-          setErrorMessage(t("login.error_invalid") || "Invalid username or password.");
+          setErrorMessage(
+            t("login.error_invalid") || "Invalid username or password.",
+          );
         } else {
           setErrorMessage(`Server error (${status}). Please try again later.`);
         }
-      } else if (error?.code === "ERR_NETWORK" || error?.message?.includes("Network")) {
-        setErrorMessage("Cannot reach the server. Check your internet connection.");
+      } else if (
+        error?.code === "ERR_NETWORK" ||
+        error?.message?.includes("Network")
+      ) {
+        setErrorMessage(
+          "Cannot reach the server. Check your internet connection.",
+        );
       } else {
         setErrorMessage("Something went wrong. Please try again.");
       }
@@ -97,9 +105,7 @@ export default function LoginScreen() {
           {/* Top Section: Logo & Title */}
           <View className="items-center pt-16 pb-10 px-8">
             {/* Logo Circle */}
-            <View
-              className=" items-center justify-center mb-6"
-            >
+            <View className=" items-center justify-center mb-6">
               <Image
                 source={require("../assets/fchv-logo.png")}
                 style={{ width: 80, height: 80 }}
@@ -112,19 +118,19 @@ export default function LoginScreen() {
             >
               {t("login.title")}
             </Text>
-
           </View>
 
           {/* Login Card */}
           <View className="mx-5 pt-7">
             {/* USER ID Field */}
             <View className="mb-5">
-              <Text className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "#0B2545" }}>
+              <Text
+                className="text-sm font-semibold uppercase tracking-widest mb-2"
+                style={{ color: "#0B2545" }}
+              >
                 {t("login.health_id_label")}
               </Text>
-              <View
-                className="flex-row items-center h-14 rounded-md border border-gray-300 px-4 bg-white"
-              >
+              <View className="flex-row items-center h-14 rounded-md border border-gray-300 px-4 bg-white">
                 <User size={20} color="#94A3B8" strokeWidth={2} />
                 <TextInput
                   className="flex-1 ml-3 text-base"
@@ -144,13 +150,14 @@ export default function LoginScreen() {
             {/* PASSWORD Field */}
             <View className="mb-6">
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-sm uppercase tracking-widest" style={{ color: "#0B2545" }}>
+                <Text
+                  className="text-sm uppercase tracking-widest"
+                  style={{ color: "#0B2545" }}
+                >
                   {t("login.password_label")}
                 </Text>
               </View>
-              <View
-                className="flex-row items-center h-14 rounded-md border border-gray-300 px-4 bg-white"
-              >
+              <View className="flex-row items-center h-14 rounded-md border border-gray-300 px-4 bg-white">
                 <Lock size={20} color="#94A3B8" strokeWidth={2} />
                 <TextInput
                   className="flex-1 ml-3 text-base"
@@ -164,7 +171,9 @@ export default function LoginScreen() {
                     setErrorMessage("");
                   }}
                 />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? (
                     <EyeOff size={20} color="#94A3B8" />
                   ) : (
@@ -198,14 +207,16 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-        {/* Footer moved outside ScrollView to stay at bottom */}
-        <View className="items-center w-full pt-10 px-10">
-          <Text className="text-center text-gray-400 text-sm leading-5">
-            {t("login.terms_text")}{" "}
-            <Text className="text-primary font-semibold">{t("login.terms_link")}</Text>.
-          </Text>
-        </View>
-
+          {/* Footer moved outside ScrollView to stay at bottom */}
+          <View className="items-center w-full pt-10 px-10">
+            <Text className="text-center text-gray-400 text-sm leading-5">
+              {t("login.terms_text")}{" "}
+              <Text className="text-primary font-semibold">
+                {t("login.terms_link")}
+              </Text>
+              .
+            </Text>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

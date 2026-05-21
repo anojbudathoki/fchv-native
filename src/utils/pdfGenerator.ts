@@ -6,6 +6,7 @@ import { getPregnantWomenList, PregnantWomenListItem } from '../hooks/database/m
 import { getAllMaternalDeaths } from '../hooks/database/models/MaternalDeathModel';
 import { getAllNewbornDeaths } from '../hooks/database/models/NewbornDeathModel';
 import { getAllInfantMonitorings } from '../hooks/database/models/InfantMonitoringModel';
+import { getAllAdolescentIfa } from '../hooks/database/models/AdolescentIfaModel';
 import { AdToBs } from 'react-native-nepali-picker';
 import storage from './storage';
 
@@ -332,69 +333,255 @@ const generateInfantCareTable = (data: any[]) => {
   return html;
 };
 
+const savePdfToDevice = async (htmlContent: string, fileName: string) => {
+  const { uri } = await Print.printToFileAsync({
+    html: htmlContent,
+    base64: false,
+  });
+
+  if (Platform.OS === 'android') {
+    try {
+      let directoryUri = await storage.get<string>('export_directory_uri');
+
+      if (!directoryUri) {
+        const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (!permissions.granted) return;
+
+        directoryUri = permissions.directoryUri;
+        await storage.set('export_directory_uri', directoryUri);
+      }
+
+      const base64 = await readAsStringAsync(uri, { encoding: EncodingType.Base64 });
+
+      try {
+        const newUri = await StorageAccessFramework.createFileAsync(directoryUri, fileName, 'application/pdf');
+        await writeAsStringAsync(newUri, base64, { encoding: EncodingType.Base64 });
+      } catch (e) {
+        // If file creation fails (e.g., folder deleted or permission revoked), clear cached URI
+        await storage.remove('export_directory_uri');
+        alert('Download folder not found or permission revoked. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred during download.');
+    }
+  } else {
+    await Share.shareAsync(uri, {
+      mimeType: 'application/pdf',
+      dialogTitle: `Export ${fileName}`,
+    });
+  }
+};
+
+const wrapHtml = (bodyHtml: string) => `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      ${getCss()}
+    </head>
+    <body>
+      ${bodyHtml}
+    </body>
+  </html>
+`;
+
 export const exportAllDataToPdf = async () => {
   try {
     const pregnancies = await getPregnantWomenList();
     const maternalDeaths = await getAllMaternalDeaths();
     const newbornDeaths = await getAllNewbornDeaths();
     const infants = await getAllInfantMonitorings();
+    const adolescents = await getAllAdolescentIfa();
 
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          ${getCss()}
-        </head>
-        <body>
-          ${generatePregnancyTable(pregnancies)}
-          ${generateMaternalDeathTable(maternalDeaths)}
-          ${generateNewbornDeathTable(newbornDeaths)}
-          ${generateChildDeathTable(newbornDeaths)}
-          ${generateInfantCareTable(infants)}
-        </body>
-      </html>
-    `;
+    const htmlContent = wrapHtml(`
+      ${generatePregnancyTable(pregnancies)}
+      ${generateMaternalDeathTable(maternalDeaths)}
+      ${generateNewbornDeathTable(newbornDeaths)}
+      ${generateChildDeathTable(newbornDeaths)}
+      ${generateInfantCareTable(infants)}
+      <div class="page-break"></div>
+      ${generateAdolescentIfaTable(adolescents)}
+    `);
 
-    const { uri } = await Print.printToFileAsync({
-      html: htmlContent,
-      base64: false
-    });
-
-    if (Platform.OS === 'android') {
-      try {
-        let directoryUri = await storage.get<string>('export_directory_uri');
-        
-        if (!directoryUri) {
-          const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
-          if (!permissions.granted) return;
-          
-          directoryUri = permissions.directoryUri;
-          await storage.set('export_directory_uri', directoryUri);
-        }
-
-        const base64 = await readAsStringAsync(uri, { encoding: EncodingType.Base64 });
-        
-        try {
-          const newUri = await StorageAccessFramework.createFileAsync(directoryUri, 'FCHV_Export_Data.pdf', 'application/pdf');
-          await writeAsStringAsync(newUri, base64, { encoding: EncodingType.Base64 });
-        } catch (e) {
-          // If file creation fails (e.g., folder deleted or permission revoked), clear cached URI
-          await storage.remove('export_directory_uri');
-          alert('Download folder not found or permission revoked. Please try again.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('An error occurred during download.');
-      }
-    } else {
-      await Share.shareAsync(uri, {
-        mimeType: 'application/pdf',
-        dialogTitle: 'Export FCHV Data PDF'
-      });
-    }
+    await savePdfToDevice(htmlContent, 'FCHV_Export_All.pdf');
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw error;
   }
 };
+
+export const exportPregnancyToPdf = async () => {
+  try {
+    const data = await getPregnantWomenList();
+    const htmlContent = wrapHtml(generatePregnancyTable(data));
+    await savePdfToDevice(htmlContent, 'FCHV_Pregnancy.pdf');
+  } catch (error) {
+    console.error('Error generating Pregnancy PDF:', error);
+    throw error;
+  }
+};
+
+export const exportMaternalDeathToPdf = async () => {
+  try {
+    const data = await getAllMaternalDeaths();
+    const htmlContent = wrapHtml(generateMaternalDeathTable(data));
+    await savePdfToDevice(htmlContent, 'FCHV_Maternal_Death.pdf');
+  } catch (error) {
+    console.error('Error generating Maternal Death PDF:', error);
+    throw error;
+  }
+};
+
+export const exportNewbornDeathToPdf = async () => {
+  try {
+    const data = await getAllNewbornDeaths();
+    const htmlContent = wrapHtml(generateNewbornDeathTable(data));
+    await savePdfToDevice(htmlContent, 'FCHV_Newborn_Death.pdf');
+  } catch (error) {
+    console.error('Error generating Newborn Death PDF:', error);
+    throw error;
+  }
+};
+
+export const exportChildDeathToPdf = async () => {
+  try {
+    const data = await getAllNewbornDeaths();
+    const htmlContent = wrapHtml(generateChildDeathTable(data));
+    await savePdfToDevice(htmlContent, 'FCHV_Child_Death.pdf');
+  } catch (error) {
+    console.error('Error generating Child Death PDF:', error);
+    throw error;
+  }
+};
+
+export const exportInfantCareToPdf = async () => {
+  try {
+    const data = await getAllInfantMonitorings();
+    const htmlContent = wrapHtml(generateInfantCareTable(data));
+    await savePdfToDevice(htmlContent, 'FCHV_Infant_Care.pdf');
+  } catch (error) {
+    console.error('Error generating Infant Care PDF:', error);
+    throw error;
+  }
+};
+
+const generateAdolescentIfaTable = (data: any[]) => {
+  let html = `
+    <div style="background-color: #A9D1EC; padding: 12px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 22px; color: #000; letter-spacing: 0.5px; border-radius: 4px;">
+      किशोरी लक्षित आइरन फोलिक एसिड वितरण अभिलेख
+    </div>
+    
+    <table style="width: 100%; border: none; margin-bottom: 15px; font-size: 11px; border-collapse: collapse;">
+      <tr style="border: none;">
+        <td style="width: 60%; text-align: left; border: none; padding: 5px;">महिला सामुदायिक स्वास्थ्य स्वयं सेविकाको नाम : ............................................</td>
+        <td style="width: 40%; text-align: left; border: none; padding: 5px;">प्रदेश : ............................................</td>
+      </tr>
+      <tr style="border: none;">
+        <td style="width: 60%; text-align: left; border: none; padding: 5px;">महा/उप/न.पा/गाउँपालिकाको नाम : ............................................</td>
+        <td style="width: 40%; text-align: left; border: none; padding: 5px;">वडा नं. : ...........</td>
+      </tr>
+      <tr style="border: none;">
+        <td style="width: 60%; text-align: left; border: none; padding: 5px;">साल : ............................</td>
+        <td style="width: 40%; text-align: left; border: none; padding: 5px;">वडा भित्र विद्यालय नजाने किशोरीहरुको संख्या: ...........</td>
+      </tr>
+    </table>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+      <thead>
+        <tr>
+          <th rowspan="3" style="width: 3%;">क्र.सं.</th>
+          <th rowspan="3" style="width: 15%;">किशोरीको नाम</th>
+          <th colspan="2" rowspan="2" style="width: 8%;">उमेर समूह<br>(वर्षमा)</th>
+          <th colspan="13">पहिलो चरण (साउन देखि असोज सम्म)</th>
+          <th rowspan="3" style="width: 4%;">१३ हप्ता<br>खाएको</th>
+          <th colspan="13">दोस्रो चरण (माघ देखि चैत्र सम्म)</th>
+          <th rowspan="3" style="width: 4%;">२६ हप्ता<br>खाएको</th>
+          <th rowspan="3" style="width: 10%;">कैफियत</th>
+        </tr>
+        <tr>
+          <th colspan="13">हप्ता</th>
+          <th colspan="13">हप्ता</th>
+        </tr>
+        <tr>
+          <th style="font-size: 8px; font-weight: normal; padding: 2px;">१०-१४</th>
+          <th style="font-size: 8px; font-weight: normal; padding: 2px;">१५-१९</th>
+          ${Array.from({ length: 13 }).map((_, i) => `<th style="padding: 2px; font-size: 8px;">${convertToNepaliNumber(i + 1)}</th>`).join('')}
+          ${Array.from({ length: 13 }).map((_, i) => `<th style="padding: 2px; font-size: 8px;">${convertToNepaliNumber(i + 1)}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  // Dynamically calculate totals
+  let total10_14 = 0;
+  let total15_19 = 0;
+  const totalP1Weeks = Array(13).fill(0);
+  let totalP1Completed = 0;
+  const totalP2Weeks = Array(13).fill(0);
+  let totalP2Completed = 0;
+
+  data.forEach((item, index) => {
+    const is10_14 = item.age_group === '10-14';
+    const is15_19 = item.age_group === '15-19';
+
+    if (is10_14) total10_14++;
+    if (is15_19) total15_19++;
+    if (item.phase1_completed === 1) totalP1Completed++;
+    if (item.phase2_completed === 1) totalP2Completed++;
+
+    // Calculate weekly sums
+    for (let w = 1; w <= 13; w++) {
+      if (item[`phase1_week_${w}`] === 1) totalP1Weeks[w - 1]++;
+      if (item[`phase2_week_${w}`] === 1) totalP2Weeks[w - 1]++;
+    }
+
+    html += `
+      <tr>
+        <td>${convertToNepaliNumber(index + 1)}</td>
+        <td style="text-align: left; padding-left: 5px;">${item.name || ''}</td>
+        <td>${is10_14 ? '✔️' : ''}</td>
+        <td>${is15_19 ? '✔️' : ''}</td>
+        ${Array.from({ length: 13 }).map((_, i) => `<td>${item[`phase1_week_${i + 1}`] === 1 ? '✔️' : ''}</td>`).join('')}
+        <td>${item.phase1_completed === 1 ? '✔️' : ''}</td>
+        ${Array.from({ length: 13 }).map((_, i) => `<td>${item[`phase2_week_${i + 1}`] === 1 ? '✔️' : ''}</td>`).join('')}
+        <td>${item.phase2_completed === 1 ? '✔️' : ''}</td>
+        <td style="text-align: left; padding-left: 5px; font-size: 8px;">${item.remarks || ''}</td>
+      </tr>
+    `;
+  });
+
+  // If empty, add placeholder rows
+  if (data.length === 0) {
+    html += getEmptyRows(33, 5);
+  }
+
+  // Add the "जम्मा" footer row
+  html += `
+    <tr style="background-color: #f2f2f2; font-weight: bold;">
+      <td colspan="2" style="text-align: center; font-weight: bold;">जम्मा</td>
+      <td>${total10_14 > 0 ? convertToNepaliNumber(total10_14) : '०'}</td>
+      <td>${total15_19 > 0 ? convertToNepaliNumber(total15_19) : '०'}</td>
+      ${totalP1Weeks.map(v => `<td>${v > 0 ? convertToNepaliNumber(v) : '०'}</td>`).join('')}
+      <td>${totalP1Completed > 0 ? convertToNepaliNumber(totalP1Completed) : '०'}</td>
+      ${totalP2Weeks.map(v => `<td>${v > 0 ? convertToNepaliNumber(v) : '०'}</td>`).join('')}
+      <td>${totalP2Completed > 0 ? convertToNepaliNumber(totalP2Completed) : '०'}</td>
+      <td></td>
+    </tr>
+  `;
+
+  html += `</tbody></table>`;
+  return html;
+};
+
+export const exportAdolescentIfaToPdf = async () => {
+  try {
+    const data = await getAllAdolescentIfa();
+    const htmlContent = wrapHtml(generateAdolescentIfaTable(data));
+    await savePdfToDevice(htmlContent, 'FCHV_Iron_Adolescent.pdf');
+  } catch (error) {
+    console.error('Error generating Adolescent IFA PDF:', error);
+    throw error;
+  }
+};
+

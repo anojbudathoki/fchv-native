@@ -29,7 +29,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import CustomHeader from "@/components/CustomHeader";
 import nutritionData from "@/assets/data/nutritionData.json";
 import AppSegmentedControl from "@/components/common/AppSegmentedControl";
-import "../../../global.css";
 
 type TabType = "pregnant" | "child";
 
@@ -59,7 +58,8 @@ function NutritionCard({
   language: "en" | "np";
 }) {
   const [expanded, setExpanded] = useState(false);
-  const IconComponent = (LucideIcons as any)[item.icon] || LucideIcons.HelpCircle;
+  const IconComponent =
+    (LucideIcons as any)[item.icon] || LucideIcons.HelpCircle;
   const content = item[language];
 
   return (
@@ -133,9 +133,7 @@ function NutritionCard({
             </View>
             {content.tips.map((tip, i) => (
               <View key={i} className="flex-row mb-1.5">
-                <Text className="text-[#92400E] font-bold text-xs mr-2">
-                  •
-                </Text>
+                <Text className="text-[#92400E] font-bold text-xs mr-2">•</Text>
                 <Text className="text-[#92400E] font-medium text-[13px] leading-[18px] flex-1">
                   {tip}
                 </Text>
@@ -154,7 +152,9 @@ export default function NutritionsScreen() {
   const router = useRouter();
 
   const items: NutritionItem[] =
-    activeTab === "pregnant" ? (nutritionData.pregnant as any) : (nutritionData.child as any);
+    activeTab === "pregnant"
+      ? (nutritionData.pregnant as any)
+      : (nutritionData.child as any);
 
   const handleBack = useCallback(() => {
     router.back();
@@ -164,7 +164,7 @@ export default function NutritionsScreen() {
     <SafeAreaView className="flex-1 bg-[#F8FAFC]">
       <StatusBar barStyle="dark-content" />
 
-      <CustomHeader 
+      <CustomHeader
         title={t("nutrition_page.title")}
         onBackPress={handleBack}
         className="pt-10 pb-3 px-5"
@@ -173,9 +173,14 @@ export default function NutritionsScreen() {
       <View className="px-5 mt-2 mb-4">
         <AppSegmentedControl
           segmentIndex={activeTab === "pregnant" ? 0 : 1}
-          setSegmentIndex={(index) => setActiveTab(index === 0 ? "pregnant" : "child")}
+          setSegmentIndex={(index) =>
+            setActiveTab(index === 0 ? "pregnant" : "child")
+          }
           values={["pregnant", "child"]}
-          label={[t("nutrition_page.tabs.pregnant"), t("nutrition_page.tabs.child")]}
+          label={[
+            t("nutrition_page.tabs.pregnant"),
+            t("nutrition_page.tabs.child"),
+          ]}
           size="large"
         />
       </View>

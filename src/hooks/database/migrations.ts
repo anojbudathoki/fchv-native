@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-export const SCHEMA_VERSION = 22;
+export const SCHEMA_VERSION = 24;
 
 type Migration = {
   version: number;
@@ -485,6 +485,65 @@ export const MIGRATIONS: Migration[] = [
         } catch (e) {
           console.log(`Migration 22 query failed or already applied: ${query}`, e);
         }
+      }
+    }
+  },
+  {
+    version: 23,
+    up: async (db) => {
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS adolescent_ifa (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            age_group TEXT NOT NULL,
+            phase1_week_1 INTEGER DEFAULT 0,
+            phase1_week_2 INTEGER DEFAULT 0,
+            phase1_week_3 INTEGER DEFAULT 0,
+            phase1_week_4 INTEGER DEFAULT 0,
+            phase1_week_5 INTEGER DEFAULT 0,
+            phase1_week_6 INTEGER DEFAULT 0,
+            phase1_week_7 INTEGER DEFAULT 0,
+            phase1_week_8 INTEGER DEFAULT 0,
+            phase1_week_9 INTEGER DEFAULT 0,
+            phase1_week_10 INTEGER DEFAULT 0,
+            phase1_week_11 INTEGER DEFAULT 0,
+            phase1_week_12 INTEGER DEFAULT 0,
+            phase1_week_13 INTEGER DEFAULT 0,
+            phase1_completed INTEGER DEFAULT 0,
+            phase2_week_1 INTEGER DEFAULT 0,
+            phase2_week_2 INTEGER DEFAULT 0,
+            phase2_week_3 INTEGER DEFAULT 0,
+            phase2_week_4 INTEGER DEFAULT 0,
+            phase2_week_5 INTEGER DEFAULT 0,
+            phase2_week_6 INTEGER DEFAULT 0,
+            phase2_week_7 INTEGER DEFAULT 0,
+            phase2_week_8 INTEGER DEFAULT 0,
+            phase2_week_9 INTEGER DEFAULT 0,
+            phase2_week_10 INTEGER DEFAULT 0,
+            phase2_week_11 INTEGER DEFAULT 0,
+            phase2_week_12 INTEGER DEFAULT 0,
+            phase2_week_13 INTEGER DEFAULT 0,
+            phase2_completed INTEGER DEFAULT 0,
+            remarks TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+          );
+        `);
+      } catch (e) {
+        console.log("Migration 23 (adolescent_ifa table) failed:", e);
+      }
+    }
+  },
+  {
+    version: 24,
+    up: async (db) => {
+      try {
+        await db.execAsync(`ALTER TABLE supplements ADD COLUMN calcium INTEGER DEFAULT 0;`);
+      } catch (e) {
+        console.log("Migration 24 (calcium column in supplements) already applied or failed:", e);
       }
     }
   }

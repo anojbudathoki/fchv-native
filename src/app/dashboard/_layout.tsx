@@ -1,6 +1,5 @@
 import { View } from "react-native";
 import { Drawer } from "expo-router/drawer";
-import "../../global.css";
 import CustomDrawer from "@/components/navigation/CustomDrawer";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 

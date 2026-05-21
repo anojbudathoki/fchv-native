@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
-import { Text } from 'react-native';
-import { saveSupplement } from '../../hooks/database/models/SupplementModel';
-import { useTranslation } from 'react-i18next';
-import ConfirmActionModal from '../common/ConfirmActionModal';
+import React, { useState } from "react";
+import { Text } from "react-native";
+import { saveSupplement } from "../../hooks/database/models/SupplementModel";
+import { useTranslation } from "react-i18next";
+import ConfirmActionModal from "../common/ConfirmActionModal";
 
 interface SupplementModalProps {
   visible: boolean;
   onClose: () => void;
   motherId: string;
-  supplementKey: 'iron_pregnancy' | 'iron_post_delivery' | 'vitamin_a_post_delivery';
+  supplementKey:
+    | "iron_pregnancy"
+    | "iron_post_delivery"
+    | "vitamin_a_post_delivery"
+    | "calcium";
   supplementName: string;
   onSuccess: () => void;
   showToast: (msg: string) => void;
@@ -23,7 +27,7 @@ export default function SupplementModal({
   supplementKey,
   supplementName,
   onSuccess,
-  showToast
+  showToast,
 }: SupplementModalProps) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -33,7 +37,7 @@ export default function SupplementModal({
     try {
       const payload = { mother_id: motherId } as any;
       payload[supplementKey] = 1;
-      
+
       await saveSupplement(payload);
       showToast(t("profile.alerts.save_success"));
       onSuccess();
@@ -53,7 +57,10 @@ export default function SupplementModal({
       title={t("profile.supplements.add_title")}
       description={
         <Text className="text-slate-600 text-base font-medium leading-relaxed text-center">
-          {t("profile.supplements.confirm_q", { name: supplementName, mother: motherName })}
+          {t("profile.supplements.confirm_q", {
+            name: supplementName,
+            mother: motherName,
+          })}
         </Text>
       }
       actionLabel={t("profile.supplements.give_btn")}

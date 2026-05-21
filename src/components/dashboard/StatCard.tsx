@@ -64,16 +64,16 @@ const StatCard = ({ icon: Icon, iconColor, iconBg = "transparent", bg = "white",
   return (
     <Animated.View style={{ flex: 1, opacity: animValue, transform: [{ translateY: animValue.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }] }}>
       <TouchableOpacity activeOpacity={0.8} onPress={() => router.push(path as any)}>
-        <View style={{ backgroundColor: bg, borderRadius: 20, padding: 16, borderWidth: bg === "white" ? 1 : 0, borderColor: "rgba(241, 245, 249, 0.8)" }}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <View style={{ backgroundColor: bg, borderRadius: 16, padding: 12, borderWidth: bg === "white" ? 1 : 0, borderColor: "rgba(241, 245, 249, 0.8)" }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             {Icon && (
-              <View style={{ backgroundColor: iconBg, width: iconBg === "transparent" ? undefined : 44, height: iconBg === "transparent" ? undefined : 44, borderRadius: 14, alignItems: "center", justifyContent: "center" }}>
-                <Icon size={22} color={iconColor} strokeWidth={2.5} />
+              <View style={{ backgroundColor: iconBg, width: iconBg === "transparent" ? undefined : 36, height: iconBg === "transparent" ? undefined : 36, borderRadius: 12, alignItems: "center", justifyContent: "center" }}>
+                <Icon size={20} color={iconColor} strokeWidth={2.5} />
               </View>
             )}
           </View>
-          <Text style={{ color: bg === "#FFE4E6" ? "#BE123C" : "#0F172A", fontSize: 32, fontWeight: "800", letterSpacing: -0.5 }}>{value}</Text>
-          <Text style={{ color: bg === "#FFE4E6" ? "#E11D48" : "#64748B", fontSize: 13, fontWeight: "500", marginTop: 4 }} numberOfLines={1}>{label}</Text>
+          <Text style={{ color: bg === "#FFE4E6" ? "#BE123C" : "#0F172A", fontSize: 26, fontWeight: "800", letterSpacing: -0.5 }}>{value}</Text>
+          <Text style={{ color: bg === "#FFE4E6" ? "#E11D48" : "#64748B", fontSize: 12, fontWeight: "500", marginTop: 2 }} numberOfLines={1}>{label}</Text>
         </View>
       </TouchableOpacity>
     </Animated.View>
