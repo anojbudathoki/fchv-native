@@ -8,7 +8,7 @@ import {
   User,
   Users,
 } from "lucide-react-native";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -54,6 +54,7 @@ interface UnifiedRecord {
   type: "mother" | "child" | "pregnancy" | "dead_mother" | "dead_child";
   image?: string;
   subtitle?: string;
+  reg_month?: string | null;
 }
 
 type TabKey =
@@ -158,7 +159,7 @@ function RecordCard({
         if (
           record.image &&
           record.image !==
-            "https://vectorified.com/images/no-profile-picture-icon-13.png"
+          "https://vectorified.com/images/no-profile-picture-icon-13.png"
         ) {
           return (
             <Image
@@ -278,6 +279,7 @@ export default function ReportScreen() {
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState<string>("all");
 
   // Raw data
   const [mothers, setMothers] = useState<MotherListDbItem[]>([]);
@@ -354,6 +356,7 @@ export default function ReportScreen() {
               : t("reports.status.pending"),
           type: "mother",
           image: m.image,
+          reg_month: m.reg_month || (m.createdAt ? m.createdAt.substring(0, 7) : null),
         });
       });
     }
@@ -370,6 +373,7 @@ export default function ReportScreen() {
           statusLabel: t("reports.status.normal"),
           type: "child",
           subtitle: `${t("reports.common.mother")}: ${c.mother_name || motherNameMap[c.mother_id || ""] || "-"}`,
+          reg_month: c.reg_month || (c.created_at ? c.created_at.substring(0, 7) : null),
         });
       });
     }
@@ -405,6 +409,7 @@ export default function ReportScreen() {
           statusLabel: risk.label,
           type: "pregnancy",
           subtitle: `G${p.gravida} P${p.parity}`,
+          reg_month: p.reg_month || (p.created_at ? p.created_at.substring(0, 7) : null),
         });
       });
     }
@@ -423,6 +428,7 @@ export default function ReportScreen() {
           subtitle: md.mother_age
             ? `${t("pregnant_form.basic_info.age_label")}: ${md.mother_age}`
             : "",
+          reg_month: md.reg_month || (md.created_at ? md.created_at.substring(0, 7) : null),
         });
       });
     }
@@ -441,6 +447,7 @@ export default function ReportScreen() {
           statusLabel: t("reports.status.deceased"),
           type: "dead_child",
           subtitle: `${t("reports.common.mother")}: ${cd.mother_name || "-"}`,
+          reg_month: cd.reg_month || (cd.created_at ? cd.created_at.substring(0, 7) : null),
         });
       });
     }
@@ -455,20 +462,35 @@ export default function ReportScreen() {
     childDeaths,
     motherNameMap,
     language,
+    t,
   ]);
 
+  const availableMonths = useMemo(() => {
+    const allRecords = getUnifiedRecords();
+    const months = new Set<string>();
+    allRecords.forEach((r: any) => {
+      if (r.reg_month) months.add(r.reg_month);
+    });
+    return Array.from(months).sort().reverse();
+  }, [getUnifiedRecords]);
+
   const filteredRecords = useCallback(() => {
-    const records = getUnifiedRecords();
+    let records = getUnifiedRecords();
+
+    if (selectedMonth !== "all") {
+      records = records.filter((r: any) => r.reg_month === selectedMonth);
+    }
+
     if (!search.trim()) return records;
 
     const q = search.toLowerCase();
     return records.filter(
       (r) =>
         r.name.toLowerCase().includes(q) ||
-        r.ward.toLowerCase().includes(q) ||
+        (r.ward || "").toLowerCase().includes(q) ||
         (r.subtitle || "").toLowerCase().includes(q),
     );
-  }, [getUnifiedRecords, search]);
+  }, [getUnifiedRecords, search, selectedMonth]);
 
   const records = filteredRecords();
 
@@ -564,6 +586,46 @@ export default function ReportScreen() {
         </View>
       </Animated.View>
 
+      <Animated.View entering={FadeInDown.delay(150).duration(500)}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingVertical: 4,
+            gap: 8,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => setSelectedMonth("all")}
+            className={`px-4 py-2 rounded-xl flex-row items-center ${selectedMonth === "all" ? "bg-blue-600" : "bg-slate-100"
+              }`}
+          >
+            <Text
+              className={`text-[12px] font-bold ${selectedMonth === "all" ? "text-white" : "text-slate-600"
+                }`}
+            >
+              {t("reports.all_months")}
+            </Text>
+          </TouchableOpacity>
+          {availableMonths.map((m) => (
+            <TouchableOpacity
+              key={m}
+              onPress={() => setSelectedMonth(m)}
+              className={`px-4 py-2 rounded-xl flex-row items-center ${selectedMonth === m ? "bg-blue-600" : "bg-slate-100"
+                }`}
+            >
+              <Text
+                className={`text-[12px] font-bold ${selectedMonth === m ? "text-white" : "text-slate-600"
+                  }`}
+              >
+                {m}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </Animated.View>
+
       <Animated.View entering={FadeInDown.delay(200).duration(500)}>
         <ScrollView
           ref={tabScrollRef}
@@ -597,27 +659,23 @@ export default function ReportScreen() {
                     });
                   }
                 }}
-                className={`px-4 py-2.5 rounded-full flex-row items-center ${
-                  isActive ? "bg-slate-900" : "bg-white border border-slate-200"
-                }`}
+                className={`px-4 py-2.5 rounded-full flex-row items-center ${isActive ? "bg-slate-900" : "bg-white border border-slate-200"
+                  }`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${
-                    isActive ? "text-white" : "text-slate-600"
-                  }`}
+                  className={`text-[13px] font-bold ${isActive ? "text-white" : "text-slate-600"
+                    }`}
                 >
                   {t(`reports.tabs.${tab.key}`)}
                 </Text>
                 {count > 0 && (
                   <View
-                    className={`ml-2 px-1.5 py-0.5 rounded-full min-w-[20px] items-center ${
-                      isActive ? "bg-white/20" : "bg-slate-100"
-                    }`}
+                    className={`ml-2 px-1.5 py-0.5 rounded-full min-w-[20px] items-center ${isActive ? "bg-white/20" : "bg-slate-100"
+                      }`}
                   >
                     <Text
-                      className={`text-[10px] font-black ${
-                        isActive ? "text-white" : "text-slate-500"
-                      }`}
+                      className={`text-[10px] font-black ${isActive ? "text-white" : "text-slate-500"
+                        }`}
                     >
                       {count}
                     </Text>

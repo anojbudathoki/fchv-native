@@ -1,3 +1,4 @@
+import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import { CreateMotherPayload, MotherStoreType } from "../types/motherModal";
 
@@ -11,8 +12,8 @@ export async function createMother(
     `INSERT INTO mother 
       (id, code, first_name, last_name, phone_number, date_of_birth, 
        address_province, address_district, address_municipality, address_ward,
-       is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       is_synced, is_deleted, reg_month, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       payload.id,
       payload.code ?? null,
@@ -26,6 +27,7 @@ export async function createMother(
       payload.address_ward ?? null,
       payload.is_synced ? 1 : 0,
       0,
+      getCurrentNepaliMonth(),
       now,
       now,
     ],
@@ -63,6 +65,7 @@ export async function createMother(
     partner_age: null,
     is_synced: payload.is_synced ? 1 : 0,
     is_deleted: 0,
+    reg_month: getCurrentNepaliMonth(),
     created_at: now,
     updated_at: now,
   };
@@ -217,6 +220,7 @@ export interface MotherListDbItem {
   age: number;
   birth_place?: string;
   baby_status?: string;
+  reg_month?: string;
   createdAt: string;
 }
 
@@ -276,7 +280,7 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
           eddDate.setDate(eddDate.getDate() + 280);
           eddCalculated = eddDate.toISOString().split("T")[0];
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     return {
@@ -391,6 +395,18 @@ export async function getMotherProfile(
 
   const firstName = row.first_name || "";
   const lastName = row.last_name || "";
+  const dob = row.date_of_birth || "";
+
+  let age = 0;
+  if (dob) {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+  }
 
   // Calculate EDD if missing but LMP is present
   const lmpRaw = row.lmp || "";
@@ -403,7 +419,7 @@ export async function getMotherProfile(
         eddDate.setDate(eddDate.getDate() + 280);
         eddCalculated = eddDate.toISOString().split("T")[0];
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return {
@@ -455,7 +471,7 @@ export async function getMotherProfile(
     createdAt: row.regDate || "",
     pregnancy_count: row.pregnancy_count || 0,
     date_of_birth: row.date_of_birth || "",
-    age: 0,
+    age: age,
     children: children || [],
   };
 }

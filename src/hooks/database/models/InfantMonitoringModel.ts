@@ -1,3 +1,4 @@
+import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import {
   CreateInfantMonitoringPayload,
@@ -13,8 +14,8 @@ export async function createInfantMonitoring(
   await db.runAsync(
     `INSERT INTO child_monitoring 
       (id, mother_id, baby_name, date_of_birth, birth_place, status, fchv_present, skilled_birth_attended,
-       baby_weight, umbilical_ointment, skin_to_skin, early_breastfeeding, asphyxiated_newborn, remarks, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       baby_weight, umbilical_ointment, skin_to_skin, early_breastfeeding, asphyxiated_newborn, remarks, is_synced, is_deleted, reg_month, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       mother_id = excluded.mother_id,
       baby_name = excluded.baby_name,
@@ -47,6 +48,7 @@ export async function createInfantMonitoring(
       payload.remarks ?? null,
       0, // is_synced
       0, // is_deleted
+      getCurrentNepaliMonth(),
       now,
       now,
     ],
@@ -56,6 +58,7 @@ export async function createInfantMonitoring(
     ...payload,
     is_synced: 0,
     is_deleted: 0,
+    reg_month: getCurrentNepaliMonth(),
     created_at: now,
     updated_at: now,
   };
@@ -82,6 +85,21 @@ export async function deleteInfantMonitoring(id: string): Promise<void> {
     `UPDATE child_monitoring SET is_deleted = 1, updated_at = ? WHERE id = ?`,
     [new Date().toISOString(), id],
   );
+}
+
+export async function getInfantMonitoringById(
+  id: string,
+): Promise<InfantMonitoringStoreType | null> {
+  const db = await getDb();
+  const result = await db.getFirstAsync<InfantMonitoringStoreType>(
+    `SELECT cm.*, 
+            (m.first_name || ' ' || m.last_name) as mother_name 
+     FROM child_monitoring cm
+     LEFT JOIN mother m ON cm.mother_id = m.id
+     WHERE cm.id = ? AND cm.is_deleted = 0`,
+    [id],
+  );
+  return result || null;
 }
 
 export async function getInfantMonitoringByMother(

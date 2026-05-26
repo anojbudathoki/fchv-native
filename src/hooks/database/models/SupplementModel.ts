@@ -1,4 +1,5 @@
 import * as Crypto from "expo-crypto";
+import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 
 export interface SupplementStoreType {
@@ -8,6 +9,7 @@ export interface SupplementStoreType {
   iron_post_delivery: number;
   vitamin_a_post_delivery: number;
   calcium: number;
+  reg_month?: string | null;
   is_synced: number;
   is_deleted: number;
   created_at: string;
@@ -82,8 +84,8 @@ export async function saveSupplement(payload: {
     await db.runAsync(
       `INSERT INTO supplements (
         id, mother_id, iron_pregnancy, iron_post_delivery, vitamin_a_post_delivery, calcium,
-        is_synced, is_deleted, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, 0, 0, ?, ?)`,
+        is_synced, is_deleted, reg_month, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, 0, 0, ?, ?, ?)`,
       [
         id,
         payload.mother_id,
@@ -91,6 +93,7 @@ export async function saveSupplement(payload: {
         payload.iron_post_delivery || 0,
         payload.vitamin_a_post_delivery || 0,
         payload.calcium || 0,
+        getCurrentNepaliMonth(),
         now,
         now,
       ],
@@ -105,6 +108,7 @@ export async function saveSupplement(payload: {
       calcium: payload.calcium || 0,
       is_synced: 0,
       is_deleted: 0,
+      reg_month: getCurrentNepaliMonth(),
       created_at: now,
       updated_at: now,
     };

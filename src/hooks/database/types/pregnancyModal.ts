@@ -14,6 +14,7 @@ export type PregnancyStoreType = {
   ended: number;
   delivered: number;
   risk_level: string;
+  reg_month: string | null;
   created_at: string;
   updated_at: string;
 };

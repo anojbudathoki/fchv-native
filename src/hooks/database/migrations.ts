@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-export const SCHEMA_VERSION = 26;
+export const SCHEMA_VERSION = 30;
 
 type Migration = {
   version: number;
@@ -564,6 +564,92 @@ export const MIGRATIONS: Migration[] = [
         await db.execAsync(`ALTER TABLE hmis_maternal_death ADD COLUMN child_condition TEXT;`);
       } catch (e) {
         console.log("Migration 26 (child_condition column in hmis_maternal_death) already applied or failed:", e);
+      }
+    }
+  },
+  {
+    version: 27,
+    up: async (db) => {
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS counseling_referral (
+            id TEXT PRIMARY KEY,
+            mother_id TEXT NOT NULL,
+            answers TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY(mother_id) REFERENCES mother(id)
+          );
+        `);
+      } catch (e) {
+        console.log("Migration 27 (counseling_referral table) failed:", e);
+      }
+    }
+  },
+  {
+    version: 28,
+    up: async (db) => {
+      const queries = [
+        "ALTER TABLE family_planning ADD COLUMN ocp_qty INTEGER DEFAULT 0;",
+        "ALTER TABLE family_planning ADD COLUMN ecp_qty INTEGER DEFAULT 0;",
+        "ALTER TABLE family_planning ADD COLUMN condom_qty INTEGER DEFAULT 0;"
+      ];
+      for (const query of queries) {
+        try {
+          await db.execAsync(query);
+        } catch (e) {
+          console.log(`Migration 28 query failed or already applied: ${query}`, e);
+        }
+      }
+    }
+  },
+  {
+    version: 29,
+    up: async (db) => {
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS child_counseling (
+            id TEXT PRIMARY KEY,
+            child_id TEXT NOT NULL,
+            answers TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY(child_id) REFERENCES child_monitoring(id)
+          );
+        `);
+      } catch (e) {
+        console.log("Migration 29 (child_counseling table) failed:", e);
+      }
+    }
+  },
+  {
+    version: 30,
+    up: async (db) => {
+      const tables = [
+        "mother",
+        "pregnancy",
+        "visit",
+        "todo",
+        "hmis_maternal_death",
+        "hmis_newborn_death",
+        "child_monitoring",
+        "supplements",
+        "family_planning",
+        "counseling",
+        "adolescent_ifa",
+        "counseling_referral",
+        "child_counseling"
+      ];
+      for (const table of tables) {
+        try {
+          await db.execAsync(`ALTER TABLE ${table} ADD COLUMN reg_month TEXT;`);
+        } catch (e) {
+          console.log(`Migration 30 query failed or already applied for ${table}:`, e);
+        }
       }
     }
   }

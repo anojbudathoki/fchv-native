@@ -16,6 +16,7 @@ export interface NewbornDeathStoreType {
   death_place_other?: string;
   gender?: 'Male' | 'Female';
   remarks: string;
+  reg_month?: string;
   is_synced: number;
   is_deleted: number;
   created_at: string;

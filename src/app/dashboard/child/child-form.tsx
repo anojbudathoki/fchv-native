@@ -1,45 +1,64 @@
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-  StatusBar,
-  Alert,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { useState, useEffect } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { Save, Calendar as CalendarIcon } from "lucide-react-native";
-import * as Crypto from "expo-crypto";
-import { CalendarPicker, AdToBs, BsToAd } from "react-native-nepali-picker";
+import CustomHeader from "@/components/CustomHeader";
+import { BoxInput } from "@/components/FormElements";
+import { ProfilePicker } from "@/components/ProfilePicker";
+import TextArea from "@/components/TextArea";
 import { useToast } from "@/context/ToastContext";
+import {
+  createInfantMonitoring,
+  getAllInfantMonitorings,
+} from "@/hooks/database/models/InfantMonitoringModel";
 import {
   getAllMothersList,
   MotherListDbItem,
 } from "@/hooks/database/models/MotherModel";
 import {
-  createInfantMonitoring,
-  getAllInfantMonitorings,
-} from "@/hooks/database/models/InfantMonitoringModel";
-import { FieldLabel, BoxInput } from "@/components/FormElements";
-import { ProfilePicker } from "@/components/ProfilePicker";
-import CustomHeader from "@/components/CustomHeader";
-import {
-  NEWBORN_CARE_OPTIONS,
   BIRTH_PLACE_OPTIONS,
   CHILD_STATUS_OPTIONS,
+  NEWBORN_CARE_OPTIONS,
 } from "@/utils/data";
+import * as Crypto from "expo-crypto";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Calendar as CalendarIcon, Save } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import TextArea from "@/components/TextArea";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 
 export default function ChildRegistrationForm() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { showToast } = useToast();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isEn = i18n.language === "en";
+
+  const BABY_WEIGHT_OPTIONS = [
+    {
+      label_en: "Normal Weight",
+      label_np: "सामान्य तौल",
+      value: "normal",
+    },
+    {
+      label_en: "Low Weight",
+      label_np: "कम तौल",
+      value: "low",
+    },
+    {
+      label_en: "Very Low Weight",
+      label_np: "धेरै कम तौल",
+      value: "very_low",
+    },
+  ];
 
   const [mothers, setMothers] = useState<MotherListDbItem[]>([]);
   const [selectedMotherId, setSelectedMotherId] = useState("");
@@ -93,7 +112,7 @@ export default function ChildRegistrationForm() {
               setBirthDateAd(infant.date_of_birth);
               try {
                 setBirthDateBs(AdToBs(infant.date_of_birth));
-              } catch (e) {}
+              } catch (e) { }
             }
           }
         }
@@ -107,11 +126,11 @@ export default function ChildRegistrationForm() {
   const validate = () => {
     const e: Record<string, string> = {};
     if (!selectedMotherId)
-      e.motherId = t("mother_is_required", "Mother is required");
+      e.motherId = t("child_form.validation.mother_required", "Mother is required");
     if (!babyName.trim())
-      e.babyName = t("baby_name_is_required", "Baby name is required");
+      e.babyName = t("child_form.validation.baby_name_required", "Baby name is required");
     if (!birthDateAd)
-      e.birthDate = t("birth_date_is_required", "Birth date is required");
+      e.birthDate = t("child_form.validation.birth_date_required", "Birth date is required");
     return e;
   };
 
@@ -120,8 +139,8 @@ export default function ChildRegistrationForm() {
     if (Object.keys(vErrors).length > 0) {
       setErrors(vErrors);
       Alert.alert(
-        t("error", "Error"),
-        t("please_fill_all_required_fields", "Please fill all required fields"),
+        t("child_form.validation.error", "Error"),
+        t("child_form.validation.fill_fields", "Please fill all required fields"),
       );
       return;
     }
@@ -148,13 +167,13 @@ export default function ChildRegistrationForm() {
       };
 
       await createInfantMonitoring(payload);
-      showToast(t("record_saved_successfully", "Record saved successfully"));
+      showToast(t("child_form.messages.save_success", "Record saved successfully"));
       router.back();
     } catch (error) {
       console.error(error);
       Alert.alert(
-        t("error", "Error"),
-        t("failed_to_save_record", "Failed to save record."),
+        t("child_form.validation.error", "Error"),
+        t("child_form.messages.save_failed", "Failed to save record."),
       );
     } finally {
       setIsLoading(false);
@@ -193,8 +212,8 @@ export default function ChildRegistrationForm() {
       <CustomHeader
         title={
           id
-            ? t("edit_child_monitoring", "Edit Child Monitoring")
-            : t("new_child_monitoring", "New Child Monitoring")
+            ? t("child_form.edit_child", "Edit Child Monitoring")
+            : t("child_form.new_child", "New Child Monitoring")
         }
         onBackPress={() => router.back()}
       />
@@ -203,11 +222,11 @@ export default function ChildRegistrationForm() {
         style={{ flex: 1 }}
       >
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-          <View className="bg-white px-4 mb-20 py-5">
+          <View className="bg-white px-4 mb-16 py-5">
             {/* Mother Selection */}
             <ProfilePicker
-              label={t("select_mother", "आमा छनौट गर्नुहोस्")}
-              placeholder={t("select_mother_placeholder", "Select Mother")}
+              label={t("child_form.select_mother", "आमा छनौट गर्नुहोस्")}
+              placeholder={t("child_form.select_mother_placeholder", "Select Mother")}
               options={motherOptions}
               selectedValue={selectedMotherId}
               onValueChange={(val: string) => {
@@ -221,8 +240,8 @@ export default function ChildRegistrationForm() {
             {/* Baby Info */}
             <View className="">
               <BoxInput
-                label={t("baby_name", "शिशुको नाम")}
-                placeholder={t("baby_name_placeholder", "Baby Name")}
+                label={t("child_form.baby_name", "शिशुको नाम")}
+                placeholder={t("child_form.baby_name_placeholder", "Baby Name")}
                 value={babyName}
                 onChangeText={(text) => {
                   setBabyName(text);
@@ -233,22 +252,21 @@ export default function ChildRegistrationForm() {
 
               <View className="mb-4">
                 <Text className="text-slate-700 font-medium mb-1.5 ml-1">
-                  {t("date_of_birth_bs", "जन्म मिति (B.S.)")}
+                  {t("child_form.date_of_birth", "जन्म मिति (B.S.)")}
                 </Text>
                 <Pressable
                   onPress={() => setShowDatePicker(true)}
-                  className={`h-14 flex-row items-center rounded-xl px-4 border ${
-                    errors.birthDate
-                      ? "border-rose-400 bg-rose-50"
-                      : "border-slate-200 bg-white"
-                  } justify-between`}
+                  className={`h-14 flex-row items-center rounded-xl px-4 border ${errors.birthDate
+                    ? "border-rose-400 bg-rose-50"
+                    : "border-slate-200 bg-white"
+                    } justify-between`}
                 >
                   <View className="flex-row items-center">
                     <CalendarIcon size={18} color="#94a3b8" />
                     <Text
                       className={`text-base font-medium ml-3 ${birthDateBs ? "text-slate-800" : "text-slate-400"}`}
                     >
-                      {birthDateBs || t("select_date", "मिति छान्नुहोस्")}
+                      {birthDateBs || t("child_form.select_date", "मिति छान्नुहोस्")}
                     </Text>
                   </View>
                 </Pressable>
@@ -271,7 +289,7 @@ export default function ChildRegistrationForm() {
                       console.error("BS to AD conversion error:", e);
                     }
                   }}
-                  language="np"
+                  language={i18n.language === "en" ? "en" : "np"}
                   theme="light"
                   brandColor="#0056D2"
                   date={birthDateBs || undefined}
@@ -284,10 +302,10 @@ export default function ChildRegistrationForm() {
 
             {/* Birth Details */}
             <ProfilePicker
-              label={t("birth_place", "शिशु जन्म स्थान")}
-              placeholder={t("select_birth_place", "Select Birth Place")}
+              label={t("child_form.birth_place", "शिशु जन्म स्थान")}
+              placeholder={t("child_form.select_birth_place", "Select Birth Place")}
               options={BIRTH_PLACE_OPTIONS.map((opt) => ({
-                label: opt.np_label,
+                label: isEn ? opt.en_label : opt.np_label,
                 value: opt.value,
               }))}
               selectedValue={birthPlace}
@@ -313,7 +331,7 @@ export default function ChildRegistrationForm() {
                   className={`font-medium flex-1 ${skilledBirthAttended ? "text-emerald-800" : "text-slate-600"}`}
                 >
                   {t(
-                    "skilled_birth_attended",
+                    "child_form.skilled_birth_attended",
                     "दक्ष स्वास्थ्यकर्मीद्वारा प्रसूति गराएको",
                   )}
                 </Text>
@@ -335,7 +353,7 @@ export default function ChildRegistrationForm() {
                   className={`font-medium flex-1 ${fchvPresent ? "text-emerald-800" : "text-slate-600"}`}
                 >
                   {t(
-                    "fchv_present",
+                    "child_form.fchv_present",
                     "महिला स्वास्थ्य स्वयंसेविका उपस्थित भएको",
                   )}
                 </Text>
@@ -345,7 +363,7 @@ export default function ChildRegistrationForm() {
             {/* Child Status */}
             <View className="mt-6">
               <Text className="text-slate-700 font-medium mb-3 ml-1">
-                {t("child_status", "शिशुको अवस्था (Status)")}
+                {t("child_form.child_status", "शिशुको अवस्था (Status)")}
               </Text>
               <View className="flex-row gap-x-4">
                 {CHILD_STATUS_OPTIONS.map((opt) => (
@@ -365,7 +383,7 @@ export default function ChildRegistrationForm() {
                     <Text
                       className={`font-medium ${status === opt.value ? "text-primary-800" : "text-slate-600"}`}
                     >
-                      {opt.np_label}
+                      {isEn ? opt.en_label : opt.np_label}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -375,16 +393,12 @@ export default function ChildRegistrationForm() {
             {/* Health Indicators */}
             <View className="mt-6">
               <ProfilePicker
-                label={t("baby_weight", "शिशुको तौल")}
-                placeholder={t("select_weight", "Select Weight")}
-                options={[
-                  { label: t("normal_weight", "सामान्य तौल"), value: "normal" },
-                  { label: t("low_weight", "कम तौल"), value: "low" },
-                  {
-                    label: t("very_low_weight", "धेरै कम तौल"),
-                    value: "very_low",
-                  },
-                ]}
+                label={t("child_form.baby_weight", "शिशुको तौल")}
+                placeholder={t("child_form.select_weight", "Select Weight")}
+                options={BABY_WEIGHT_OPTIONS.map((opt) => ({
+                  label: isEn ? opt.label_en : opt.label_np,
+                  value: opt.value,
+                }))}
                 selectedValue={babyWeight}
                 onValueChange={(val: string) => setBabyWeight(val)}
               />
@@ -406,7 +420,7 @@ export default function ChildRegistrationForm() {
                 <Text
                   className={`font-medium flex-1 ${asphyxiatedNewborn ? "text-rose-800" : "text-slate-600"}`}
                 >
-                  {t("asphyxiated_newborn", "निसासिएको शिशु (Asphyxiated)")}
+                  {t("child_form.asphyxiated_newborn", "निसासिएको शिशु (Asphyxiated)")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -414,7 +428,7 @@ export default function ChildRegistrationForm() {
             {/* Newborn Care Options */}
             <View className="mt-6">
               <Text className="text-slate-700 font-medium mb-3 ml-1">
-                {t("newborn_care", "नवजात शिशु स्याहार")}
+                {t("child_form.newborn_care", "नवजात शिशु स्याहार")}
               </Text>
               <View className="gap-y-3">
                 {NEWBORN_CARE_OPTIONS.map((option) => {
@@ -436,7 +450,7 @@ export default function ChildRegistrationForm() {
                       <Text
                         className={`font-medium flex-1 ${isSelected ? "text-emerald-800" : "text-slate-600"}`}
                       >
-                        {option.np_label}
+                        {isEn ? option.en_label : option.np_label}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -447,8 +461,8 @@ export default function ChildRegistrationForm() {
             {/* Remarks & Save */}
             <View className="mt-6">
               <TextArea
-                label={t("remarks", "कैफियत (Remarks)")}
-                placeholder={t("remarks_placeholder", "Enter remarks here")}
+                label={t("child_profile.child_form.remarks")}
+                placeholder={t("child_profile.child_form.remarks_placeholder")}
                 value={remarks}
                 onChangeText={setRemarks}
                 numberOfLines={4}
@@ -456,13 +470,13 @@ export default function ChildRegistrationForm() {
               <TouchableOpacity
                 onPress={handleSave}
                 disabled={isLoading}
-                className={`h-14 mt-6  mb-5 items-center justify-center flex-row ${isLoading ? "bg-primary" : "bg-primary/80"}`}
+                className={`h-14 mt-6 mb-5 items-center justify-center rounded-xl flex-row ${isLoading ? "bg-primary" : "bg-primary/80"}`}
               >
                 <Save size={22} color="white" />
                 <Text className="text-white font-medium text-lg ml-2">
                   {isLoading
-                    ? t("saving", "Saving...")
-                    : t("save_record", "रेकर्ड सेभ गर्नुहोस्")}
+                    ? t("child_profile.child_form.saving")
+                    : t("child_profile.child_form.save_record")}
                 </Text>
               </TouchableOpacity>
             </View>

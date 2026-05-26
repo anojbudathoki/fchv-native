@@ -48,8 +48,8 @@ export default function ChildManagementScreen() {
     filterData(infants, search);
   }, [search, infants]);
 
-  const handleEdit = (id: string) => {
-    router.push({ pathname: "/dashboard/child/child-form", params: { id } });
+  const handleProfileClick = (id: string) => {
+    router.push({ pathname: "/dashboard/child/child-profile", params: { id } });
   };
 
   return (
@@ -96,7 +96,7 @@ export default function ChildManagementScreen() {
               <TouchableOpacity
                 key={item.id}
                 activeOpacity={0.7}
-                onPress={() => handleEdit(item.id)}
+                onPress={() => handleProfileClick(item.id)}
                 className="bg-white p-4 rounded-md flex-row items-center border border-gray-100 shadow-sm"
               >
                 {/* Avatar */}

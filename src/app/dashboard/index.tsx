@@ -393,7 +393,6 @@ export default function DashboardScreen() {
               }}
             >
               <TouchableOpacity
-                activeOpacity={0.8}
                 onPress={() => router.push("/dashboard/record")}
                 style={{
                   flex: 1,
@@ -429,7 +428,6 @@ export default function DashboardScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                activeOpacity={0.8}
                 onPress={() => router.push("/dashboard/child")}
                 style={{
                   flex: 1,
@@ -465,7 +463,6 @@ export default function DashboardScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                activeOpacity={0.8}
                 onPress={() => router.push("/dashboard/adolescent")}
                 style={{
                   flex: 1,
@@ -868,7 +865,6 @@ export default function DashboardScreen() {
                       return (
                         <TouchableOpacity
                           key={todo.id}
-                          activeOpacity={0.7}
                           onPress={() => toggleTodo(todo.id, todo.is_completed)}
                           style={{
                             flexDirection: "row",

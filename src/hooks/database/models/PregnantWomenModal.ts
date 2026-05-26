@@ -1,4 +1,5 @@
 import * as Crypto from "expo-crypto";
+import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import {
   CreatePregnancyPayload,
@@ -18,8 +19,8 @@ export async function createPregnancy(
 
   await db.runAsync(
     `INSERT INTO pregnancy 
-      (id, mother_id, lmp_date, expected_delivery_date, caretakers_name, caretakers_phone, is_current, gravida, parity, selected, ended, delivered, risk_level, is_synced, is_deleted, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, mother_id, lmp_date, expected_delivery_date, caretakers_name, caretakers_phone, is_current, gravida, parity, selected, ended, delivered, risk_level, is_synced, is_deleted, reg_month, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       mother_id = excluded.mother_id,
       lmp_date = excluded.lmp_date,
@@ -52,6 +53,7 @@ export async function createPregnancy(
       payload.risk_level || "normal",
       0,
       0,
+      getCurrentNepaliMonth(),
       now,
       now,
     ],
@@ -73,6 +75,7 @@ export async function createPregnancy(
     risk_level: payload.risk_level || "normal",
     is_synced: payload.is_synced ? 1 : 0,
     is_deleted: 0,
+    reg_month: getCurrentNepaliMonth(),
     created_at: now,
     updated_at: now,
   };
@@ -251,6 +254,7 @@ export interface PregnantWomenListItem {
   gravida: number;
   parity: number;
   risk_level: string;
+  reg_month?: string;
   created_at?: string;
 }
 
@@ -268,6 +272,7 @@ export async function getPregnantWomenList(): Promise<PregnantWomenListItem[]> {
       p.gravida,
       p.parity,
       p.risk_level,
+      p.reg_month,
       p.created_at
     FROM pregnancy p
     INNER JOIN mother m ON p.mother_id = m.id

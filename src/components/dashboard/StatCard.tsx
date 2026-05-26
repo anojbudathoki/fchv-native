@@ -30,7 +30,7 @@ const StatCard = ({ icon: Icon, iconColor, iconBg = "transparent", bg = "white",
   if (layout === "compact") {
     return (
       <Animated.View style={{ flex: 1, opacity: animValue, transform: [{ translateY: animValue.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }] }}>
-        <TouchableOpacity activeOpacity={0.8} onPress={() => router.push(path as any)}>
+        <TouchableOpacity onPress={() => router.push(path as any)}>
           <View style={{ backgroundColor: bg, borderRadius: 16, padding: 12, flexDirection: "row", alignItems: "center", gap: 10, borderWidth: bg === "white" ? 1 : 0, borderColor: "rgba(241, 245, 249, 1)" }}>
             <View style={{ backgroundColor: iconBg, padding: 6, borderRadius: 12, alignItems: "center", justifyContent: "center" }}>
               {Icon && <Icon size={18} color={iconColor} strokeWidth={2.5} />}

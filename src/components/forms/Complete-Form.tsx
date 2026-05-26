@@ -1,32 +1,35 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { 
-  View, Text, TouchableOpacity, Image, ActivityIndicator, Alert, 
-  SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, StatusBar, 
-  Pressable 
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { Camera, X, Save, ChevronRight, ChevronLeft, User, MapPin, Briefcase, HeartPulse, Calendar, Edit } from "lucide-react-native";
-import * as Crypto from "expo-crypto";
-import { useRouter } from "expo-router";
-import { CalendarPicker, AdToBs, BsToAd } from "react-native-nepali-picker";
-import { updateMother, getMotherProfile } from "../../hooks/database/models/MotherModel";
-import { updatePregnancy } from "../../hooks/database/models/PregnantWomenModal";
-import { useToast } from "../../context/ToastContext";
-import CameraCapture from "../CameraCapture";
-import { FieldLabel, BoxInput, SelectInput } from "../FormElements";
-import { Button } from "../button";
-import { ProfilePicker } from "../ProfilePicker";
-import { 
-  EDUCATION_LEVELS, 
-  JATI_CODES, 
-  BLOOD_GROUP_OPTIONS, 
-  MONTHLY_INCOME_OPTIONS, 
-  OCCUPATIONS 
+import {
+  BLOOD_GROUP_OPTIONS,
+  EDUCATION_LEVELS,
+  JATI_CODES,
+  MONTHLY_INCOME_OPTIONS,
+  OCCUPATIONS
 } from "@/utils/data";
+import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
+import { Briefcase, Calendar, Camera, ChevronLeft, ChevronRight, HeartPulse, MapPin, User } from "lucide-react-native";
+import { useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator, Alert,
+  Image,
+  KeyboardAvoidingView, Platform,
+  Pressable,
+  SafeAreaView, ScrollView,
+  StatusBar,
+  Text, TouchableOpacity,
+  View
+} from "react-native";
+import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import municipalitiesData from "../../assets/json/municipalities.json";
-import { Province } from "../../types/profile";
-import CustomHeader from "../CustomHeader";
 import { useLanguage } from "../../context/LanguageContext";
+import { useToast } from "../../context/ToastContext";
+import { getMotherProfile, updateMother } from "../../hooks/database/models/MotherModel";
+import { updatePregnancy } from "../../hooks/database/models/PregnantWomenModal";
+import { Province } from "../../types/profile";
+import CameraCapture from "../CameraCapture";
+import CustomHeader from "../CustomHeader";
+import { BoxInput, FieldLabel } from "../FormElements";
+import { ProfilePicker } from "../ProfilePicker";
 
 const provinces: Province[] = municipalitiesData as Province[];
 
@@ -45,7 +48,7 @@ export default function CompleteForm({ id }: { id?: string }) {
   const [phone, setPhone] = useState("");
   const [alias, setAlias] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  
+
   // Step 2: Address
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -107,13 +110,13 @@ export default function CompleteForm({ id }: { id?: string }) {
             setPhone(data.phone || "");
             setDobAd(data.dateOfBirth || "");
             if (data.dateOfBirth) {
-              try { setDobBs(AdToBs(data.dateOfBirth)); } catch (e) {}
+              try { setDobBs(AdToBs(data.dateOfBirth)); } catch (e) { }
             }
             setSelectedProvince(data.addressProvince || "");
             setSelectedDistrict(data.addressDistrict || "");
             setSelectedMunicipality(data.addressMunicipality || "");
             setSelectedWard(data.addressWard || "");
-            
+
             setPartnerName(data.partnerName || "");
             setPartnerMobile(data.partnerMobile || "");
             setPartnerAge(data.partnerAge || "");
@@ -124,19 +127,20 @@ export default function CompleteForm({ id }: { id?: string }) {
             setIncome(data.income || "");
             setOccupation(data.occupation || "");
             setBloodGroup(data.bloodGroup || "");
-            
+
             setEthnicity(data.ethnicity || "");
             setEducation(data.education || "");
-            
+
             if (data.gravida !== undefined && data.gravida !== null) setGravida(String(data.gravida));
             if (data.parity !== undefined && data.parity !== null) setParity(String(data.parity));
-            
+
             setLmpDate(data.lmp || "");
-            
+
             if (data.image && !data.image.includes("vectorified")) {
               setPhotoUrl(data.image);
             }
             setCodeState(data.code || null);
+            setPregnancyId(data.pregnancyId || null);
           }
         } catch (e) {
           console.error("error fetching mother profile", e);
@@ -225,8 +229,28 @@ export default function CompleteForm({ id }: { id?: string }) {
         is_synced: false,
       });
 
+      if (pregnancyId) {
+        let calculatedEdd: string | undefined = undefined;
+        if (lmpDate) {
+          try {
+            const lmpD = new Date(lmpDate);
+            if (!isNaN(lmpD.getTime())) {
+              const edd = new Date(lmpD);
+              edd.setDate(edd.getDate() + 280);
+              calculatedEdd = edd.toISOString().split("T")[0];
+            }
+          } catch (e) { }
+        }
+        await updatePregnancy(pregnancyId, {
+          lmp_date: lmpDate,
+          expected_delivery_date: calculatedEdd,
+          gravida: parseInt(gravida) || 0,
+          parity: parseInt(parity) || 0
+        });
+      }
+
       showToast("Mother details updated successfully");
-      router.replace("/dashboard/profile");
+      router.back();
     } catch (err) {
       console.error("Error saving form:", err);
       showToast(t("complete_form.messages.save_error"));
@@ -276,12 +300,11 @@ export default function CompleteForm({ id }: { id?: string }) {
     <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
       {[1, 2, 3, 4].map((step) => (
         <View key={step} className="flex-row items-center">
-          <View className={`w-8 h-8 rounded-full items-center justify-center ${
-            currentStep === step ? "bg-primary" : 
+          <View className={`w-8 h-8 rounded-full items-center justify-center ${currentStep === step ? "bg-primary" :
             currentStep > step ? "bg-green-500" : "bg-gray-200"
-          }`}>
+            }`}>
             {currentStep > step ? (
-               <Text className="text-white text-xs font-bold">✓</Text>
+              <Text className="text-white text-xs font-bold">✓</Text>
             ) : (
               <Text className={`text-xs font-bold ${currentStep === step ? "text-white" : "text-gray-500"}`}>
                 {step}
@@ -302,7 +325,7 @@ export default function CompleteForm({ id }: { id?: string }) {
             <Text className="text-xl font-bold text-slate-800 mb-6 flex-row items-center">
               <User size={20} color="#0056D2" />  {t("complete_form.steps.personal")}
             </Text>
-            
+
             <TouchableOpacity onPress={handlePhotoUpload} className="items-center mb-8">
               <View className="w-24 h-24 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 items-center justify-center overflow-hidden">
                 {photoUrl ? (
@@ -503,21 +526,21 @@ export default function CompleteForm({ id }: { id?: string }) {
             <View className="flex-row gap-4">
               <View className="flex-1">
                 <FieldLabel label={t("complete_form.fields.partner_mobile")} />
-                <BoxInput 
-                  placeholder="98*******" 
-                  value={partnerMobile} 
-                  onChangeText={setPartnerMobile} 
-                  keyboardType="phone-pad" 
-                  maxLength={10} 
+                <BoxInput
+                  placeholder="98*******"
+                  value={partnerMobile}
+                  onChangeText={setPartnerMobile}
+                  keyboardType="phone-pad"
+                  maxLength={10}
                 />
               </View>
               <View className="flex-1">
                 <FieldLabel label={t("complete_form.fields.partner_age")} />
-                <BoxInput 
-                  placeholder={t("complete_form.fields.years_placeholder")} 
-                  value={partnerAge} 
-                  onChangeText={setPartnerAge} 
-                  keyboardType="numeric" 
+                <BoxInput
+                  placeholder={t("complete_form.fields.years_placeholder")}
+                  value={partnerAge}
+                  onChangeText={setPartnerAge}
+                  keyboardType="numeric"
                 />
               </View>
             </View>
@@ -544,12 +567,12 @@ export default function CompleteForm({ id }: { id?: string }) {
             </View>
 
             <FieldLabel label={t("complete_form.fields.emergency_contact")} />
-            <BoxInput 
-              placeholder="98*******" 
-              value={emergencyContact} 
-              onChangeText={setEmergencyContact} 
-              keyboardType="phone-pad" 
-              maxLength={10} 
+            <BoxInput
+              placeholder="98*******"
+              value={emergencyContact}
+              onChangeText={setEmergencyContact}
+              keyboardType="phone-pad"
+              maxLength={10}
             />
           </View>
         );
@@ -561,11 +584,11 @@ export default function CompleteForm({ id }: { id?: string }) {
   return (
     <SafeAreaView className="flex-1 bg-white pt-8 pb-10">
       <StatusBar barStyle="dark-content" />
-      <CustomHeader title={id ? t("complete_form.title_edit") : t("complete_form.title_new")} onBackPress={() => router.replace("/dashboard/profile")} />
-      
+      <CustomHeader title={id ? t("complete_form.title_edit") : t("complete_form.title_new")} onBackPress={() => router.back()} />
+
       <StepIndicator />
 
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         className="flex-1"
       >
@@ -573,33 +596,33 @@ export default function CompleteForm({ id }: { id?: string }) {
           {renderStep()}
         </ScrollView>
 
-      <View className="p-6 pb-28 flex-row gap-4 bg-white items-center">
-        {currentStep > 1 && (
-          <TouchableOpacity 
-            onPress={handlePrev}
-            className="flex-1 h-14 rounded-md bg-slate-100 items-center justify-center flex-row"
-          >
-            <ChevronLeft size={20} color="#64748b" />
-          </TouchableOpacity>
-        )}
-        
-        {currentStep < totalSteps ? (
-          <TouchableOpacity 
-            onPress={handleNext}
-            className="flex-[2] h-14 rounded-md bg-primary/80 items-center justify-center flex-row"
-          >
-            <Text className="text-white font-bold text-base mr-2">{t("complete_form.buttons.continue")}</Text>
-            <ChevronRight size={20} color="#fff" />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={save}
-            className="flex-[2] h-14 rounded-md bg-primary/80 items-center justify-center flex-row"
-          >
-            {isLoading ? <ActivityIndicator color="white" size="small" /> : <Text className="text-white font-bold text-base">{id ? t("complete_form.buttons.finish_update") : t("complete_form.buttons.complete_reg")}</Text>}
-          </TouchableOpacity>
-        )}
-      </View>
+        <View className="p-6 pb-16 flex-row gap-4 bg-white items-center">
+          {currentStep > 1 && (
+            <TouchableOpacity
+              onPress={handlePrev}
+              className="flex-1 h-14 rounded-md bg-slate-100 items-center justify-center flex-row"
+            >
+              <ChevronLeft size={20} color="#64748b" />
+            </TouchableOpacity>
+          )}
+
+          {currentStep < totalSteps ? (
+            <TouchableOpacity
+              onPress={handleNext}
+              className="flex-[2] h-14 rounded-md bg-primary/80 items-center justify-center flex-row"
+            >
+              <Text className="text-white font-bold text-base mr-2">{t("complete_form.buttons.continue")}</Text>
+              <ChevronRight size={20} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={save}
+              className="flex-[2] h-14 rounded-md bg-primary/80 items-center justify-center flex-row"
+            >
+              {isLoading ? <ActivityIndicator color="white" size="small" /> : <Text className="text-white font-bold text-base">{id ? t("complete_form.buttons.finish_update") : t("complete_form.buttons.complete_reg")}</Text>}
+            </TouchableOpacity>
+          )}
+        </View>
       </KeyboardAvoidingView>
 
       <CameraCapture
@@ -615,7 +638,7 @@ export default function CompleteForm({ id }: { id?: string }) {
           setShowDobPicker(false);
           setDobBs(bsDate);
           setErrors({ ...errors, dob: "" });
-          try { setDobAd(BsToAd(bsDate)); } catch (e) {}
+          try { setDobAd(BsToAd(bsDate)); } catch (e) { }
         }}
         language={language === "np" ? "np" : "en"}
         theme="light"

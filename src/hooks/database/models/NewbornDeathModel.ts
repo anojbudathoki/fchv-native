@@ -1,7 +1,7 @@
+import * as Crypto from "expo-crypto";
+import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import { NewbornDeathStoreType } from "../types/newbornDeathModal";
-
-import * as Crypto from "expo-crypto";
 
 export async function createNewbornDeath(
   data: Partial<NewbornDeathStoreType>,
@@ -16,8 +16,8 @@ export async function createNewbornDeath(
       id, mother_id, mother_name, baby_name, birth_day, birth_month, birth_year,
       birth_condition, birth_condition_other,
       death_age_days, death_age_unit, cause_of_death, cause_of_death_other, death_place, death_place_other,
-      gender, remarks, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      gender, remarks, reg_month, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       id,
       data.mother_id!,
@@ -36,6 +36,7 @@ export async function createNewbornDeath(
       data.death_place_other || "",
       data.gender || "",
       data.remarks || "",
+      getCurrentNepaliMonth(),
       now,
       now,
     ],

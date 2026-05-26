@@ -1,4 +1,5 @@
 import * as Crypto from "expo-crypto";
+import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import {
   CreateMaternalDeathPayload,
@@ -16,8 +17,8 @@ export async function createMaternalDeath(
   await db.runAsync(
     `INSERT INTO hmis_maternal_death 
       (id, mother_id, serial_no, mother_name, mother_age, death_condition, death_condition_other,
-       death_day, death_month, death_year, death_place, death_place_other, child_condition, remarks, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       death_day, death_month, death_year, death_place, death_place_other, child_condition, remarks, reg_month, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       mother_id = excluded.mother_id,
       serial_no = excluded.serial_no,
@@ -48,6 +49,7 @@ export async function createMaternalDeath(
       payload.death_place_other ?? "",
       payload.child_condition ?? null,
       payload.remarks ?? null,
+      getCurrentNepaliMonth(),
       now,
       now,
     ],
@@ -55,6 +57,7 @@ export async function createMaternalDeath(
 
   return {
     ...payload,
+    reg_month: getCurrentNepaliMonth(),
     created_at: now,
     updated_at: now,
   };

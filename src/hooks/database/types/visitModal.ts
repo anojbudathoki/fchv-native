@@ -10,6 +10,7 @@ export type VisitStoreType = {
   visit_date: string;
   visit_type: VisitType;
   visit_notes: string | null;
+  reg_month: string | null;
   created_at: string;
   updated_at: string;
 };

@@ -15,6 +15,7 @@ export interface MaternalDeathStoreType {
   death_place_other?: string;
   child_condition?: string; // 'Alive', 'Dead'
   remarks?: string;
+  reg_month?: string;
   is_synced?: number;
   is_deleted?: number;
   created_at: string;

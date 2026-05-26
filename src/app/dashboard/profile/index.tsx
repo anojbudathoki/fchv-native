@@ -1,3 +1,4 @@
+import { useLanguage } from "@/context/LanguageContext";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   AlertTriangle,
@@ -9,7 +10,6 @@ import {
   User,
 } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
@@ -23,7 +23,7 @@ import {
 import CustomHeader from "../../../components/CustomHeader";
 import MaternalDeathModal from "../../../components/forms/MaternalDeathModal";
 import NewbornDeathModal from "../../../components/forms/NewbornDeathModal";
-import CounselingSection from "../../../components/profile/CounselingSection";
+import CounselingReferralSection from "../../../components/profile/CounselingReferralSection";
 import FamilyPlanningSection from "../../../components/profile/FamilyPlanningSection";
 import Colors from "../../../constants/Colors";
 import { useToast } from "../../../context/ToastContext";
@@ -69,7 +69,7 @@ const VisitBadge = ({ label, val }: any) => (
 );
 
 export default function HmisRecordProfileScreen() {
-  const { t } = useTranslation();
+  const { language, t } = useLanguage();
   const router = useRouter();
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>();
   const { showToast } = useToast();
@@ -282,25 +282,18 @@ export default function HmisRecordProfileScreen() {
               <TouchableOpacity
                 onPress={() =>
                   router.push({
-                    pathname: "/dashboard/record/complete-profile",
+                    pathname: "/dashboard/profile/complete-profile",
                     params: { id: record.id },
                   } as any)
                 }
-                className="mt-4 w-full bg-primary/80 py-3.5 flex-row items-center justify-center"
+                className="mt-4 w-full bg-primary/80 rounded-lg py-3.5 flex-row items-center justify-center"
               >
                 <FileText size={16} color="white" strokeWidth={2.5} />
-                <Text className="text-white font-bold ml-2 text-sm">
-                  Edit Mother Profile
+                <Text className="text-white font-semibold ml-2 text-md">
+                  {language === "np" ? "आमाको प्रोफाइल सम्पादन गर्नुहोस्" : "Edit Mother Profile"}
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
-
-          <View className="flex-1">
-            <CounselingSection
-              motherId={record.id}
-              motherName={record?.mother_name}
-            />
           </View>
 
           {/* Dates Grid */}
@@ -333,6 +326,7 @@ export default function HmisRecordProfileScreen() {
             </View>
           </View>
 
+
           {/* Quick Stats */}
           <View className="bg-white flex-1 p-4 py-5 rounded-md border border-slate-100 flex-row items-center">
             <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center mr-3">
@@ -347,6 +341,15 @@ export default function HmisRecordProfileScreen() {
               </Text>
             </View>
           </View>
+
+          <View className="flex-1">
+            {/* <CounselingSection
+              motherId={record.id}
+              motherName={record?.mother_name}
+            /> */}
+            <CounselingReferralSection motherId={record.id} />
+          </View>
+
 
           {/* ANC Checkups Card */}
           <View className="bg-white p-5 rounded-xl border border-slate-100">
@@ -491,11 +494,10 @@ export default function HmisRecordProfileScreen() {
                       setNewbornDeathModalVisible(true);
                     }
                   }}
-                  className={`p-4 rounded-md border flex-row items-center justify-between ${
-                    item.exists
-                      ? "bg-rose-50 border-rose-200"
-                      : "bg-slate-50 border-slate-200"
-                  }`}
+                  className={`p-4 rounded-md border flex-row items-center justify-between ${item.exists
+                    ? "bg-rose-50 border-rose-200"
+                    : "bg-slate-50 border-slate-200"
+                    }`}
                 >
                   <View className="flex-1 mr-4">
                     <Text

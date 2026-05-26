@@ -1,3 +1,4 @@
+import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 
 const generateId = () =>
@@ -10,6 +11,7 @@ export interface TodoItem {
   task_date?: string | null;
   task_time?: string | null;
   is_completed: number;
+  reg_month?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -23,16 +25,18 @@ export async function createTodo(
   const db = await getDb();
   const id = generateId();
   const now = new Date().toISOString();
+  const regMonth = getCurrentNepaliMonth();
 
   await db.runAsync(
-    `INSERT INTO todo (id, task, description, task_date, task_time, is_completed, created_at, updated_at) 
-     VALUES (?, ?, ?, ?, ?, 0, ?, ?)`,
+    `INSERT INTO todo (id, task, description, task_date, task_time, is_completed, reg_month, created_at, updated_at) 
+     VALUES (?, ?, ?, ?, ?, 0, ?, ?, ?)`,
     [
       id,
       task,
       description || null,
       task_date || null,
       task_time || null,
+      regMonth,
       now,
       now,
     ],
@@ -45,6 +49,7 @@ export async function createTodo(
     task_date: task_date || null,
     task_time: task_time || null,
     is_completed: 0,
+    reg_month: regMonth,
     created_at: now,
     updated_at: now,
   };

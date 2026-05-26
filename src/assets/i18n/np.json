@@ -24,7 +24,8 @@
     "welcome-back": "स्वागत छ",
     "welcome": "स्वागत छ",
     "update": "अपडेट",
-    "add": "थप्नुहोस्"
+    "add": "थप्नुहोस्",
+    "delete": "हटाउनुहोस्"
   },
   "dashboard": {
     "title": "FCHV डैशबोर्ड",
@@ -475,6 +476,8 @@
       "pregnancy": "गर्भवती"
     },
     "search_by_name_ward": "नाम वा वडाले खोज्नुहोस्...",
+    "select_month": "महिना छान्नुहोस्",
+    "all_months": "सबै महिना",
     "status": {
       "normal": "सामान्य",
       "high_risk": "उच्च जोखिम",
@@ -611,7 +614,7 @@
     "date_of_death": "मृत्यु भएको मिति",
     "condition_of_death": "मृत्यु हुँदाको अवस्था",
     "pregnant": "गर्भवती",
-    "labor": "सुत्केरी व्यथा",
+    "labor": "डेलिभरीको समय",
     "postpartum": "सुत्केरी",
     "place_of_death": "मृत्यु भएको स्थान",
     "home": "घर",
@@ -828,7 +831,9 @@
     "validation": {
       "select_one": "कृपया कम्तिमा एउटा साधन छान्नुहोस्",
       "enter_custom": "कृपया साधनको नाम लेख्नुहोस्"
-    }
+    },
+    "remove_confirm_title": "विधि हटाउनुहोस्",
+    "remove_confirm_msg": "के तपाईं यो परिवार नियोजनको विधि हटाउन निश्चित हुनुहुन्छ?"
   },
   "todo_tasks": {
     "title": "कार्यहरू",
@@ -969,5 +974,80 @@
     "no_records": "कुनै रेकर्ड फेला परेन",
     "no_results_msg": "तपाईंको खोजीसँग मिल्दो कुनै बालबालिका भेटिएन। फरक नाम प्रयास गर्नुहोस्।",
     "no_records_msg": "माथिको + बटन प्रयोग गरेर नयाँ बालबालिका दर्ता सुरु गर्नुहोस्।"
+  },
+  "child_profile": {
+    "title": "बालबालिका विवरण",
+    "identity": {
+      "birth_place": "जन्म स्थान",
+      "status": "अवस्था",
+      "baby_weight": "तौल",
+      "date_of_birth": "जन्म मिति",
+      "years": "वर्ष"
+    },
+    "actions": {
+      "edit_profile": "बच्चाको विवरण सम्पादन गर्नुहोस्"
+    },
+    "values": {
+      "home": "घर",
+      "institution": "स्वास्थ्य संस्था",
+      "trained_worker": "दक्ष स्वास्थ्यकर्मी",
+      "alive": "जीवित",
+      "dead": "मृत्यु",
+      "normal": "सामान्य",
+      "low_weight": "कम तौल"
+    },
+    "counseling": {
+      "vaccination": "खोप",
+      "nutrition": "पोषण",
+      "growth": "वृद्धि अनुगमन",
+      "danger_signs": "खतराका चिन्हहरू",
+      "yes": "हो",
+      "no": "हैन"
+    },
+    "malnutrition": {
+      "title": "कुपोषण",
+      "question": "के बच्चालाई कुपोषण लागेको छ?",
+      "medium": "मध्यम",
+      "high": "कडा",
+      "not_cured": "उपचारपछि निको भएको छैन?",
+      "dropped_out": "उपचार गर्दा गर्दै स्वास्थ्य संस्था जान छोडेको हो?",
+      "no_weight_gain": "उपचार गर्दा पनि तौल वृद्धि भएको छैन?"
+    },
+    "child_form": {
+      "edit_child": "शिशु अनुगमन सम्पादन",
+      "new_child": "नयाँ शिशु अनुगमन",
+      "select_mother": "आमा छनौट गर्नुहोस्",
+      "select_mother_placeholder": "आमा छान्नुहोस्",
+      "baby_name": "शिशुको नाम",
+      "baby_name_placeholder": "शिशुको नाम लेख्नुहोस्",
+      "date_of_birth": "जन्म मिति (वि.सं.)",
+      "select_date": "मिति छान्नुहोस्",
+      "birth_place": "शिशु जन्म स्थान",
+      "select_birth_place": "जन्म स्थान छान्नुहोस्",
+      "skilled_birth_attended": "दक्ष स्वास्थ्यकर्मीद्वारा प्रसूति गराएको",
+      "fchv_present": "महिला स्वास्थ्य स्वयंसेविका उपस्थित भएको",
+      "child_status": "शिशुको अवस्था (Status)",
+      "baby_weight": "शिशुको तौल",
+      "select_weight": "तौल छान्नुहोस्",
+      "normal_weight": "सामान्य तौल",
+      "low_weight": "कम तौल",
+      "very_low_weight": "धेरै कम तौल",
+      "asphyxiated_newborn": "निसासिएको शिशु (Asphyxiated)",
+      "newborn_care": "नवजात शिशु स्याहार",
+      "remarks": "कैफियत",
+      "remarks_placeholder": "यहाँ कैफियत लेख्नुहोस्...",
+      "saving": "सुरक्षित गर्दै...",
+      "save_record": "रेकर्ड सेभ गर्नुहोस्",
+      "validation": {
+        "mother_required": "आमा छनौट गर्न आवश्यक छ",
+        "baby_name_required": "शिशुको नाम आवश्यक छ",
+        "birth_date_required": "जन्म मिति आवश्यक छ",
+        "fill_fields": "कृपया सबै आवश्यक क्षेत्रहरू भर्नुहोस्"
+      },
+      "messages": {
+        "save_success": "रेकर्ड सफलतापूर्वक सुरक्षित गरियो",
+        "save_failed": "रेकर्ड सुरक्षित गर्न असफल भयो"
+      }
+    }
   }
 }
