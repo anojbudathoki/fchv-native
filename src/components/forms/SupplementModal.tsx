@@ -56,7 +56,7 @@ export default function SupplementModal({
       onClose={onClose}
       title={t("profile.supplements.add_title")}
       description={
-        <Text className="text-slate-600 text-base font-medium leading-relaxed text-center">
+        <Text className="text-slate-600 text-[15px] font-semibold leading-relaxed text-center">
           {t("profile.supplements.confirm_q", {
             name: supplementName,
             mother: motherName,

@@ -1,4 +1,7 @@
-import { getCurrentNepaliDate } from "../../../utils/dateHelper";
+import {
+  getCurrentNepaliDate,
+  resolveNepaliYearMonth,
+} from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import { CreateMotherPayload, MotherStoreType } from "../types/motherModal";
 
@@ -61,7 +64,6 @@ export async function createMother(
     gravida: null,
     cover_photo: null,
     emergency_contact_number: null,
-    alias: null,
     partner_name: null,
     partner_mobile: null,
     partner_age: null,
@@ -106,7 +108,6 @@ export async function updateMother(
       gravida = ?,
       cover_photo = ?,
       emergency_contact_number = ?,
-      alias = ?,
       partner_name = ?,
       partner_mobile = ?,
       partner_age = ?,
@@ -138,7 +139,6 @@ export async function updateMother(
       payload.gravida ?? null,
       payload.cover_photo ?? null,
       payload.emergency_contact_number ?? null,
-      payload.alias ?? null,
       payload.partner_name ?? null,
       payload.partner_mobile ?? null,
       payload.partner_age ?? null,
@@ -180,7 +180,6 @@ export async function unSyncedMothers(): Promise<CreateMotherPayload[]> {
     parity: row.parity ?? undefined,
     gravida: row.gravida ?? undefined,
     emergency_contact_number: row.emergency_contact_number ?? undefined,
-    alias: row.alias ?? undefined,
     partner_name: row.partner_name ?? undefined,
     partner_mobile: row.partner_mobile ?? undefined,
     partner_age: row.partner_age ?? undefined,
@@ -223,7 +222,8 @@ export interface MotherListDbItem {
   age: number;
   birth_place?: string;
   baby_status?: string;
-  reg_month?: string;
+  reg_year?: number;
+  reg_month?: number;
   createdAt: string;
 }
 
@@ -312,6 +312,8 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
       birth_place: row.birth_place || "",
       baby_status: row.baby_status || "",
       remarks: row.baby_remarks || "",
+      reg_year: row.reg_year,
+      reg_month: row.reg_month,
       createdAt: row.created_at || "",
     };
   });
@@ -338,7 +340,6 @@ export interface MotherProfileDbItem extends MotherListDbItem {
   partnerMobile?: string;
   partnerAge?: string;
   emergencyContactNumber?: string;
-  alias?: string;
   addressLocality?: string;
   addressHouseNumber?: string;
   children?: any[]; // Array to hold child monitoring data
@@ -371,7 +372,6 @@ export async function getMotherProfile(
       m.partner_mobile,
       m.partner_age,
       m.emergency_contact_number,
-      m.alias,
       m.address_locality,
       m.address_house_number,
       m.created_at as regDate,
@@ -450,7 +450,6 @@ export async function getMotherProfile(
     partnerMobile: row.partner_mobile || "",
     partnerAge: row.partner_age !== null ? String(row.partner_age) : "",
     emergencyContactNumber: row.emergency_contact_number || "",
-    alias: row.alias || "",
     addressLocality: row.address_locality || "",
     addressHouseNumber: row.address_house_number || "",
     pregnancyId: row.pregnancyId || null,
@@ -486,4 +485,39 @@ export async function getMotherCount(): Promise<number> {
   );
   const count = result?.count ?? 0;
   return Number(count);
+}
+
+export async function getMotherTrend(): Promise<
+  { month: number; year: number; count: number }[]
+> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<any>(
+    `SELECT reg_year, reg_month, created_at
+     FROM mother
+     WHERE is_deleted = 0`,
+  );
+  const counts = new Map<string, { month: number; year: number; count: number }>();
+
+  rows.forEach((row: any) => {
+    const resolved = resolveNepaliYearMonth(
+      row.reg_year,
+      row.reg_month,
+      row.created_at,
+    );
+    if (!resolved) return;
+
+    const key = `${resolved.year}-${resolved.month}`;
+    const existing = counts.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      counts.set(key, {
+        month: resolved.month - 1,
+        year: resolved.year,
+        count: 1,
+      });
+    }
+  });
+
+  return Array.from(counts.values());
 }

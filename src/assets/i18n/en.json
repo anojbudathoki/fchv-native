@@ -53,7 +53,7 @@
       "add_adolescent": "Adolescent Girls IFA"
     },
     "sections": {
-      "community_pulse": "Community Pulse",
+      "community_pulse": "Community Health Statistics",
       "recent_activity": "Recent Activity",
       "tasks_today": "Tasks Today",
       "view_all": "View All"
@@ -391,14 +391,14 @@
     },
     "anc": {
       "title": "ANC Visits",
-      "wk12": "12 Wk",
-      "wk16": "16 Wk",
-      "wk20_24": "20-24 Wk",
-      "wk28": "28 Wk",
-      "wk32": "32 Wk",
-      "wk34": "34 Wk",
-      "wk36": "36 Wk",
-      "wk38_40": "38-40 Wk"
+      "wk12": "Within 12 Weeks",
+      "wk20": "20 Weeks",
+      "wk26": "26 Weeks",
+      "wk30": "30 Weeks",
+      "wk34": "34 Weeks",
+      "wk36": "36 Weeks",
+      "wk38": "38 Weeks",
+      "wk40": "40 Weeks"
     },
     "supplements": {
       "title": "Supplements",
@@ -437,6 +437,15 @@
       "add_more": "Add More +",
       "add": "Add +",
       "submitted": "Submitted"
+    },
+    "countdown": {
+      "title": "Delivery Follow-up",
+      "edd": "EDD: {{date}}",
+      "due_label": "Due in",
+      "overdue_label": "Overdue",
+      "today_label": "Due",
+      "days_short": "{{days}} days",
+      "today_short": "Today"
     },
     "remarks": "Remarks"
   },
@@ -639,6 +648,12 @@
     "subtitle": "Newborn & Child Death (0–59 months)",
     "baby_name": "Child's Name",
     "baby_name_placeholder": "Enter child's name...",
+    "choose_baby": "Choose Baby",
+    "choose_baby_placeholder": "Select child",
+    "select_child_error": "Please choose a child.",
+    "loading_children": "Loading children...",
+    "no_children": "No children registered for this mother.",
+    "unnamed_child": "Unnamed child",
     "gender": "Gender",
     "male": "Boy",
     "female": "Girl",
@@ -771,8 +786,6 @@
       "dob": "Date of Birth (BS)",
       "dob_placeholder": "Select DOB",
       "phone": "Phone Number",
-      "alias": "Alias / Nickname",
-      "alias_placeholder": "e.g. Maya",
       "province": "Province",
       "district": "District",
       "municipality": "Municipality",
@@ -1060,7 +1073,19 @@
   },
   "counseling_section": {
     "malnutrition_screening": "Malnutrition Screening",
-    "is_malnourished": "Is the child malnourished?",
+    "muac_condition": "MUAC (Condition)",
+    "muac_normal": "Normal (Green)",
+    "muac_risk": "Risk (Yellow)",
+    "muac_severe": "Severe (Red)",
+    "weight_kg": "Weight (kg.)",
+    "height_cm": "Height (cm.)",
+    "weight_short": "Weight",
+    "height_short": "Height",
+    "bmi": "BMI",
+    "bmi_auto": "Auto calculated from weight and height",
+    "history": "History",
+    "not_recorded": "Not recorded",
+    "malnutrition_good": "Nutritional status is good",
     "severity_medium": "Medium",
     "severity_severe": "Severe",
     "add": "Add",

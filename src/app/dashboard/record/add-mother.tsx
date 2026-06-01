@@ -4,15 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  KeyboardAvoidingView,
-  Platform,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CustomHeader from "../../../components/CustomHeader";
 import MotherForm from "../../../components/MotherForm";
 import PregnancyForm from "../../../components/PregnancyForm";
@@ -66,9 +64,11 @@ const TabIndicator = ({
 export default function AddMotherScreen() {
   const router = useRouter();
   const { t } = useLanguage();
-  const { id, step: initialStep } = useLocalSearchParams<{
+  const { id, step: initialStep, from, mode } = useLocalSearchParams<{
     id: string;
     step?: string;
+    from?: string;
+    mode?: string;
   }>();
   const [step, setStep] = useState(initialStep === "1" ? 1 : 0);
   const [createdId, setCreatedId] = useState<string | null>(null);
@@ -93,16 +93,24 @@ export default function AddMotherScreen() {
       <CustomHeader
         title={id ? t("add_mother.title_edit") : t("add_mother.title_new")}
         subtitle=""
-        onBackPress={() => router.back()}
+        onBackPress={() => {
+          if (from === "profile" && id) {
+            router.replace({
+              pathname: "/dashboard/profile",
+              params: { id },
+            } as any);
+          } else if (step === 1 && !id) {
+            setStep(0);
+          } else {
+            router.back();
+          }
+        }}
       />
 
       {/* Tab Indicator */}
       <TabIndicator step={step} setStep={setStep} />
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
+      <View className="flex-1">
         <Animated.View
           style={{
             flex: 1,
@@ -111,9 +119,11 @@ export default function AddMotherScreen() {
             transform: [{ translateX: slideAnim }],
           }}
         >
-          <ScrollView
+          <KeyboardAwareScrollView
             className="flex-1 bg-white"
             showsVerticalScrollIndicator={false}
+            enableOnAndroid={true}
+            extraScrollHeight={100}
             contentContainerStyle={{
               paddingBottom: 120,
               paddingHorizontal: 17,
@@ -130,11 +140,13 @@ export default function AddMotherScreen() {
                 setStep(1);
               }}
             />
-          </ScrollView>
+          </KeyboardAwareScrollView>
 
-          <ScrollView
+          <KeyboardAwareScrollView
             className="flex-1 bg-white"
             showsVerticalScrollIndicator={false}
+            enableOnAndroid={true}
+            extraScrollHeight={100}
             contentContainerStyle={{
               paddingBottom: 120,
               paddingHorizontal: 17,
@@ -143,11 +155,13 @@ export default function AddMotherScreen() {
           >
             <PregnancyForm
               id={id || createdId || undefined}
+              from={from}
+              mode={mode}
               onSwitchToMother={() => setStep(0)}
             />
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </Animated.View>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }

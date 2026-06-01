@@ -31,7 +31,7 @@ export default function ConfirmActionModal({
         <Pressable onPress={(e) => e.stopPropagation()} className="bg-white w-full rounded-3xl p-6 shadow-xl">
           
           <View className="flex-row justify-between items-center mb-6">
-            <Text className="text-xl font-bold text-slate-800">{title}</Text>
+            <Text className="text-xl font-semibold text-slate-800">{title}</Text>
             <TouchableOpacity onPress={onClose} className="p-2 bg-slate-100 rounded-full">
               <X size={20} color="#64748B" />
             </TouchableOpacity>
@@ -39,7 +39,7 @@ export default function ConfirmActionModal({
 
           <View className="mb-8">
             {typeof description === 'string' ? (
-              <Text className="text-slate-600 text-base font-medium leading-relaxed text-center">
+              <Text className="text-slate-600 text-[15px] font-semibold leading-relaxed text-center">
                 {description}
               </Text>
             ) : (
@@ -55,7 +55,7 @@ export default function ConfirmActionModal({
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text className="text-white font-semibold text-md">{actionLabel}</Text>
+              <Text className="text-white font-semibold text-[16px]">{actionLabel}</Text>
             )}
           </TouchableOpacity>
           

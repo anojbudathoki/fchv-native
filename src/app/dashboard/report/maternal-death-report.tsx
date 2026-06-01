@@ -131,7 +131,9 @@ export default function MaternalDeathReportScreen() {
       <StatusBar barStyle="dark-content" />
       <CustomHeader
         title={t("reports.maternal_death_report.title")}
-        onBackPress={() => router.replace("/dashboard/report")}
+        onBackPress={() => {
+          router.replace("/dashboard/");
+        }}
       />
 
       <View className="flex-1">

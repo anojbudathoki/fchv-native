@@ -1,18 +1,18 @@
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import { Search, Plus, Baby, Calendar, ChevronRight } from "lucide-react-native";
-import { router, useFocusEffect } from "expo-router";
-import { useState, useCallback, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import CustomHeader from "@/components/CustomHeader";
 import { getAllInfantMonitorings } from "@/hooks/database/models/InfantMonitoringModel";
 import { InfantMonitoringStoreType } from "@/hooks/database/types/infantMonitoringModal";
+import { router, useFocusEffect } from "expo-router";
+import { Baby, Calendar, ChevronRight, Plus, Search } from "lucide-react-native";
+import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { AdToBs } from "react-native-nepali-picker";
 
 export default function ChildManagementScreen() {
@@ -57,11 +57,11 @@ export default function ChildManagementScreen() {
       <CustomHeader
         title={t("child_page.title")}
         subtitle={t("child_page.subtitle")}
-        onBackPress={() => router.replace('/dashboard')}
+        onBackPress={() => router.back()}
         rightNode={
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => router.push("/dashboard/child/child-form")}
+            onPress={() => router.push("/dashboard/child/add-child")}
             className="bg-primary/80 px-3 py-2.5 rounded-md items-center justify-center flex-row"
           >
             <Plus size={16} color="#ffffff" strokeWidth={3} />
@@ -109,7 +109,7 @@ export default function ChildManagementScreen() {
                   <Text className="text-slate-800 text-base font-bold mb-1" numberOfLines={1}>
                     {item.baby_name || t("child_page.unnamed_baby")}
                   </Text>
-                  
+
                   <View className="flex-row items-center mb-1">
                     <Text className="text-slate-500 font-medium text-[13px]" numberOfLines={1}>
                       {t("child_page.mother")}: <Text className="text-slate-700">{item.mother_name || t("child_page.unknown")}</Text>
@@ -137,7 +137,7 @@ export default function ChildManagementScreen() {
               </View>
               <Text className="text-slate-600 font-bold text-lg text-center mb-2">{t("child_page.no_records")}</Text>
               <Text className="text-slate-400 text-sm text-center leading-5 px-6">
-                {search 
+                {search
                   ? t("child_page.no_results_msg")
                   : t("child_page.no_records_msg")}
               </Text>

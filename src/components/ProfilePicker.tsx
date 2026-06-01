@@ -13,7 +13,7 @@ export const ProfilePicker = ({
   isSearchable = false,
   disabled = false
 }: {
-  label: string;
+  label?: string;
   selectedValue: string;
   onValueChange: (value: string) => void;
   options: any[];
@@ -25,9 +25,11 @@ export const ProfilePicker = ({
 }) => {
   return (
     <View>
-      <Text className="mb-1.5 text-[14px] text-[#64748b]">
-        {label}
-      </Text>
+      {label ? (
+        <Text className="mb-1.5 text-[16px] text-slate-800">
+          {label}
+        </Text>
+      ) : null}
 
       <Dropdown
         placeholder={placeholder}
@@ -47,6 +49,9 @@ export const ProfilePicker = ({
         onValueChange={(value) => onValueChange(String(value))}
         isSearchable={isSearchable}
         disabled={disabled}
+        listControls={{
+          keyboardShouldPersistTaps: "always",
+        }}
         primaryColor="#eb6189"
         dropdownStyle={{
           minHeight: 48,
@@ -64,11 +69,11 @@ export const ProfilePicker = ({
           right: 15
         }}
         selectedItemStyle={{
-          fontSize: 15,
+          fontSize: 16,
           color: "#0f172a"
         }}
         placeholderStyle={{
-          fontSize: 15,
+          fontSize: 16,
           color: "#94a3b8"
         }}
       />

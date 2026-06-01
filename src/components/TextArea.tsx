@@ -21,7 +21,7 @@ const TextArea = ({
   return (
     <View className="mb-4">
       {label && (
-        <Text className="text-slate-700 font-medium mb-1.5 ml-1">{label}</Text>
+        <Text className="text-slate-800 text-[16px] mb-1.5 ml-1">{label}</Text>
       )}
       <View
         className={`min-h-[120px] flex-row rounded-xl px-4 py-3 border ${

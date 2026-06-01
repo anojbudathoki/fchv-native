@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS mother(
     gravida INTEGER,
     cover_photo TEXT,
     emergency_contact_number TEXT,
-    alias TEXT,
     partner_name TEXT,
     partner_mobile TEXT,
     partner_age TEXT,
@@ -162,6 +161,7 @@ CREATE TABLE IF NOT EXISTS child_monitoring (
     skin_to_skin INTEGER DEFAULT 0,
     early_breastfeeding INTEGER DEFAULT 0,
     asphyxiated_newborn INTEGER DEFAULT 0,
+    is_all_given INTEGER DEFAULT 0,
     remarks TEXT,
     reg_year INTEGER,
     reg_month INTEGER,
@@ -207,6 +207,7 @@ CREATE TABLE IF NOT EXISTS family_planning (
 CREATE TABLE IF NOT EXISTS counseling (
     id TEXT PRIMARY KEY,
     mother_id TEXT NOT NULL,
+    pregnancy_id TEXT,
     is_counseled INTEGER DEFAULT 0,
     counseled_topics TEXT,
     reg_year INTEGER,
@@ -215,7 +216,8 @@ CREATE TABLE IF NOT EXISTS counseling (
     is_deleted INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
-    FOREIGN KEY(mother_id) REFERENCES mother(id)
+    FOREIGN KEY(mother_id) REFERENCES mother(id),
+    FOREIGN KEY(pregnancy_id) REFERENCES pregnancy(id)
 );
 
 CREATE TABLE IF NOT EXISTS adolescent_ifa (
@@ -261,6 +263,7 @@ CREATE TABLE IF NOT EXISTS adolescent_ifa (
 CREATE TABLE IF NOT EXISTS counseling_referral (
     id TEXT PRIMARY KEY,
     mother_id TEXT NOT NULL,
+    pregnancy_id TEXT,
     answers TEXT,
     reg_year INTEGER,
     reg_month INTEGER,
@@ -269,7 +272,8 @@ CREATE TABLE IF NOT EXISTS counseling_referral (
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY(mother_id) REFERENCES mother(id),
-    UNIQUE(mother_id, reg_year, reg_month)
+    FOREIGN KEY(pregnancy_id) REFERENCES pregnancy(id),
+    UNIQUE(mother_id, pregnancy_id, reg_year, reg_month)
 );
 CREATE INDEX IF NOT EXISTS idx_counseling_referral_mother_id ON counseling_referral(mother_id);
 CREATE INDEX IF NOT EXISTS idx_counseling_referral_reg ON counseling_referral(reg_year, reg_month);
@@ -289,4 +293,20 @@ CREATE TABLE IF NOT EXISTS child_counseling (
 );
 CREATE INDEX IF NOT EXISTS idx_child_counseling_child_id ON child_counseling(child_id);
 CREATE INDEX IF NOT EXISTS idx_child_counseling_reg ON child_counseling(reg_year, reg_month);
+
+CREATE TABLE IF NOT EXISTS child_vaccination (
+    id TEXT PRIMARY KEY,
+    child_id TEXT NOT NULL,
+    vaccine_id TEXT NOT NULL,
+    is_given INTEGER DEFAULT 0,
+    given_date TEXT,
+    is_synced INTEGER NOT NULL DEFAULT 0,
+    is_deleted INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY(child_id) REFERENCES child_monitoring(id),
+    UNIQUE(child_id, vaccine_id)
+);
+CREATE INDEX IF NOT EXISTS idx_child_vaccination_child_id ON child_vaccination(child_id);
+
 `;

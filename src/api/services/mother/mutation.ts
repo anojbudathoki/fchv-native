@@ -9,7 +9,6 @@ const postMother = async (data: CreateMotherPayload) => {
     id: data.id,
     first_name: data.first_name || "",
     last_name: data.last_name || "",
-    alias: data.alias || null,
     phone_number: data.phone_number || "",
     date_of_birth: data.date_of_birth || "",
     gravida: data.gravida ?? null,

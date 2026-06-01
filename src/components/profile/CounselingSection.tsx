@@ -7,6 +7,7 @@ import {
   CounselingStoreType,
   getCounselingByMother,
 } from "../../hooks/database/models/CounselingModel";
+import { getPregnancyByMotherId } from "../../hooks/database/models/PregnantWomenModal";
 import CounselingModal from "../forms/CounselingModal";
 
 interface CounselingSectionProps {
@@ -24,10 +25,15 @@ export default function CounselingSection({
   const [record, setRecord] = useState<CounselingStoreType | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [pregnancyId, setPregnancyId] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
-      const data = await getCounselingByMother(motherId);
+      const pregnancy = await getPregnancyByMotherId(motherId);
+      const pregId = pregnancy?.id || null;
+      setPregnancyId(pregId);
+
+      const data = await getCounselingByMother(motherId, pregId);
       setRecord(data);
     } catch (e) {
       console.error(e);
@@ -107,6 +113,7 @@ export default function CounselingSection({
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         motherId={motherId}
+        pregnancyId={pregnancyId}
         motherName={motherName || "the mother"}
         existingTopics={record?.counseled_topics}
         onSuccess={loadData}

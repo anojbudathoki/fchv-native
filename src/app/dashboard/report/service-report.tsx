@@ -187,7 +187,13 @@ export default function ServiceReportScreen() {
       <StatusBar barStyle="dark-content" />
       <CustomHeader
         title={t("reports.service_recipients.title")}
-        onBackPress={() => router.replace("/dashboard/report")}
+        onBackPress={() => {
+          if (router.canGoBack()) {
+            router.back();
+          } else {
+            router.replace("/dashboard");
+          }
+        }}
       />
 
       <ScrollView

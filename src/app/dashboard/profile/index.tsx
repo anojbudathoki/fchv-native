@@ -6,8 +6,10 @@ import {
   Calendar,
   FileText,
   Info,
+  Pencil,
+  Plus,
   Stethoscope,
-  User,
+  User
 } from "lucide-react-native";
 import { useCallback, useState } from "react";
 import {
@@ -20,6 +22,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { AdToBs, BsToAd } from "react-native-nepali-picker";
 import CustomHeader from "../../../components/CustomHeader";
 import MaternalDeathModal from "../../../components/forms/MaternalDeathModal";
 import NewbornDeathModal from "../../../components/forms/NewbornDeathModal";
@@ -40,33 +43,132 @@ import { getVisitsByMotherId } from "../../../hooks/database/models/VisitModel";
 import { HmisRecordStoreType } from "../../../hooks/database/types/hmisRecordModal";
 import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDeathModal";
 import { NewbornDeathStoreType } from "../../../hooks/database/types/newbornDeathModal";
+import { toNepaliNumbers } from "../../../utils/dateHelper";
 import SupplementsScreen from "./supplements";
 
-const SectionTitle = ({ title, icon: Icon, colorClass }: any) => (
-  <View className="flex-row items-center mb-4 mt-2">
+const SectionTitle = ({ title, icon: Icon, colorClass, bgColor = "bg-white" }: any) => (
+  <View className={`flex-row items-center p-4 rounded-t-xl ${bgColor} border-b border-slate-50`}>
     <View
-      className={`w-8 h-8 rounded-full items-center justify-center mr-3 ${colorClass}`}
+      className={`w-8 h-8 rounded-full items-center justify-center mr-3 bg-gray-100`}
     >
-      <Icon size={16} color="white" />
+      <Icon size={16} color="#64748B" />
     </View>
-    <Text className="text-slate-800 font-bold text-lg">{title}</Text>
+    <Text className="text-slate-800 font-semibold text-xl">{title}</Text>
   </View>
 );
 
 const VisitBadge = ({ label, val }: any) => (
   <View
-    className={`px-3 py-3 rounded-md flex-row items-center justify-between border mb-3 w-[48%] ${val ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-100"}`}
+    className={`px-3 py-3 rounded-lg flex-row items-center justify-between border mb-3 w-[47%] ${val ? "bg-emerald-50/30 border-emerald-200" : "bg-white border-slate-200"}`}
   >
     <Text
-      className={`text-[12px] ${val ? "text-emerald-800 font-bold" : "text-slate-500 font-medium"}`}
+      className={`text-[15px] flex-1 mr-2 ${val ? "text-emerald-800 font-medium" : "text-slate-700 font-medium"}`}
     >
       {label}
     </Text>
     <View
-      className={`w-2 h-2 rounded-full ${val ? "bg-emerald-500" : "bg-slate-300"}`}
+      className={`w-1.5 h-1.5 rounded-full ${val ? "bg-emerald-500" : "bg-slate-200"}`}
     />
   </View>
 );
+
+type DateFormat = "BS" | "AD";
+
+const normalizeDateString = (dateStr: string | null | undefined) => {
+  if (!dateStr || dateStr === "N/A") return null;
+  const pureDate = dateStr.split("T")[0].replace(/\//g, "-").trim();
+  return /^\d{4}-\d{1,2}-\d{1,2}$/.test(pureDate) ? pureDate : null;
+};
+
+const resolveDateFormat = (dateStr: string, fallbackFormat: DateFormat): DateFormat => {
+  const year = parseInt(dateStr.split("-")[0], 10);
+  return year >= 2070 ? "BS" : fallbackFormat;
+};
+
+const toDisplayNumber = (value: string | number, targetLang: string) =>
+  targetLang === "np" ? toNepaliNumbers(value) : String(value);
+
+const parseDateParts = (dateStr: string | null | undefined, originalFormat: DateFormat) => {
+  const normalizedDate = normalizeDateString(dateStr);
+  if (!normalizedDate) return [];
+
+  try {
+    const sourceFormat = resolveDateFormat(normalizedDate, originalFormat);
+    const bsDate = sourceFormat === "BS" ? normalizedDate : AdToBs(normalizedDate);
+    return bsDate.split("-").map((part) => parseInt(part, 10));
+  } catch (e) {
+    console.warn("Date parts conversion error for:", dateStr, e);
+    return [];
+  }
+};
+
+const formatBsDateDisplay = (
+  dateStr: string | null | undefined,
+  originalFormat: DateFormat,
+  targetLang: string,
+) => {
+  const normalizedDate = normalizeDateString(dateStr);
+  if (!normalizedDate) return "---";
+
+  try {
+    const sourceFormat = resolveDateFormat(normalizedDate, originalFormat);
+    const bsDate = sourceFormat === "BS" ? normalizedDate : AdToBs(normalizedDate);
+    return toDisplayNumber(bsDate, targetLang);
+  } catch (e) {
+    console.warn("BS date display conversion error for:", dateStr, e);
+    return normalizedDate;
+  }
+};
+
+const toLocalDate = (dateStr: string) => {
+  const [year, month, day] = dateStr.split("-").map((part) => parseInt(part, 10));
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+};
+
+const toAdDateString = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getDaysDiffFromBsEdd = (eddStr: string | null | undefined, originalFormat: DateFormat) => {
+  const normalizedDate = normalizeDateString(eddStr);
+  if (!normalizedDate) return null;
+
+  try {
+    const sourceFormat = resolveDateFormat(normalizedDate, originalFormat);
+    const eddBs = sourceFormat === "BS" ? normalizedDate : AdToBs(normalizedDate);
+    const todayBs = AdToBs(toAdDateString(new Date()));
+    const eddAdDate = toLocalDate(BsToAd(eddBs));
+    const todayAdDate = toLocalDate(BsToAd(todayBs));
+    if (!eddAdDate || !todayAdDate) return null;
+
+    const diffTime = eddAdDate.getTime() - todayAdDate.getTime();
+    return Math.round(diffTime / (1000 * 60 * 60 * 24));
+  } catch (e) {
+    console.warn("EDD remaining days conversion error:", e);
+    return null;
+  }
+};
+
+const calculateEddFromLmp = (lmpDateStr: string | null | undefined) => {
+  if (!lmpDateStr || lmpDateStr === 'N/A' || lmpDateStr === '') return null;
+  try {
+    // pregnancy?.lmp_date is BS string
+    const adDateStr = BsToAd(lmpDateStr.split('T')[0].replace(/\//g, '-'));
+    const lmpDate = new Date(adDateStr);
+    if (!isNaN(lmpDate.getTime())) {
+      const eddDate = new Date(lmpDate);
+      eddDate.setDate(eddDate.getDate() + 280);
+      return toAdDateString(eddDate);
+    }
+  } catch (e) {
+    console.warn("EDD Calculation error:", e);
+  }
+  return null;
+};
 
 export default function HmisRecordProfileScreen() {
   const { language, t } = useLanguage();
@@ -81,12 +183,19 @@ export default function HmisRecordProfileScreen() {
     useState<MaternalDeathStoreType | null>(null);
   const [existingNewbornDeathRecord, setExistingNewbornDeathRecord] =
     useState<NewbornDeathStoreType | null>(null);
+  const [children, setChildren] = useState<any[]>([]);
+  const [mother, setMother] = useState<any>(null);
+  const [pregnancy, setPregnancy] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   const [maternalDeathModalVisible, setMaternalDeathModalVisible] =
     useState(false);
   const [newbornDeathModalVisible, setNewbornDeathModalVisible] =
     useState(false);
+
+  const childEng = children.length > 1 ? "Children" : "Child"
+  const childNep = children.length > 1 ? "बच्चाहरू" : "बच्चा"
+
 
   const loadSupplements = async (motherId: string) => {
     try {
@@ -115,20 +224,14 @@ export default function HmisRecordProfileScreen() {
             ]);
 
           if (mother) {
-            const lmpParts = pregnancy?.lmp_date
-              ? pregnancy.lmp_date.split(/[-/T]/)
-              : mother.lmp && mother.lmp !== "N/A"
-                ? mother.lmp.split(/[-/]/)
-                : [];
-            const eddParts = pregnancy?.expected_delivery_date
-              ? pregnancy.expected_delivery_date.split(/[-/T]/)
-              : mother.edd && mother.edd !== "N/A"
-                ? mother.edd.split(/[-/]/)
-                : [];
-            const regParts =
-              mother.regDate && mother.regDate !== "N/A"
-                ? mother.regDate.split(/[-/T]/)
-                : [];
+            const lmpDate = pregnancy?.lmp_date || mother.lmp;
+            const eddDate =
+              normalizeDateString(pregnancy?.expected_delivery_date) ||
+              normalizeDateString(mother.edd) ||
+              calculateEddFromLmp(lmpDate);
+            const lmpParts = parseDateParts(lmpDate, "BS");
+            const eddParts = parseDateParts(eddDate, "AD");
+            const regParts = parseDateParts(mother.regDate, "AD");
 
             // Map visits to ANC/PNC slots
             const ancVisits = visits.filter((v) => v.visit_type === "ANC");
@@ -137,31 +240,27 @@ export default function HmisRecordProfileScreen() {
             const data: HmisRecordStoreType = {
               id: mother.id,
               serial_no: null,
-              date_year:
-                regParts.length >= 3 ? parseInt(regParts[0], 10) : null,
-              date_month:
-                regParts.length >= 3 ? parseInt(regParts[1], 10) : null,
-              date_day: regParts.length >= 3 ? parseInt(regParts[2], 10) : null,
+              date_year: regParts.length >= 3 ? regParts[0] : null,
+              date_month: regParts.length >= 3 ? regParts[1] : null,
+              date_day: regParts.length >= 3 ? regParts[2] : null,
               mother_name: mother.name,
               mother_age: mother.age,
-              lmp_year: lmpParts.length >= 3 ? parseInt(lmpParts[0], 10) : null,
-              lmp_month:
-                lmpParts.length >= 3 ? parseInt(lmpParts[1], 10) : null,
-              lmp_day: lmpParts.length >= 3 ? parseInt(lmpParts[2], 10) : null,
-              edd_year: eddParts.length >= 3 ? parseInt(eddParts[0], 10) : null,
-              edd_month:
-                eddParts.length >= 3 ? parseInt(eddParts[1], 10) : null,
-              edd_day: eddParts.length >= 3 ? parseInt(eddParts[2], 10) : null,
+              lmp_year: lmpParts.length >= 3 ? lmpParts[0] : null,
+              lmp_month: lmpParts.length >= 3 ? lmpParts[1] : null,
+              lmp_day: lmpParts.length >= 3 ? lmpParts[2] : null,
+              edd_year: eddParts.length >= 3 ? eddParts[0] : null,
+              edd_month: eddParts.length >= 3 ? eddParts[1] : null,
+              edd_day: eddParts.length >= 3 ? eddParts[2] : null,
               counseling_given: null,
-              // Sequential mapping for demo/simplicity since specific milestones aren't in visit table
+              // Sequential mapping for 8 ANC visits
               checkup_12: ancVisits.length >= 1 ? 1 : null,
-              checkup_16: ancVisits.length >= 2 ? 1 : null,
-              checkup_20_24: ancVisits.length >= 3 ? 1 : null,
-              checkup_28: ancVisits.length >= 4 ? 1 : null,
-              checkup_32: ancVisits.length >= 5 ? 1 : null,
-              checkup_34: ancVisits.length >= 6 ? 1 : null,
-              checkup_36: ancVisits.length >= 7 ? 1 : null,
-              checkup_38_40: ancVisits.length >= 8 ? 1 : null,
+              checkup_20: ancVisits.length >= 2 ? 1 : null,
+              checkup_26: ancVisits.length >= 3 ? 1 : null,
+              checkup_30: ancVisits.length >= 4 ? 1 : null,
+              checkup_34: ancVisits.length >= 5 ? 1 : null,
+              checkup_36: ancVisits.length >= 6 ? 1 : null,
+              checkup_38: ancVisits.length >= 7 ? 1 : null,
+              checkup_40: ancVisits.length >= 8 ? 1 : null,
               checkup_other: null,
               iron_preg_received: null,
               iron_pnc_received: null,
@@ -181,6 +280,9 @@ export default function HmisRecordProfileScreen() {
 
             if (isActive) {
               setRecord(data);
+              setMother(mother);
+              setPregnancy(pregnancy);
+              setChildren(mother.children || []);
               const deathData = await getMaternalDeathByMother(mother.id);
               setExistingDeathRecord(deathData);
               const newbornDeathData = await getNewbornDeathByMother(mother.id);
@@ -254,130 +356,232 @@ export default function HmisRecordProfileScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100, paddingTop: 12 }}
       >
-        <View className="px-3 gap-y-3">
+        <View className="px-4 gap-y-4">
           {/* Main Identity Card */}
-          <View className="bg-white p-5 rounded-xl border border-slate-100">
-            <View className="flex-col items-center mb-2">
-              <View className="flex-row items-center mb-5">
-                <View className="w-16 h-16 rounded-full bg-blue-50 items-center justify-center mr-4">
-                  <User size={32} color={Colors.primary} />
-                </View>
-                <View className="flex-1">
-                  <View className="flex-row items-center mb-1">
-                    <Text className="text-slate-400 font-bold text-[10px] uppercase tracking-widest bg-slate-50 px-2 py-0.5 rounded-md">
-                      {t("profile.identity.serial_no")}{" "}
-                      {record.serial_no || "N/A"}
+          <View className="bg-white p-6 rounded-xl border border-slate-100">
+            <View className="flex-row w-full mb-6">
+              <View className="w-20 h-20 rounded-full bg-[#E0F2FE] items-center justify-center mr-5 border-4 border-white shadow-sm shadow-slate-200">
+                <User size={40} color="#64748B" />
+              </View>
+              <View className="flex-1">
+                <View className="flex-row items-center mb-1">
+                  <View className="bg-[#E2E8F0] px-3 py-1 rounded-md">
+                    <Text className="text-[#64748B] font-bold text-[10px] uppercase tracking-widest">
+                      {t("profile.identity.serial_no")}:{" "}
+                      {record.serial_no ?? "N/A"}
                     </Text>
                   </View>
-                  <Text className="text-slate-900 text-xl font-extrabold leading-tight">
-                    {record.mother_name}
+                </View>
+                <Text className="text-[#1E293B] text-2xl font-normal leading-tight">
+                  {record.mother_name}
+                </Text>
+                <Text className="text-[#64748B] font-medium text-[15px] mt-1">
+                  {toDisplayNumber(record.mother_age ?? 0, language)} {t("profile.identity.years")} •{" "}
+                  {t("profile.identity.maternal_health")}
+                </Text>
+              </View>
+              <View>
+                <TouchableOpacity className="ml-2 p-3 bg-gray-50 rounded-full" onPress={() =>
+                  router.push({
+                    pathname: "/dashboard/profile/complete-profile",
+                    params: { id: record.id, from: "profile" },
+                  } as any)
+                }>
+                  <Pencil size={16} color="#64748B" strokeWidth={2} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {children.length > 0 && (
+              <View className="py-4 border-t border-gray-50">
+                <View className="flex-row items-center justify-center">
+                  <Text className="text-[15px] text-slate-600 font-semibold uppercase tracking-widest pr-2">
+                    {language === 'np' ? childNep : childEng}:
                   </Text>
-                  <Text className="text-slate-500 font-medium text-[13px] mt-0.5">
-                    {record.mother_age} {t("profile.identity.years")} •{" "}
-                    {t("profile.identity.maternal_health")}
-                  </Text>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 8 }}
+                  >
+                    {children.map((child, idx) => (
+                      <TouchableOpacity
+                        key={child.id || idx}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/dashboard/child/child-profile",
+                            params: { id: child.id, from: "profile" }
+                          } as any)
+                        }
+                        className="flex-row items-center px-2 rounded-lg border-b border-slate-200"
+                      >
+                        <Baby size={16} color="#64748B" />
+                        <Text className="text-slate-600 text-[15px] pl-1">
+                          {child.baby_name || (language === 'np' ? 'नाम नखुलेको' : 'Unnamed')}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
                 </View>
               </View>
+            )}
+
+            <View className="flex-row items-center justify-between border-t border-slate-100 pt-2 pt-5 pr-2" >
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "/dashboard/record/add-mother",
+                    params: { id: record.id, step: "1", from: "profile", mode: "new" },
+                  } as any)
+                }
+                className="flex-row items-center justify-end px-2"
+              >
+                <Plus size={17} color="#64748B" strokeWidth={3} />
+                <Text className="text-gray-600 font-semibold ml-2 text-[15px]">
+                  {language === "np"
+                    ? "गर्भावस्था थप्नुहोस्"
+                    : "Add Pregnancy"}
+                </Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() =>
                   router.push({
-                    pathname: "/dashboard/profile/complete-profile",
-                    params: { id: record.id },
+                    pathname: "/dashboard/profile/add-child",
+                    params: { motherId: record.id, from: "profile" }
                   } as any)
                 }
-                className="mt-4 w-full bg-primary/80 rounded-lg py-3.5 flex-row items-center justify-center"
+                className="flex-row items-center justify-end px-2"
               >
-                <FileText size={16} color="white" strokeWidth={2.5} />
-                <Text className="text-white font-semibold ml-2 text-md">
-                  {language === "np" ? "आमाको प्रोफाइल सम्पादन गर्नुहोस्" : "Edit Mother Profile"}
+                <Plus size={17} color="#64748B" strokeWidth={3} />
+                <Text className="text-[#475569] font-semibold ml-2 text-[15px]">
+                  {language === "np" ? "बच्चा थप्नुहोस्" : "Add Child"}
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Dates Grid */}
-          <View className="flex-row gap-3">
-            <View className="flex-1 bg-white p-3 py-4 rounded-md flex-row items-center border border-slate-100/50">
-              <Calendar size={18} color="#64748B" className="mr-3" />
-              <View>
-                <Text className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">
-                  {t("profile.identity.lmp_date")}
-                </Text>
-                <Text className="text-sm font-semibold text-slate-800">
-                  {record.lmp_year
-                    ? `${record.lmp_day}/${record.lmp_month}/${record.lmp_year}`
-                    : "---"}
-                </Text>
+          {
+            pregnancy?.lmp_date && (
+              <View className="flex-row gap-3">
+                <View className="flex-1 bg-white p-4 rounded-xl flex-row items-center border border-slate-100 shadow-sm shadow-slate-100">
+                  <View className="w-10 h-10 rounded-full bg-slate-50 items-center justify-center mr-3">
+                    <Calendar size={18} color="#64748B" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-[13px] text-slate-600 font-medium">
+                      {t("profile.identity.lmp_date")}
+                    </Text>
+                    <Text className="text-[16px] font-semibold text-slate-800">
+                      {formatBsDateDisplay(
+                        pregnancy?.lmp_date || mother?.lmp,
+                        'BS',
+                        language
+                      )}
+                    </Text>
+                  </View>
+                </View>
+                {/* Registration Date */}
+                <View className="bg-white p-4 rounded-xl border border-slate-100 flex-row items-center">
+                  <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center mr-3">
+                    <Calendar size={18} color="#64748B" />
+                  </View>
+                  <View className="">
+                    <Text className="text-[13px] text-slate-600 font-medium">
+                      {t("profile.quick_stats.reg_date")}
+                    </Text>
+                    <Text className="text-slate-800 font-semibold text-[16px]">
+                      {formatBsDateDisplay(
+                        mother?.regDate,
+                        'AD',
+                        language
+                      )}
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-            <View className="flex-1 bg-white p-3 py-4 rounded-md flex-row items-center border border-slate-100/50">
-              <Calendar size={18} color={Colors.primary} className="mr-3" />
-              <View>
-                <Text className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-0.5">
-                  {t("profile.identity.edd_date")}
-                </Text>
-                <Text className="text-sm font-semibold text-blue-900">
-                  {record.edd_year
-                    ? `${record.edd_day}/${record.edd_month}/${record.edd_year}`
-                    : "---"}
-                </Text>
-              </View>
-            </View>
-          </View>
+            )
+          }
 
+          {/* Pregnancy Countdown Card */}
+          {pregnancy && !pregnancy.delivered && !pregnancy.ended && (pregnancy.expected_delivery_date || pregnancy.lmp_date) && (
+            (() => {
+              const eddDate =
+                normalizeDateString(pregnancy.expected_delivery_date) ||
+                calculateEddFromLmp(pregnancy.lmp_date);
+              const daysRemaining = getDaysDiffFromBsEdd(eddDate, 'AD');
+              if (daysRemaining === null) return null;
+              const isOverdue = daysRemaining < 0;
+              const isToday = daysRemaining === 0;
+              const badgeStyle = isOverdue
+                ? "bg-rose-50 border-rose-100"
+                : isToday
+                  ? "bg-emerald-50 border-emerald-100"
+                  : "bg-blue-50 border-blue-100";
+              const badgeTextStyle = isOverdue
+                ? "text-rose-700"
+                : isToday
+                  ? "text-emerald-700"
+                  : "text-blue-700";
 
-          {/* Quick Stats */}
-          <View className="bg-white flex-1 p-4 py-5 rounded-md border border-slate-100 flex-row items-center">
-            <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center mr-3">
-              <Calendar size={18} color="#10B981" />
-            </View>
-            <View className="">
-              <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">
-                {t("profile.quick_stats.reg_date")}
-              </Text>
-              <Text className="text-slate-800 font-bold text-sm">
-                {record.date_day}/{record.date_month}/{record.date_year}
-              </Text>
-            </View>
-          </View>
+              return (
+                <View className="bg-white rounded-xl border border-slate-100 p-3 flex-row items-center shadow-sm shadow-slate-100">
+                  <View className="w-10 h-10 rounded-full bg-blue-50 items-center justify-center mr-3">
+                    <Calendar size={18} color="#2563EB" />
+                  </View>
+                  <View className="flex-1 pr-3">
+                    <Text className="text-[12px] text-slate-500 font-medium">
+                      {t("profile.countdown.title")}
+                    </Text>
+                    <Text className="text-[15px] font-semibold text-slate-800 mt-0.5">
+                      {t("profile.countdown.edd", {
+                        date: formatBsDateDisplay(eddDate, 'AD', language)
+                      })}
+                    </Text>
+                  </View>
+                  <View className={`px-3 py-2 rounded-lg border items-center min-w-[88px] ${badgeStyle}`}>
+                    <Text className={`text-[11px] font-semibold ${badgeTextStyle}`}>
+                      {isOverdue
+                        ? t("profile.countdown.overdue_label")
+                        : isToday
+                          ? t("profile.countdown.today_label")
+                          : t("profile.countdown.due_label")}
+                    </Text>
+                    <Text className={`text-[16px] font-bold mt-0.5 ${badgeTextStyle}`}>
+                      {isToday
+                        ? t("profile.countdown.today_short")
+                        : t("profile.countdown.days_short", {
+                          days: toDisplayNumber(Math.abs(daysRemaining), language)
+                        })}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })()
+          )}
 
-          <View className="flex-1">
-            {/* <CounselingSection
-              motherId={record.id}
-              motherName={record?.mother_name}
-            /> */}
-            <CounselingReferralSection motherId={record.id} />
-          </View>
-
-
-          {/* ANC Checkups Card */}
-          <View className="bg-white p-5 rounded-xl border border-slate-100">
+          <View className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
             <SectionTitle
               title={t("profile.anc.title")}
               icon={Stethoscope}
               colorClass="bg-blue-500"
             />
-            <View className="flex-row flex-wrap justify-between">
+            <View className="flex-row flex-wrap justify-between p-4 pb-1">
               <VisitBadge
                 label={t("profile.anc.wk12")}
                 val={record.checkup_12}
               />
               <VisitBadge
-                label={t("profile.anc.wk16")}
-                val={record.checkup_16}
+                label={t("profile.anc.wk20")}
+                val={record.checkup_20}
               />
               <VisitBadge
-                label={t("profile.anc.wk20_24")}
-                val={record.checkup_20_24}
+                label={t("profile.anc.wk26")}
+                val={record.checkup_26}
               />
               <VisitBadge
-                label={t("profile.anc.wk28")}
-                val={record.checkup_28}
-              />
-              <VisitBadge
-                label={t("profile.anc.wk32")}
-                val={record.checkup_32}
+                label={t("profile.anc.wk30")}
+                val={record.checkup_30}
               />
               <VisitBadge
                 label={t("profile.anc.wk34")}
@@ -388,12 +592,16 @@ export default function HmisRecordProfileScreen() {
                 val={record.checkup_36}
               />
               <VisitBadge
-                label={t("profile.anc.wk38_40")}
-                val={record.checkup_38_40}
+                label={t("profile.anc.wk38")}
+                val={record.checkup_38}
+              />
+              <VisitBadge
+                label={t("profile.anc.wk40")}
+                val={record.checkup_40}
               />
             </View>
             {record.checkup_other && (
-              <View className="mt-2 p-3 bg-slate-50 rounded-xl border border-slate-100 flex-row items-center">
+              <View className="mx-4 mb-4 p-3 bg-slate-50 rounded-xl border border-slate-100 flex-row items-center">
                 <Info size={16} color="#64748B" className="mr-2" />
                 <Text className="text-slate-600 text-[13px] font-medium">
                   {record.checkup_other}
@@ -402,67 +610,76 @@ export default function HmisRecordProfileScreen() {
             )}
           </View>
 
-          <SupplementsScreen />
-          <FamilyPlanningSection motherId={record.id} />
+          <CounselingReferralSection motherId={record.id} />
+          <SupplementsScreen motherId={record.id} />
 
-          {/* Birth & PNC Details Card */}
-          <View className="bg-white p-5 rounded-xl border border-slate-100">
+          <View className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm shadow-slate-200">
+            <SectionTitle
+              title={language === "np" ? "परिवार नियोजन साधन प्रयोग" : "Family Planning Method"}
+              icon={User}
+              colorClass="bg-indigo-600"
+            />
+            <View className="p-4">
+              <FamilyPlanningSection motherId={record.id} />
+            </View>
+          </View>
+
+          <View className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm shadow-slate-200">
             <SectionTitle
               title={t("profile.birth_pnc.title")}
               icon={Baby}
               colorClass="bg-indigo-500"
             />
-            <View className="flex-row gap-3 mb-5">
-              <View className="flex-1 p-4 bg-slate-50 rounded-md border border-slate-100/50">
-                <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">
-                  {t("profile.birth_pnc.place")}
-                </Text>
-                <Text className="text-slate-800 font-bold text-sm">
-                  {record.delivery_place || t("profile.birth_pnc.unrecorded")}
-                </Text>
+            <View className="p-4">
+              <View className="flex-row gap-3 mb-4">
+                <View className="flex-1 p-4 bg-slate-50 rounded-xl border border-slate-100/50">
+                  <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">
+                    {t("profile.birth_pnc.place")}
+                  </Text>
+                  <Text className="text-slate-800 font-semibold text-[13px]">
+                    {record.delivery_place || t("profile.birth_pnc.unrecorded")}
+                  </Text>
+                </View>
+                <View className="flex-1 p-4 bg-slate-50 rounded-xl border border-slate-100/50">
+                  <Text className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest mb-1">
+                    {t("profile.birth_pnc.condition")}
+                  </Text>
+                  <Text className="text-slate-800 font-semibold text-[13px]">
+                    {record.newborn_condition ||
+                      t("profile.birth_pnc.unrecorded")}
+                  </Text>
+                </View>
               </View>
-              <View className="flex-1 p-4 bg-slate-50 rounded-md border border-slate-100/50">
-                <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">
-                  {t("profile.birth_pnc.condition")}
-                </Text>
-                <Text className="text-slate-800 font-bold text-sm">
-                  {record.newborn_condition ||
-                    t("profile.birth_pnc.unrecorded")}
-                </Text>
-              </View>
-            </View>
 
-            <Text className="text-slate-800 font-bold text-sm mb-3 ml-1">
-              PNC Checkups
-            </Text>
-            <View className="flex-row flex-wrap justify-between">
-              <VisitBadge
-                label={t("profile.birth_pnc.hr24")}
-                val={record.pnc_check_24hr}
-              />
-              <VisitBadge
-                label={t("profile.birth_pnc.day3")}
-                val={record.pnc_check_3day}
-              />
-              <VisitBadge
-                label={t("profile.birth_pnc.day7_14")}
-                val={record.pnc_check_7_14day}
-              />
-              <VisitBadge
-                label={t("profile.birth_pnc.day42")}
-                val={record.pnc_check_42day}
-              />
+              <View className="flex-row flex-wrap justify-between">
+                <VisitBadge
+                  label={t("profile.birth_pnc.hr24")}
+                  val={record.pnc_check_24hr}
+                />
+                <VisitBadge
+                  label={t("profile.birth_pnc.day3")}
+                  val={record.pnc_check_3day}
+                />
+                <VisitBadge
+                  label={t("profile.birth_pnc.day7_14")}
+                  val={record.pnc_check_7_14day}
+                />
+                <VisitBadge
+                  label={t("profile.birth_pnc.day42")}
+                  val={record.pnc_check_42day}
+                />
+              </View>
             </View>
           </View>
 
-          {/* Death Reporting Section */}
-          <View className="bg-white p-5 rounded-xl border border-slate-100">
+          <View className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm shadow-slate-200">
             <SectionTitle
               title={t("profile.mortality.title")}
               icon={AlertTriangle}
               colorClass="bg-red-500"
+              bgColor="bg-red-50/30"
             />
-            <View className="gap-y-3">
+            <View className="gap-y-3 p-4">
               {[
                 {
                   title: t("profile.mortality.maternal_title"),
@@ -477,45 +694,45 @@ export default function HmisRecordProfileScreen() {
                   exists: !!existingNewbornDeathRecord,
                 },
               ].map((item, idx) => (
-                <TouchableOpacity
+                <View
                   key={idx}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (item.key === "maternal") {
-                      if (existingDeathRecord) {
-                        Alert.alert(
-                          t("profile.alerts.already_reported"),
-                          t("profile.alerts.maternal_exists"),
-                        );
-                      } else {
-                        setMaternalDeathModalVisible(true);
-                      }
-                    } else if (item.key === "newborn") {
-                      setNewbornDeathModalVisible(true);
-                    }
-                  }}
-                  className={`p-4 rounded-md border flex-row items-center justify-between ${item.exists
-                    ? "bg-rose-50 border-rose-200"
-                    : "bg-slate-50 border-slate-200"
+                  className={`p-4 rounded-xl border ${item.exists
+                    ? "bg-rose-50/50 border-rose-100"
+                    : "bg-slate-50 border-slate-100"
                     }`}
                 >
-                  <View className="flex-1 mr-4">
+                  <View className="mb-4">
                     <Text
-                      className={`font-bold text-[13px] ${item.exists ? "text-rose-900" : "text-slate-800"}`}
+                      className={`font-semibold text-[16px] ${item.exists ? "text-rose-600" : "text-slate-800"}`}
                     >
                       {item.title}
                     </Text>
                     <Text
-                      className={`text-[11px] font-medium leading-relaxed mt-1 ${item.exists ? "text-rose-600" : "text-slate-500"}`}
+                      className={`text-[15px] font-semibold leading-normal mt-1 ${item.exists ? "text-rose-400" : "text-slate-500"}`}
                     >
                       {item.subtitle}
                     </Text>
                   </View>
-                  <View
-                    className={`px-3 py-2 rounded-md ${item.exists ? "bg-rose-600" : "bg-white border border-slate-200"}`}
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      if (item.key === "maternal") {
+                        if (existingDeathRecord) {
+                          Alert.alert(
+                            t("profile.alerts.already_reported"),
+                            t("profile.alerts.maternal_exists"),
+                          );
+                        } else {
+                          setMaternalDeathModalVisible(true);
+                        }
+                      } else if (item.key === "newborn") {
+                        setNewbornDeathModalVisible(true);
+                      }
+                    }}
+                    className={`flex-row items-center justify-center py-2.5 rounded-lg ${item.exists ? "bg-rose-500" : "bg-white border border-slate-200"}`}
                   >
                     <Text
-                      className={`text-[10px] font-bold uppercase tracking-wider ${item.exists ? "text-white" : "text-slate-600"}`}
+                      className={`text-[15px] font-semibold ${item.exists ? "text-white" : "text-slate-600"}`}
                     >
                       {item.key === "newborn"
                         ? item.exists
@@ -525,8 +742,8 @@ export default function HmisRecordProfileScreen() {
                           ? t("profile.mortality.submitted")
                           : t("profile.mortality.add")}
                     </Text>
-                  </View>
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                </View>
               ))}
             </View>
           </View>
@@ -562,6 +779,7 @@ export default function HmisRecordProfileScreen() {
               visible={newbornDeathModalVisible}
               onClose={() => setNewbornDeathModalVisible(false)}
               record={record}
+              children={children}
               onSuccess={(data) => setExistingNewbornDeathRecord(data)}
               showToast={showToast}
             />

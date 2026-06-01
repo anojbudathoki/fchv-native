@@ -1,5 +1,6 @@
 import ChildCounselingSection from "@/app/dashboard/child/ChildCounselingSection";
 import CustomHeader from "@/components/CustomHeader";
+import VaccinationSection from "@/components/profile/VaccinationSection";
 import Colors from "@/constants/Colors";
 import { getInfantMonitoringById } from "@/hooks/database/models/InfantMonitoringModel";
 import { InfantMonitoringStoreType } from "@/hooks/database/types/infantMonitoringModal";
@@ -26,7 +27,7 @@ const toNepaliNumbers = (num: number | string) => {
 export default function ChildProfileScreen() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { id } = useLocalSearchParams<{ id: string }>();
+    const { id, from } = useLocalSearchParams<{ id: string, from?: string }>();
 
     const [record, setRecord] = useState<InfantMonitoringStoreType | null>(null);
     const [loading, setLoading] = useState(true);
@@ -96,7 +97,12 @@ export default function ChildProfileScreen() {
             <CustomHeader
                 title={t("child_profile.title")}
                 onBackPress={() => {
-                    if (router.canGoBack()) {
+                    if (from === "profile" && record?.mother_id) {
+                        router.replace({
+                            pathname: "/dashboard/profile",
+                            params: { id: record.mother_id },
+                        } as any);
+                    } else if (router.canGoBack()) {
                         router.back();
                     } else {
                         router.replace("/dashboard/child");
@@ -117,46 +123,49 @@ export default function ChildProfileScreen() {
                             </View>
                             <View className="flex-1">
                                 <View className="flex-row items-center justify-between">
-                                    <Text className="text-slate-800 text-[16px] font-bold">
+                                    <Text className="text-slate-800 text-[17px] font-bold">
                                         {record.baby_name || t("child_page.unnamed_baby")}
                                     </Text>
                                     <TouchableOpacity
                                         onPress={() =>
                                             router.push({
-                                                pathname: "/dashboard/child/child-form",
-                                                params: { id: record.id },
+                                                pathname: "/dashboard/child/add-child",
+                                                params: { id: record.id, from },
                                             })
                                         }
-                                        className="ml-2"
+                                        className="ml-2 p-3 bg-gray-50 rounded-full"
                                     >
-                                        <Edit2 size={14} color="#94A3B8" />
+                                        <Edit2 size={16} color="#899bb4ff" />
                                     </TouchableOpacity>
                                 </View>
-                                <Text className="text-[#64748B] text-[12px] mt-1 font-medium">
+                                <Text className="text-[#64748B] text-[15px] mt-1 font-medium">
                                     {t("child_profile.dob_label")}: {record.date_of_birth ? toNepaliNumbers(AdToBs(record.date_of_birth)) : "---"}
                                 </Text>
-                                <View className="bg-[#E0F2FE] self-start px-2.5 py-0.5 rounded-full mt-2">
-                                    <Text className="text-[#0369A1] text-[10px] font-semibold">
-                                        {t("child_profile.boy")}
+                                <TouchableOpacity onPress={() => router.push({
+                                    pathname: "/dashboard/profile",
+                                    params: { id: record.mother_id, from: `/dashboard/child/child-profile?id=${id}${from ? `&from=${from}` : ""}` },
+                                })} className="flex-row items-center mb-1">
+                                    <Text className="text-slate-500 font-medium text-[15px]" numberOfLines={1}>
+                                        {t("child_page.mother")}: <Text className="text-slate-700">{record.mother_name || t("child_page.unknown")}</Text>
                                     </Text>
-                                </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
                         <View className="flex-row gap-3 mt-5">
                             <View className="flex-1 bg-[#F8FAFC] py-3 rounded-xl items-center border border-slate-100">
-                                <Text className="text-[11px] text-slate-500 font-medium mb-1">
+                                <Text className="text-[13px] text-slate-600 font-medium mb-1">
                                     {t("child_profile.age")}
                                 </Text>
-                                <Text className="text-[13px] font-bold text-[#334155]">
+                                <Text className="text-[15px] font-bold text-[#334155]">
                                     {toNepaliNumbers(1)} {t("child_profile.identity.years")} {toNepaliNumbers(1)} महिना
                                 </Text>
                             </View>
                             <View className="flex-1 bg-[#F8FAFC] py-3 rounded-xl items-center border border-slate-100">
-                                <Text className="text-[11px] text-slate-500 font-medium mb-1">
+                                <Text className="text-[13px] text-slate-600 font-medium mb-1">
                                     {t("child_profile.reg_date")}
                                 </Text>
-                                <Text className="text-[13px] font-bold text-[#334155]">
+                                <Text className="text-[15px] font-bold text-[#334155]">
                                     {record.created_at ? toNepaliNumbers(AdToBs(record.created_at.split('T')[0])) : "---"}
                                 </Text>
                             </View>
@@ -165,28 +174,28 @@ export default function ChildProfileScreen() {
 
                     {/* Birth Info Grid */}
                     <View className="flex-row gap-3">
-                        <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex-row items-center">
+                        <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 flex-row items-center">
                             <View className="w-10 h-10 rounded-full bg-blue-50 items-center justify-center mr-3">
                                 <MapPin size={20} color="#3B82F6" />
                             </View>
                             <View>
-                                <Text className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+                                <Text className="text-[13px] text-slate-500 font-medium uppercase tracking-tight">
                                     {t("child_profile.identity.birth_place")}
                                 </Text>
-                                <Text className="text-[13px] font-bold text-slate-700 capitalize">
+                                <Text className="text-[15px] font-bold text-slate-700 capitalize">
                                     {record.birth_place ? t(`child_profile.values.${record.birth_place}`, { defaultValue: record.birth_place.replace("_", " ") }) : "---"}
                                 </Text>
                             </View>
                         </View>
-                        <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex-row items-center">
+                        <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 flex-row items-center">
                             <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center mr-3">
                                 <Activity size={20} color="#10B981" />
                             </View>
                             <View>
-                                <Text className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+                                <Text className="text-[13px] text-slate-500 font-medium uppercase tracking-tight">
                                     {t("child_profile.identity.status")}
                                 </Text>
-                                <Text className="text-[13px] font-bold text-slate-700 capitalize">
+                                <Text className="text-[15px] font-bold text-slate-700 capitalize">
                                     {record.status ? t(`child_profile.values.${record.status}`, { defaultValue: record.status }) : t("child_profile.values.alive")}
                                 </Text>
                             </View>
@@ -194,6 +203,7 @@ export default function ChildProfileScreen() {
                     </View>
 
                     <View className="mt-2">
+                        <VaccinationSection childId={record.id} childName={record.baby_name || ""} />
                         <ChildCounselingSection childId={record.id} />
                     </View>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Dimensions } from "react-native";
-import Svg, { Path, Rect, Text as SvgText, Line } from "react-native-svg";
-import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing, withDelay } from "react-native-reanimated";
+import { Dimensions, Text, View } from "react-native";
+import Animated, { Easing, useAnimatedProps, useSharedValue, withDelay, withTiming } from "react-native-reanimated";
+import Svg, { Line, Path, Rect, Text as SvgText } from "react-native-svg";
 
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -33,7 +33,7 @@ const TrendChart = ({ pregnancyData, childData, motherData }: TrendChartProps) =
     ...(motherData ? motherData.map((d) => d.value) : []),
     5
   );
-  
+
   // Round up to nearest multiple of 4 to have 4 even intervals
   const tickStep = Math.ceil(maxDataVal / 4);
   const maxVal = tickStep * 4;
@@ -48,7 +48,7 @@ const TrendChart = ({ pregnancyData, childData, motherData }: TrendChartProps) =
       const x1 = paddingLeft + (i + 0.5) * stepX + offset;
       const y1 = height - paddingBottom - (data[i].value / maxVal) * chartHeight;
       const x2 = paddingLeft + (i + 1.5) * stepX + offset;
-      const y2 = height - paddingBottom - (data[i+1].value / maxVal) * chartHeight;
+      const y2 = height - paddingBottom - (data[i + 1].value / maxVal) * chartHeight;
       const cx1 = x1 + (x2 - x1) / 2;
       const cy1 = y1;
       const cx2 = x1 + (x2 - x1) / 2;
@@ -83,13 +83,13 @@ const TrendChart = ({ pregnancyData, childData, motherData }: TrendChartProps) =
           const y = height - paddingBottom - (val / maxVal) * chartHeight;
           return (
             <React.Fragment key={`tick-${i}`}>
-              <Line 
-                x1={paddingLeft} 
-                y1={y} 
-                x2={containerWidth} 
-                y2={y} 
-                stroke="#F8FAFC" 
-                strokeWidth={1.5} 
+              <Line
+                x1={paddingLeft}
+                y1={y}
+                x2={containerWidth}
+                y2={y}
+                stroke="#F8FAFC"
+                strokeWidth={1.5}
               />
               <SvgText
                 x={paddingLeft - 10}
@@ -144,12 +144,12 @@ const TrendChart = ({ pregnancyData, childData, motherData }: TrendChartProps) =
               <SvgText
                 x={x}
                 y={height - 14}
-                fill="#94A3B8"
-                fontSize="10"
+                fill="#4d5664ff"
+                fontSize={d.label.length > 5 ? 11 : 11}
                 fontWeight="600"
                 textAnchor="middle"
               >
-                {d.label.substring(0, 3).toUpperCase()}
+                {d.label}
               </SvgText>
             </React.Fragment>
           );

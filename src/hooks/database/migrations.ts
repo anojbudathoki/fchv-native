@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-export const SCHEMA_VERSION = 32;
+export const SCHEMA_VERSION = 37;
 
 type Migration = {
   version: number;
@@ -714,4 +714,186 @@ export const MIGRATIONS: Migration[] = [
       }
     },
   },
+  {
+    version: 33,
+    up: async (db) => {
+      const tables = ["counseling", "counseling_referral"];
+      for (const table of tables) {
+        try {
+          await db.execAsync(`ALTER TABLE ${table} ADD COLUMN pregnancy_id TEXT;`);
+        } catch (e) {
+          console.log(`Migration 33: pregnancy_id already exists for ${table}:`, e);
+        }
+      }
+    },
+  },
+  {
+    version: 34,
+    up: async (db) => {
+      // Ensure pregnancy_id exists before recreation
+      try {
+        await db.execAsync(`ALTER TABLE counseling ADD COLUMN pregnancy_id TEXT;`);
+      } catch (e) { }
+      try {
+        await db.execAsync(`ALTER TABLE counseling_referral ADD COLUMN pregnancy_id TEXT;`);
+      } catch (e) { }
+
+      // Recreate counseling table to ensure proper definition
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS counseling_new (
+            id TEXT PRIMARY KEY,
+            mother_id TEXT NOT NULL,
+            pregnancy_id TEXT,
+            is_counseled INTEGER DEFAULT 0,
+            counseled_topics TEXT,
+            reg_year INTEGER,
+            reg_month INTEGER,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY(mother_id) REFERENCES mother(id),
+            FOREIGN KEY(pregnancy_id) REFERENCES pregnancy(id)
+          );
+          
+          INSERT OR IGNORE INTO counseling_new (id, mother_id, pregnancy_id, is_counseled, counseled_topics, reg_year, reg_month, is_synced, is_deleted, created_at, updated_at)
+          SELECT id, mother_id, pregnancy_id, is_counseled, counseled_topics, reg_year, reg_month, is_synced, is_deleted, created_at, updated_at FROM counseling;
+          
+          DROP TABLE counseling;
+          ALTER TABLE counseling_new RENAME TO counseling;
+        `);
+      } catch (e) {
+        console.log("Migration 34: counseling recreation failed:", e);
+      }
+
+      // Recreate counseling_referral table to add UNIQUE constraint
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS counseling_referral_new (
+            id TEXT PRIMARY KEY,
+            mother_id TEXT NOT NULL,
+            pregnancy_id TEXT,
+            answers TEXT,
+            reg_year INTEGER,
+            reg_month INTEGER,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY(mother_id) REFERENCES mother(id),
+            FOREIGN KEY(pregnancy_id) REFERENCES pregnancy(id),
+            UNIQUE(mother_id, pregnancy_id, reg_year, reg_month)
+          );
+          
+          INSERT OR IGNORE INTO counseling_referral_new (id, mother_id, pregnancy_id, answers, reg_year, reg_month, is_synced, is_deleted, created_at, updated_at)
+          SELECT id, mother_id, pregnancy_id, answers, reg_year, reg_month, is_synced, is_deleted, created_at, updated_at FROM counseling_referral;
+          
+          DROP TABLE counseling_referral;
+          ALTER TABLE counseling_referral_new RENAME TO counseling_referral;
+        `);
+      } catch (e) {
+        console.log("Migration 34: counseling_referral recreation failed:", e);
+      }
+    },
+  },
+  {
+    version: 35,
+    up: async (db) => {
+      await db.execAsync(`
+        CREATE TABLE IF NOT EXISTS child_vaccination (
+          id TEXT PRIMARY KEY,
+          child_id TEXT NOT NULL,
+          vaccine_id TEXT NOT NULL,
+          is_given INTEGER DEFAULT 0,
+          given_date TEXT,
+          is_synced INTEGER NOT NULL DEFAULT 0,
+          is_deleted INTEGER NOT NULL DEFAULT 0,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL,
+          FOREIGN KEY(child_id) REFERENCES child_monitoring(id),
+          UNIQUE(child_id, vaccine_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_child_vaccination_child_id ON child_vaccination(child_id);
+      `);
+    },
+  },
+  {
+    version: 36,
+    up: async (db) => {
+      try {
+        await db.execAsync(`
+          CREATE TABLE mother_new (
+            id TEXT PRIMARY KEY,
+            code TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            husband_name TEXT,
+            ethnicity TEXT,
+            education TEXT,
+            photo TEXT,
+            first_name TEXT,
+            last_name TEXT,
+            phone_number TEXT,
+            date_of_birth TEXT,
+            address_locality TEXT,
+            address_house_number TEXT,
+            address_province TEXT,
+            address_district TEXT,
+            address_municipality TEXT,
+            address_ward TEXT,
+            income TEXT,
+            occupation TEXT,
+            blood_group TEXT,
+            jati_code TEXT,
+            lmp_date TEXT,
+            parity INTEGER,
+            gravida INTEGER,
+            cover_photo TEXT,
+            emergency_contact_number TEXT,
+            partner_name TEXT,
+            partner_mobile TEXT,
+            partner_age TEXT,
+            reg_year INTEGER,
+            reg_month INTEGER,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+          );
+          
+          INSERT INTO mother_new (
+            id, code, is_synced, is_deleted, husband_name, ethnicity, education, photo,
+            first_name, last_name, phone_number, date_of_birth, address_locality, 
+            address_house_number, address_province, address_district, address_municipality, 
+            address_ward, income, occupation, blood_group, jati_code, lmp_date, parity, 
+            gravida, cover_photo, emergency_contact_number, partner_name, 
+            partner_mobile, partner_age, reg_year, reg_month, created_at, updated_at
+          )
+          SELECT 
+            id, code, is_synced, is_deleted, husband_name, ethnicity, education, photo,
+            first_name, last_name, phone_number, date_of_birth, address_locality, 
+            address_house_number, address_province, address_district, address_municipality, 
+            address_ward, income, occupation, blood_group, jati_code, lmp_date, parity, 
+            gravida, cover_photo, emergency_contact_number, partner_name, 
+            partner_mobile, partner_age, reg_year, reg_month, created_at, updated_at
+          FROM mother;
+          
+          DROP TABLE mother;
+          ALTER TABLE mother_new RENAME TO mother;
+        `);
+      } catch (e) {
+        console.log("Migration 36 (remove alias column) failed:", e);
+      }
+    }
+  },
+  {
+    version: 37,
+    up: async (db) => {
+      try {
+        await db.execAsync(`ALTER TABLE child_monitoring ADD COLUMN is_all_given INTEGER DEFAULT 0;`);
+      } catch (e) {
+        console.log("Migration 37 (is_all_given) failed or already applied:", e);
+      }
+    }
+  },
 ];
+

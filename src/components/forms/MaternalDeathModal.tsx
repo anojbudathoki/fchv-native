@@ -116,7 +116,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
   // Helper: renders a field label row
   const FieldLabel = ({ label, hasError, required = true }: { label: string; hasError: boolean; required?: boolean }) => (
     <View className="flex-row items-center mb-2.5">
-      <Text className="text-[14px] text-slate-700 font-semibold">{label}</Text>
+      <Text className="text-[16px] text-slate-700 font-semibold">{label}</Text>
       {required && <Text className="text-red-500 ml-1">*</Text>}
     </View>
   );
@@ -132,8 +132,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
         {/* Header */}
         <View className="flex-row items-center justify-between px-5 py-4 bg-white border-b border-slate-100 shadow-sm">
           <View>
-            <Text className="text-slate-900 text-[18px] font-bold">{t("maternal_death_modal.title")}</Text>
-            <Text className="text-slate-500 text-[13px] mt-0.5">{t("maternal_death_modal.subtitle")}</Text>
+            <Text className="text-slate-800 text-xl font-semibold">{t("maternal_death_modal.title")}</Text>
           </View>
           <Pressable onPress={onClose} className="bg-slate-50 p-2 rounded-full border border-slate-100">
             <X size={20} color="#64748B" />
@@ -151,7 +150,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                 className="bg-white border border-slate-200 px-4 py-2.5 rounded-md flex-row items-center justify-between shadow-sm shadow-slate-100"
               >
                 <View className="flex-row items-center">
-                  <Text className="text-slate-800 text-[15px] font-medium">
+                  <Text className="text-slate-800 text-[16px] font-medium">
                     {toNepali(deathYear, deathMonth, deathDay)}
                   </Text>
                 </View>
@@ -196,8 +195,8 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                     onPress={() => { setDeathCondition(c.value); setErrDeathCondition(false); }}
                     className={`w-full p-4 rounded-md border flex-row items-center ${
                       deathCondition === c.value
-                        ? 'bg-blue-50 border-[#0056D2] shadow-blue-100'
-                        : errDeathCondition ? 'bg-red-50 border-red-300 shadow-red-100' : 'bg-white border-slate-200 shadow-slate-100'
+                        ? 'bg-blue-50 border-[#0056D2]'
+                        : errDeathCondition ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'
                     }`}
                   >
                     <View className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${
@@ -205,7 +204,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                     }`}>
                       {deathCondition === c.value && <View className="w-2.5 h-2.5 rounded-full bg-[#0056D2]" />}
                     </View>
-                    <Text className={`text-[14px] font-medium ${
+                    <Text className={`text-[16px] font-medium ${
                       deathCondition === c.value ? 'text-[#0056D2]' : 'text-slate-700'
                     }`}>{c.label}</Text>
                   </Pressable>
@@ -225,10 +224,10 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                   <Pressable
                     key={c.value}
                     onPress={() => { setDeathPlace(c.value); setErrDeathPlace(false); }}
-                    className={`w-full p-4 rounded-md border flex-row items-center shadow-sm ${
+                    className={`w-full p-4 rounded-md border flex-row items-center ${
                       deathPlace === c.value
-                        ? 'bg-blue-50 border-[#0056D2] shadow-blue-100'
-                        : errDeathPlace ? 'bg-red-50 border-red-300 shadow-red-100' : 'bg-white border-slate-200 shadow-slate-100'
+                        ? 'bg-blue-50 border-[#0056D2]'
+                        : errDeathPlace ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'
                     }`}
                   >
                     <View className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${
@@ -236,7 +235,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                     }`}>
                       {deathPlace === c.value && <View className="w-2.5 h-2.5 rounded-full bg-[#0056D2]" />}
                     </View>
-                    <Text className={`text-[14px] font-medium ${
+                    <Text className={`text-[16px] font-medium ${
                       deathPlace === c.value ? 'text-[#0056D2]' : 'text-slate-700'
                     }`}>{c.label}</Text>
                   </Pressable>
@@ -246,7 +245,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                 <View className="mt-3">
                   <TextInput
                     placeholder={t("maternal_death_modal.specify_place")}
-                    className={`bg-white border p-4 rounded-md text-slate-900 text-[15px] shadow-sm shadow-slate-100 ${
+                    className={`bg-white border p-4 rounded-md text-slate-800 text-[16px] ${
                       errDeathPlaceOther ? 'border-red-400' : 'border-slate-200'
                     }`}
                     onChangeText={(v) => { setDeathPlaceOther(v); if (v.trim()) setErrDeathPlaceOther(false); }}
@@ -272,8 +271,8 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                     onPress={() => { setChildCondition(c.value); setErrChildCondition(false); }}
                     className={`flex-1 p-4 rounded-md border flex-row items-center justify-center ${
                       childCondition === c.value
-                        ? c.value === 'Alive' ? 'bg-emerald-50 border-emerald-500 shadow-emerald-100' : 'bg-red-50 border-red-400 shadow-red-100'
-                        : errChildCondition ? 'bg-red-50 border-red-300 shadow-red-100' : 'bg-white border-slate-200 shadow-slate-100'
+                        ? c.value === 'Alive' ? 'bg-emerald-50 border-emerald-500' : 'bg-red-50 border-red-400'
+                        : errChildCondition ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'
                     }`}
                   >
                     <View className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${
@@ -287,7 +286,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
                         }`} />
                       )}
                     </View>
-                    <Text className={`text-[14px] font-medium ${
+                    <Text className={`text-[16px] font-medium ${
                       childCondition === c.value
                         ? c.value === 'Alive' ? 'text-emerald-700' : 'text-red-600'
                         : 'text-slate-700'
@@ -302,7 +301,7 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
               <FieldLabel label={t("maternal_death_modal.remarks")} hasError={false} required={false} />
               <TextInput
                 placeholder={t("maternal_death_modal.remarks_placeholder")}
-                className="bg-white border border-slate-200 p-4 rounded-md text-slate-900 min-h-[100px] shadow-sm shadow-slate-100 text-[15px]"
+                className="bg-white border border-slate-200 p-4 rounded-md text-slate-800 min-h-[100px] text-[16px]"
                 multiline
                 placeholderTextColor="#94A3B8"
                 textAlignVertical="top"
@@ -319,14 +318,14 @@ export default function MaternalDeathModal({ visible, onClose, record, onSuccess
           <Pressable
             onPress={handleSaveMaternalDeath}
             disabled={submitting}
-            className={`w-full py-4 flex-row items-center justify-center shadow-sm shadow-blue-200 active:opacity-80 ${submitting ? 'bg-slate-400' : 'bg-primary/80'}`}
+            className={`w-full py-4 flex-row items-center justify-center rounded-lg active:opacity-80 ${submitting ? 'bg-slate-400' : 'bg-primary/80'}`}
           >
             {submitting ? (
               <ActivityIndicator color="white" size="small" />
             ) : (
               <>
                 <Save size={20} color="white" />
-                <Text className="text-white font-bold text-[16px] ml-2 tracking-wide">{t("maternal_death_modal.save")}</Text>
+                <Text className="text-white font-semibold text-[16px] ml-2 tracking-wide">{t("maternal_death_modal.save")}</Text>
               </>
             )}
           </Pressable>

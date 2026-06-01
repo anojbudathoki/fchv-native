@@ -5,10 +5,14 @@ import NepaliDate from "nepali-date-converter";
  * Month is 1-indexed (Baisakh=1, Chaitra=12).
  */
 export const getCurrentNepaliDate = (): { year: number; month: number } => {
-    const now = new NepaliDate();
+    return adToBs(new Date());
+};
+
+export const adToBs = (date: Date): { year: number; month: number } => {
+    const nd = new NepaliDate(date);
     return {
-        year: now.getYear(),
-        month: now.getMonth() + 1, // getMonth() is 0-indexed
+        year: nd.getYear(),
+        month: nd.getMonth() + 1,
     };
 };
 
@@ -35,3 +39,83 @@ export const getNepaliMonthName = (monthIndex: number): string => {
 export const getNepaliMonthNameNp = (monthIndex: number): string => {
     return NepaliMonthNamesNp[monthIndex - 1] || "";
 };
+export const toNepaliNumbers = (num: number | string): string => {
+    const nepaliDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
+    return String(num).replace(/[0-9]/g, (match) => nepaliDigits[parseInt(match)]);
+};
+
+export type NepaliYearMonth = {
+    year: number;
+    month: number;
+};
+
+export type NepaliTrendBucket = NepaliYearMonth & {
+    label: string;
+    labelNp: string;
+};
+
+const normalizeMonth = (month: number): number | null => {
+    if (!Number.isFinite(month)) return null;
+
+    if (month >= 1 && month <= 12) return month;
+
+    return null;
+};
+
+export const resolveNepaliYearMonth = (
+    regYear?: number | string | null,
+    regMonth?: number | string | null,
+    createdAt?: string | null,
+): NepaliYearMonth | null => {
+    const parsedYear = Number(regYear);
+
+    if (regMonth !== null && regMonth !== undefined && regMonth !== "") {
+        const monthText = String(regMonth);
+
+        if (monthText.includes("-")) {
+            const [yearPart, monthPart] = monthText.split("-");
+            const year = Number(yearPart);
+            const month = normalizeMonth(Number(monthPart));
+            if (Number.isFinite(year) && month) {
+                return { year, month };
+            }
+        }
+
+        const month = normalizeMonth(Number(regMonth));
+        if (Number.isFinite(parsedYear) && month) {
+            return { year: parsedYear, month };
+        }
+    }
+
+    if (!createdAt) return null;
+
+    const createdDate = new Date(createdAt);
+    if (Number.isNaN(createdDate.getTime())) return null;
+
+    return adToBs(createdDate);
+};
+
+export const getRecentNepaliMonthBuckets = (monthCount = 3): NepaliTrendBucket[] => {
+    const { year: currentYear, month: currentMonth } = getCurrentNepaliDate();
+    const buckets: NepaliTrendBucket[] = [];
+
+    for (let i = monthCount - 1; i >= 0; i--) {
+        let month = currentMonth - i;
+        let year = currentYear;
+
+        while (month <= 0) {
+            month += 12;
+            year -= 1;
+        }
+
+        buckets.push({
+            year,
+            month,
+            label: NepaliMonthNames[month - 1],
+            labelNp: NepaliMonthNamesNp[month - 1],
+        });
+    }
+
+    return buckets;
+};
+

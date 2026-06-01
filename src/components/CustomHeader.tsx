@@ -42,12 +42,12 @@ export default function CustomHeader({
       <View className="flex-row items-center flex-1">
         <TouchableOpacity 
           onPress={handleBack} 
-          className="mr-3 p-2 rounded-xl"
+          className="mr-1 p-2 rounded-xl"
         >
           <ChevronLeft size={22} color={Colors.textPrimary || "#1E293B"} strokeWidth={2.5} />
         </TouchableOpacity>
         <View className="flex-1">
-          <Text className="font-semibold text-lg ml-1" style={{ color: Colors.textPrimary || "#1E293B" }}>
+          <Text className="font-semibold text-xl" style={{ color: Colors.textPrimary || "#1E293B" }}>
             {title}
           </Text>
           {subtitle && (

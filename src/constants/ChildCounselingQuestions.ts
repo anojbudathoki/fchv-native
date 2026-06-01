@@ -4,31 +4,34 @@ export interface ChildCounselingQuestion {
   ne: string;
 }
 
+export const ONE_TIME_CHILD_COUNSELING_QUESTIONS = [
+
+  {
+    id: "bathed_after_24_hours",
+    en: "Did you bathe the baby only after 24 hours of birth?",
+    ne: "बच्चा जन्मिएको २४ घण्टा पूरा भएपछि मात्र नुहाउनुभएको थियो?",
+  },
+  {
+    id: "all_vaccines_23_months",
+    en: "Have you given all necessary vaccines to the child within 23 months?",
+    ne: "बच्चालाई २३ महिनाभित्र सबै आवश्यक खोपहरू लगाउनु भएको हो?",
+  },
+]
+
+
 export const CHILD_COUNSELING_QUESTIONS: ChildCounselingQuestion[] = [
   {
     id: "newborn_vaccination_facility",
     en: "Did you send the newborn baby to the health facility for vaccination?",
     ne: "नवजात शिशुलाई खोप लगाउन स्वास्थ्य संस्थामा पठाउनु भएको हो?",
   },
-  {
-    id: "bathed_after_24_hours",
-    en: "Did you bathe the baby only after 24 hours of birth?",
-    ne: "बच्चा जन्मिएको २४ घण्टा पूरा भएपछि मात्र नुहाउनुभएको थियो?",
-  },
-  // {
-  //   id: "sent_for_vaccination_2",
-  //   en: "Did you send the new baby to the health facility for vaccination?",
-  //   ne: "नयाँ बच्चालाई खोप लगाउन स्वास्थ्य संस्थामा पठाउनु भएको थियो?",
-  // },
-  {
-    id: "all_vaccines_23_months",
-    en: "Have you given all necessary vaccines to the child within 23 months?",
-    ne: "बच्चालाई २३ महिनाभित्र सबै आवश्यक खोपहरू लगाउनु भएको हो?",
-  },
+];
+
+export const CHILD_HEALTH_COUNSELLING_QUESTIONS = [
   {
     id: "good_health_condition",
-    en: "Is the baby's health condition good?",
-    ne: "शिशुको स्वास्थ्य अवस्था राम्रो छ?",
+    en: "Is the baby's health condition bad?",
+    ne: "शिशुको स्वास्थ्य अवस्था राम्रो छैन?",
   },
   {
     id: "has_diarrhea",
@@ -46,14 +49,14 @@ export const CHILD_COUNSELING_QUESTIONS: ChildCounselingQuestion[] = [
     ne: "बच्चालाई निमोनिया भएको छ?",
   },
   {
-    id: "home_treatment_cold",
-    en: "Did you advise home treatment for common respiratory problems like a cold?",
-    ne: "रुघाखोकी जस्ता सामान्य श्वासप्रश्वास समस्या लागेर घरमै उपचारका लागि सल्लाह दिनुभएको हो?",
-  },
-  {
     id: "referred_breathing_problems",
     en: "Did you refer to the health facility as needed for breathing problems?",
     ne: "बच्चालाई श्वासप्रश्वास सम्बन्धी समस्या भएर आवश्यक अनुसार स्वास्थ्य संस्थामा रेफर गर्नु भएको हो?",
+  },
+  {
+    id: "home_treatment_cold",
+    en: "Did you advise home treatment for common respiratory problems like a cold?",
+    ne: "रुघाखोकी जस्ता सामान्य श्वासप्रश्वास समस्या लागेर घरमै उपचारका लागि सल्लाह दिनुभएको हो?",
   },
 ];
 

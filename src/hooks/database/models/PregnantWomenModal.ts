@@ -1,5 +1,8 @@
 import * as Crypto from "expo-crypto";
-import { getCurrentNepaliMonth } from "../../../utils/dateHelper";
+import {
+  getCurrentNepaliDate,
+  resolveNepaliYearMonth,
+} from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import {
   CreatePregnancyPayload,
@@ -17,10 +20,18 @@ export async function createPregnancy(
   const now = new Date().toISOString();
   const id = payload.id || Crypto.randomUUID();
 
+  // If this new pregnancy is marked as current, deactivate other current pregnancies for this mother
+  if (payload.is_current) {
+    await db.runAsync(
+      `UPDATE pregnancy SET is_current = 0, updated_at = ? WHERE mother_id = ? AND id != ? AND is_current = 1`,
+      [now, payload.mother_id, id]
+    );
+  }
+
   await db.runAsync(
     `INSERT INTO pregnancy 
-      (id, mother_id, lmp_date, expected_delivery_date, caretakers_name, caretakers_phone, is_current, gravida, parity, selected, ended, delivered, risk_level, is_synced, is_deleted, reg_month, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, mother_id, lmp_date, expected_delivery_date, caretakers_name, caretakers_phone, is_current, gravida, parity, selected, ended, delivered, risk_level, is_synced, is_deleted, reg_year, reg_month, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       mother_id = excluded.mother_id,
       lmp_date = excluded.lmp_date,
@@ -53,7 +64,8 @@ export async function createPregnancy(
       payload.risk_level || "normal",
       0,
       0,
-      getCurrentNepaliMonth(),
+      getCurrentNepaliDate().year,
+      getCurrentNepaliDate().month,
       now,
       now,
     ],
@@ -75,7 +87,8 @@ export async function createPregnancy(
     risk_level: payload.risk_level || "normal",
     is_synced: payload.is_synced ? 1 : 0,
     is_deleted: 0,
-    reg_month: getCurrentNepaliMonth(),
+    reg_year: getCurrentNepaliDate().year,
+    reg_month: getCurrentNepaliDate().month,
     created_at: now,
     updated_at: now,
   };
@@ -371,19 +384,45 @@ export async function getPregnancyTrend(): Promise<
   { month: number; year: number; count: number }[]
 > {
   const db = await getDb();
-  // Using substr for more robust date extraction since strftime can be picky about formats
   const query = `
     SELECT 
-      CAST(substr(COALESCE(created_at, lmp_date), 6, 2) AS INTEGER) - 1 as month,
-      CAST(substr(COALESCE(created_at, lmp_date), 1, 4) AS INTEGER) as year,
-      COUNT(*) as count
+      reg_year,
+      reg_month,
+      created_at
     FROM pregnancy 
     WHERE is_deleted = 0
-      AND COALESCE(created_at, lmp_date) IS NOT NULL
-      AND month >= 0 AND month <= 11
-      AND year > 2000
-    GROUP BY year, month
   `;
   const rows = await db.getAllAsync<any>(query);
-  return rows;
+  const counts = new Map<string, { month: number; year: number; count: number }>();
+
+  rows.forEach((row: any) => {
+    const resolved = resolveNepaliYearMonth(
+      row.reg_year,
+      row.reg_month,
+      row.created_at,
+    );
+    if (!resolved) return;
+
+    const key = `${resolved.year}-${resolved.month}`;
+    const existing = counts.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      counts.set(key, {
+        month: resolved.month - 1,
+        year: resolved.year,
+        count: 1,
+      });
+    }
+  });
+
+  return Array.from(counts.values());
+}
+export async function deactivateOtherPregnancies(motherId: string, currentPregnancyId: string): Promise<void> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  await db.runAsync(
+    `UPDATE pregnancy SET is_current = 0, updated_at = ? WHERE mother_id = ? AND id != ? AND is_current = 1`,
+    [now, motherId, currentPregnancyId]
+  );
 }

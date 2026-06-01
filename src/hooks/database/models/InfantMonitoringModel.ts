@@ -1,4 +1,7 @@
-import { getCurrentNepaliDate } from "../../../utils/dateHelper";
+import {
+  getCurrentNepaliDate,
+  resolveNepaliYearMonth,
+} from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import {
   CreateInfantMonitoringPayload,
@@ -15,8 +18,8 @@ export async function createInfantMonitoring(
   await db.runAsync(
     `INSERT INTO child_monitoring 
       (id, mother_id, baby_name, date_of_birth, birth_place, status, fchv_present, skilled_birth_attended,
-       baby_weight, umbilical_ointment, skin_to_skin, early_breastfeeding, asphyxiated_newborn, remarks, is_synced, is_deleted, reg_year, reg_month, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       baby_weight, umbilical_ointment, skin_to_skin, early_breastfeeding, asphyxiated_newborn, is_all_given, remarks, is_synced, is_deleted, reg_year, reg_month, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       mother_id = excluded.mother_id,
       baby_name = excluded.baby_name,
@@ -30,6 +33,7 @@ export async function createInfantMonitoring(
       skin_to_skin = excluded.skin_to_skin,
       early_breastfeeding = excluded.early_breastfeeding,
       asphyxiated_newborn = excluded.asphyxiated_newborn,
+      is_all_given = excluded.is_all_given,
       remarks = excluded.remarks,
       updated_at = excluded.updated_at;`,
     [
@@ -46,6 +50,7 @@ export async function createInfantMonitoring(
       payload.skin_to_skin ?? 0,
       payload.early_breastfeeding ?? 0,
       payload.asphyxiated_newborn ?? 0,
+      payload.is_all_given ?? 0,
       payload.remarks ?? null,
       0, // is_synced
       0, // is_deleted
@@ -111,6 +116,17 @@ export async function getInfantMonitoringByMother(
   const db = await getDb();
   return await db.getFirstAsync<InfantMonitoringStoreType>(
     `SELECT * FROM child_monitoring WHERE mother_id = ? AND is_deleted = 0 ORDER BY created_at DESC`,
+    [motherId],
+  );
+}
+
+export async function getInfantMonitoringsByMother(
+  motherId: string,
+): Promise<InfantMonitoringStoreType[]> {
+  const db = await getDb();
+  return await db.getAllAsync<InfantMonitoringStoreType>(
+    `SELECT * FROM child_monitoring WHERE mother_id = ? AND is_deleted = 0 ORDER BY created_at DESC`,
+    [motherId],
   );
 }
 
@@ -118,20 +134,48 @@ export async function getChildTrend(): Promise<
   { month: number; year: number; count: number }[]
 > {
   const db = await getDb();
-  // Using substr for extraction and removed the 1-year filter to show all registrations
   const query = `
     SELECT 
-      CAST(substr(COALESCE(created_at, date_of_birth), 6, 2) AS INTEGER) - 1 as month,
-      CAST(substr(COALESCE(created_at, date_of_birth), 1, 4) AS INTEGER) as year,
-      COUNT(*) as count
+      reg_year,
+      reg_month,
+      created_at
     FROM child_monitoring 
-    WHERE is_deleted = 0 
-      AND COALESCE(created_at, date_of_birth) IS NOT NULL
-      AND month >= 0 AND month <= 11
-      AND year > 2000
-    GROUP BY year, month
-    ORDER BY year DESC, month DESC
+    WHERE is_deleted = 0
   `;
   const rows = await db.getAllAsync<any>(query);
-  return rows;
+  const counts = new Map<string, { month: number; year: number; count: number }>();
+
+  rows.forEach((row: any) => {
+    const resolved = resolveNepaliYearMonth(
+      row.reg_year,
+      row.reg_month,
+      row.created_at,
+    );
+    if (!resolved) return;
+
+    const key = `${resolved.year}-${resolved.month}`;
+    const existing = counts.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      counts.set(key, {
+        month: resolved.month - 1,
+        year: resolved.year,
+        count: 1,
+      });
+    }
+  });
+
+  return Array.from(counts.values());
+}
+
+export async function updateAllVaccinatedStatus(
+  id: string,
+  completed: boolean,
+): Promise<void> {
+  const db = await getDb();
+  await db.runAsync(
+    `UPDATE child_monitoring SET is_all_given = ?, updated_at = ? WHERE id = ?`,
+    [completed ? 1 : 0, new Date().toISOString(), id],
+  );
 }

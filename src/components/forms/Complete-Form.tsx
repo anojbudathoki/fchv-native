@@ -12,13 +12,13 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator, Alert,
   Image,
-  KeyboardAvoidingView, Platform,
   Pressable,
-  SafeAreaView, ScrollView,
+  SafeAreaView,
   StatusBar,
   Text, TouchableOpacity,
   View
 } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import municipalitiesData from "../../assets/json/municipalities.json";
 import { useLanguage } from "../../context/LanguageContext";
@@ -33,7 +33,7 @@ import { ProfilePicker } from "../ProfilePicker";
 
 const provinces: Province[] = municipalitiesData as Province[];
 
-export default function CompleteForm({ id }: { id?: string }) {
+export default function CompleteForm({ id, from }: { id?: string; from?: string }) {
   const router = useRouter();
   const { showToast } = useToast();
   const { t, language } = useLanguage();
@@ -46,7 +46,6 @@ export default function CompleteForm({ id }: { id?: string }) {
   const [dobAd, setDobAd] = useState("");
   const [dobBs, setDobBs] = useState("");
   const [phone, setPhone] = useState("");
-  const [alias, setAlias] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   // Step 2: Address
@@ -121,7 +120,6 @@ export default function CompleteForm({ id }: { id?: string }) {
             setPartnerMobile(data.partnerMobile || "");
             setPartnerAge(data.partnerAge || "");
             setEmergencyContact(data.emergencyContactNumber || "");
-            setAlias(data.alias || "");
             setLocality(data.addressLocality || "");
             setHouseNumber(data.addressHouseNumber || "");
             setIncome(data.income || "");
@@ -218,7 +216,6 @@ export default function CompleteForm({ id }: { id?: string }) {
         income: income,
         blood_group: bloodGroup,
         photo: photoUrl ?? undefined,
-        alias: alias,
         partner_name: partnerName,
         partner_mobile: partnerMobile,
         partner_age: partnerAge,
@@ -301,7 +298,7 @@ export default function CompleteForm({ id }: { id?: string }) {
       {[1, 2, 3, 4].map((step) => (
         <View key={step} className="flex-row items-center">
           <View className={`w-8 h-8 rounded-full items-center justify-center ${currentStep === step ? "bg-primary" :
-            currentStep > step ? "bg-green-500" : "bg-gray-200"
+            currentStep > step ? "bg-gray-500" : "bg-gray-200"
             }`}>
             {currentStep > step ? (
               <Text className="text-white text-xs font-bold">✓</Text>
@@ -311,7 +308,7 @@ export default function CompleteForm({ id }: { id?: string }) {
               </Text>
             )}
           </View>
-          {step < 4 && <View className={`w-10 h-[2px] mx-1 ${currentStep > step ? "bg-green-500" : "bg-gray-200"}`} />}
+          {step < 4 && <View className={`w-10 h-[2px] mx-1 ${currentStep > step ? "bg-gray-500" : "bg-gray-200"}`} />}
         </View>
       ))}
     </View>
@@ -322,12 +319,12 @@ export default function CompleteForm({ id }: { id?: string }) {
       case 1:
         return (
           <View className="p-6">
-            <Text className="text-xl font-bold text-slate-800 mb-6 flex-row items-center">
-              <User size={20} color="#0056D2" />  {t("complete_form.steps.personal")}
-            </Text>
+            {/* <Text className="text-xl font-semibold text-slate-800 mb-6 flex-row items-center">
+              <User size={20} color="#475569" />  {t("complete_form.steps.personal")}
+            </Text> */}
 
             <TouchableOpacity onPress={handlePhotoUpload} className="items-center mb-8">
-              <View className="w-24 h-24 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 items-center justify-center overflow-hidden">
+              <View className="w-28 h-28 rounded-full border-2 border-dashed border-slate-300 items-center justify-center overflow-hidden">
                 {photoUrl ? (
                   <Image source={{ uri: photoUrl }} className="w-full h-full" />
                 ) : (
@@ -378,21 +375,14 @@ export default function CompleteForm({ id }: { id?: string }) {
               maxLength={10}
               error={errors.phone}
             />
-
-            <FieldLabel label={t("complete_form.fields.alias")} />
-            <BoxInput
-              placeholder={t("complete_form.fields.alias_placeholder")}
-              value={alias}
-              onChangeText={setAlias}
-            />
           </View>
         );
       case 2:
         return (
           <View className="p-6">
-            <Text className="text-xl font-bold text-slate-800 mb-6">
-              <MapPin size={20} color="#0056D2" />  {t("complete_form.steps.address")}
-            </Text>
+            {/* <Text className="text-xl font-semibold text-slate-800 mb-6">
+              <MapPin size={20} color="#475569" />  {t("complete_form.steps.address")}
+            </Text> */}
 
             <ProfilePicker
               label={t("complete_form.fields.province")}
@@ -468,9 +458,9 @@ export default function CompleteForm({ id }: { id?: string }) {
       case 3:
         return (
           <View className="p-6">
-            <Text className="text-xl font-bold text-slate-800 mb-6">
+            {/* <Text className="text-xl font-bold text-slate-800 mb-6">
               <Briefcase size={20} color="#0056D2" />  {t("complete_form.steps.socio_economic")}
-            </Text>
+            </Text> */}
 
             <ProfilePicker
               label={t("complete_form.fields.ethnicity")}
@@ -516,9 +506,9 @@ export default function CompleteForm({ id }: { id?: string }) {
       case 4:
         return (
           <View className="p-6">
-            <Text className="text-xl font-bold text-slate-800 mb-6">
+            {/* <Text className="text-xl font-bold text-slate-800 mb-6">
               <HeartPulse size={20} color="#0056D2" />  {t("complete_form.steps.health")}
-            </Text>
+            </Text> */}
 
             <FieldLabel label={t("complete_form.fields.partner_name")} />
             <BoxInput placeholder={t("complete_form.fields.partner_name_placeholder")} value={partnerName} onChangeText={setPartnerName} />
@@ -584,46 +574,60 @@ export default function CompleteForm({ id }: { id?: string }) {
   return (
     <SafeAreaView className="flex-1 bg-white pt-8 pb-10">
       <StatusBar barStyle="dark-content" />
-      <CustomHeader title={id ? t("complete_form.title_edit") : t("complete_form.title_new")} onBackPress={() => router.back()} />
+      <CustomHeader
+        title={id ? t("complete_form.title_edit") : t("complete_form.title_new")}
+        onBackPress={() => {
+          if (from === "profile" && id) {
+            router.replace({
+              pathname: "/dashboard/profile",
+              params: { id },
+            } as any);
+          } else {
+            router.back();
+          }
+        }}
+      />
 
       <StepIndicator />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      <KeyboardAwareScrollView
         className="flex-1"
+        enableOnAndroid={true}
+        extraScrollHeight={100}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {renderStep()}
-        </ScrollView>
+        {renderStep()}
+      </KeyboardAwareScrollView>
 
-        <View className="p-6 pb-16 flex-row gap-4 bg-white items-center">
-          {currentStep > 1 && (
-            <TouchableOpacity
-              onPress={handlePrev}
-              className="flex-1 h-14 rounded-md bg-slate-100 items-center justify-center flex-row"
-            >
-              <ChevronLeft size={20} color="#64748b" />
-            </TouchableOpacity>
-          )}
+      <View className="p-6 pb-16 flex-row gap-4 bg-white items-center">
+        {currentStep > 1 && (
+          <TouchableOpacity
+            onPress={handlePrev}
+            className="flex-1 h-14 rounded-md bg-slate-100 items-center justify-center flex-row"
+          >
+            <ChevronLeft size={20} color="#64748b" className="mt-1"/>
+          </TouchableOpacity>
+        )}
 
-          {currentStep < totalSteps ? (
-            <TouchableOpacity
-              onPress={handleNext}
-              className="flex-[2] h-14 rounded-md bg-primary/80 items-center justify-center flex-row"
-            >
-              <Text className="text-white font-bold text-base mr-2">{t("complete_form.buttons.continue")}</Text>
-              <ChevronRight size={20} color="#fff" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={save}
-              className="flex-[2] h-14 rounded-md bg-primary/80 items-center justify-center flex-row"
-            >
-              {isLoading ? <ActivityIndicator color="white" size="small" /> : <Text className="text-white font-bold text-base">{id ? t("complete_form.buttons.finish_update") : t("complete_form.buttons.complete_reg")}</Text>}
-            </TouchableOpacity>
-          )}
-        </View>
-      </KeyboardAvoidingView>
+        {currentStep < totalSteps ? (
+          <TouchableOpacity
+            onPress={handleNext}
+            className="flex-[2] h-14 rounded-md bg-primary items-center justify-center flex-row"
+          >
+            <Text className="text-white font-semibold text-lg mr-2">{t("complete_form.buttons.continue")}</Text>
+            <ChevronRight size={20} color="#fff" className="mt-1"/>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={save}
+            className="flex-[2] h-14 rounded-md bg-primary items-center justify-center flex-row"
+          >
+            {isLoading ? <ActivityIndicator color="white" size="small" /> : <Text className="text-white font-semibold text-lg">{id ? t("complete_form.buttons.finish_update") : t("complete_form.buttons.complete_reg")}</Text>}
+          </TouchableOpacity>
+        )}
+      </View>
+
 
       <CameraCapture
         visible={showCamera}
@@ -658,6 +662,6 @@ export default function CompleteForm({ id }: { id?: string }) {
         brandColor="#0056D2"
         date={lmpDate || undefined}
       />
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }

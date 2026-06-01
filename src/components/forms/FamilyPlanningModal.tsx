@@ -86,7 +86,7 @@ export default function FamilyPlanningModal({
         <Pressable onPress={(e) => e.stopPropagation()} className="bg-white w-full rounded-t-3xl p-6 shadow-xl pb-10">
           
           <View className="flex-row justify-between items-center mb-6">
-            <Text className="text-lg font-bold text-slate-800">
+            <Text className="text-xl font-semibold text-slate-800">
               {isNepali ? 'परिवार नियोजन साधन थप्नुहोस्' : 'Add Family Planning Method'}
             </Text>
             <TouchableOpacity onPress={onClose} className="p-2 bg-slate-100 rounded-full">
@@ -97,13 +97,13 @@ export default function FamilyPlanningModal({
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
             {/* Pills Section */}
             <View className="mb-6">
-              <Text className="text-slate-800 font-bold text-[14px] mb-3">
+              <Text className="text-slate-800 font-medium` text-[16px] mb-3">
                 {isNepali ? 'चक्कीहरू (Pills)' : 'Pills'}
               </Text>
               
               {/* OCP */}
               <View className="flex-row justify-between items-center bg-white border border-slate-200 p-3 rounded-xl mb-3">
-                <Text className="text-slate-600 text-sm font-medium">
+                <Text className="text-slate-600 text-[15px] font-medium">
                   {isNepali ? 'OCP (नियमित पिल्स)' : 'OCP (Regular Pills)'}
                 </Text>
                 <View className="flex-row items-center gap-4">
@@ -129,7 +129,7 @@ export default function FamilyPlanningModal({
 
               {/* ECP */}
               <View className="flex-row justify-between items-center bg-white border border-slate-200 p-3 rounded-xl">
-                <Text className="text-slate-600 text-sm font-medium">
+                <Text className="text-slate-600 text-[15px] font-medium">
                   {isNepali ? 'ECP (आकस्मिक पिल्स)' : 'ECP (Emergency Pills)'}
                 </Text>
                 <View className="flex-row items-center gap-4">
@@ -146,9 +146,9 @@ export default function FamilyPlanningModal({
                       // Ensure mutually exclusive
                       setOcpQty(0);
                     }}
-                    className="w-8 h-8 rounded-full bg-slate-200 items-center justify-center"
+                    className="w-8 h-8 rounded-full bg-blue-500 items-center justify-center"
                   >
-                    <Plus size={16} color="#64748B" />
+                    <Plus size={16} color="white" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -156,12 +156,12 @@ export default function FamilyPlanningModal({
 
             {/* Condoms Section */}
             <View className="mb-6">
-              <Text className="text-slate-800 font-bold text-[14px] mb-3">
+              <Text className="text-slate-800 text-[16px] mb-3">
                 {isNepali ? 'कण्डोम (Condoms)' : 'Condoms'}
               </Text>
               
               <View className="flex-row justify-between items-center bg-white border border-slate-200 p-3 rounded-xl">
-                <Text className="text-slate-600 text-sm font-medium">
+                <Text className="text-slate-600 text-[15px] font-medium">
                   {isNepali ? 'कण्डोम' : 'Condom'}
                 </Text>
                 <View className="flex-row items-center gap-4">
@@ -187,7 +187,7 @@ export default function FamilyPlanningModal({
                 onPress={onClose}
                 className="flex-1 py-3.5 border border-slate-200 rounded-xl items-center"
               >
-                <Text className="font-semibold text-slate-700">
+                <Text className="font-semibold text-slate-700 text-[16px]">
                   {isNepali ? 'रद्द गर्नुहोस्' : 'Cancel'}
                 </Text>
               </TouchableOpacity>
@@ -200,7 +200,7 @@ export default function FamilyPlanningModal({
                 {loading ? (
                   <ActivityIndicator color="white" />
                 ) : (
-                  <Text className="text-white font-semibold">
+                  <Text className="text-white font-semibold text-[16px]">
                     {isNepali ? 'सुरक्षित गर्नुहोस्' : 'Save'}
                   </Text>
                 )}

@@ -33,6 +33,7 @@ import { getTotalMaternalDeaths } from "../../hooks/database/models/MaternalDeat
 import {
   getAllMothersList,
   getMotherCount,
+  getMotherTrend,
 } from "../../hooks/database/models/MotherModel";
 import { getTotalNewbornDeaths } from "../../hooks/database/models/NewbornDeathModel";
 import {
@@ -45,37 +46,33 @@ import { useTodo } from "../../hooks/useTodo";
 import { Skeleton } from "@/components/common/Skeleton"; // Checking if this exists, if not I'll use a View
 import StatCard from "@/components/dashboard/StatCard";
 import TrendChart from "@/components/dashboard/TrendChart";
+import { getRecentNepaliMonthBuckets } from "../../utils/dateHelper";
 import { getMunicipalityById, getWardById } from "../../utils/locationHelper";
 
-const parseDate = (dateStr: string | undefined | null): Date | null => {
-  if (!dateStr || dateStr === "N/A") return null;
+type TrendRow = {
+  month: number;
+  year: number;
+  count: number;
+};
 
-  let d = new Date(dateStr);
-  if (!isNaN(d.getTime()) && d.getFullYear() > 1970 && d.getFullYear() < 2100)
-    return d;
+const buildDashboardTrend = (rows: TrendRow[], isNepali: boolean) => {
+  const buckets = getRecentNepaliMonthBuckets(3);
 
-  const parts = dateStr.split(/[-/T ]/);
-  if (parts.length >= 3) {
-    let y = parseInt(parts[0]);
-    let m = parseInt(parts[1]) - 1;
-    let day = parseInt(parts[2]);
+  return buckets.map((bucket) => {
+    const row = rows.find(
+      (item) => item.year === bucket.year && item.month === bucket.month - 1,
+    );
 
-    if (y < 100 && day > 1000) {
-      const temp = y;
-      y = day;
-      day = temp;
-    }
-
-    d = new Date(y, m, day);
-    if (!isNaN(d.getTime()) && d.getFullYear() > 1970 && d.getFullYear() < 2100)
-      return d;
-  }
-  return null;
+    return {
+      label: isNepali ? bucket.labelNp : bucket.label,
+      value: row?.count ?? 0,
+    };
+  });
 };
 
 export default function DashboardScreen() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isConnected } = useOnlineStatus();
   const [motherCount, setMotherCount] = useState(0);
   const [pregnancyCount, setPregnancyCount] = useState(0);
@@ -87,24 +84,9 @@ export default function DashboardScreen() {
   const [days29To59Months, setDays29To59Months] = useState(0);
   const [highRiskPregnancyCount, setHighRiskPregnancyCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  // Initial 12 months placeholder
-  const monthsNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const now = new Date();
-  const initialTrend = Array.from({ length: 12 }, (_, i) => {
-    return { label: monthsNames[i], value: 0 };
+  // Initial 3-month BS placeholder
+  const initialTrend = Array.from({ length: 3 }, () => {
+    return { label: "", value: 0 };
   });
 
   const [pregnancyTrend, setPregnancyTrend] =
@@ -145,6 +127,7 @@ export default function DashboardScreen() {
             cDeaths,
             pTrend,
             cTrend,
+            mTrend,
             mothers,
             adolCount,
           ] = await Promise.all([
@@ -155,6 +138,7 @@ export default function DashboardScreen() {
             getTotalNewbornDeaths(),
             getPregnancyTrend(),
             getChildTrend(),
+            getMotherTrend(),
             getAllMothersList(),
             getAdolescentIfaCount(),
           ]);
@@ -266,93 +250,10 @@ export default function DashboardScreen() {
           });
           setUnder29Days(u29);
           setDays29To59Months(u59m);
-
-          const monthsNames = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ];
-          const trend: {
-            year: number;
-            month: number;
-            label: string;
-            pregnant: number;
-            child: number;
-            mother: number;
-          }[] = [];
-
-          const now = new Date();
-          const currentYear = now.getFullYear();
-          const currentMonth = now.getMonth();
-
-          for (let i = 2; i >= 0; i--) {
-            let m = currentMonth - i;
-            let y = currentYear;
-            if (m < 0) {
-              m += 12;
-              y -= 1;
-            }
-            trend.push({
-              year: y,
-              month: m,
-              label: monthsNames[m],
-              pregnant: 0,
-              child: 0,
-              mother: 0,
-            });
-          }
-
-          pTrend.forEach((row: any) => {
-            const bucket = trend.find(
-              (b) => b.month === row.month && b.year === row.year,
-            );
-            if (bucket) bucket.pregnant = row.count;
-          });
-
-          cTrend.forEach((row: any) => {
-            const bucket = trend.find(
-              (b) => b.month === row.month && b.year === row.year,
-            );
-            if (bucket) bucket.child = row.count;
-          });
-
-          mothers.forEach((row: any) => {
-            const d = new Date(row.createdAt || row.created_at || new Date());
-            let bucket = trend.find(
-              (b) => b.month === d.getMonth() && b.year === d.getFullYear(),
-            );
-            // If the mother was created before the chart window, count in the earliest bucket
-            if (!bucket) {
-              const earliestBucket = trend[0];
-              const motherTime = d.getTime();
-              const earliestDate = new Date(
-                earliestBucket.year,
-                earliestBucket.month,
-                1,
-              ).getTime();
-              if (motherTime < earliestDate) {
-                bucket = earliestBucket;
-              }
-            }
-            if (bucket) bucket.mother++;
-          });
-
-          setPregnancyTrend(
-            trend.map((b) => ({ label: b.label, value: b.pregnant })),
-          );
-          setChildTrend(trend.map((b) => ({ label: b.label, value: b.child })));
-          setMotherTrend(
-            trend.map((b) => ({ label: b.label, value: b.mother })),
-          );
+          const isNepali = i18n.language.startsWith("ne");
+          setPregnancyTrend(buildDashboardTrend(pTrend, isNepali));
+          setChildTrend(buildDashboardTrend(cTrend, isNepali));
+          setMotherTrend(buildDashboardTrend(mTrend, isNepali));
           await fetchTodos();
         } catch (err) {
           console.error("Dashboard fetch error:", err);
@@ -362,7 +263,7 @@ export default function DashboardScreen() {
       };
 
       load();
-    }, []),
+    }, [fetchTodos, i18n.language, t]),
   );
 
   return (
@@ -413,13 +314,13 @@ export default function DashboardScreen() {
                     marginBottom: 14,
                   }}
                 >
-                  <UserPlus size={24} color="#0284C7" />
+                  <UserPlus size={25} color="#0284C7" />
                 </View>
                 <Text
                   style={{
                     color: "#0F172A",
                     fontWeight: "600",
-                    fontSize: 13,
+                    fontSize: 16,
                     textAlign: "center",
                   }}
                 >
@@ -448,13 +349,13 @@ export default function DashboardScreen() {
                     marginBottom: 14,
                   }}
                 >
-                  <Smile size={24} color="#059669" />
+                  <Smile size={25} color="#059669" />
                 </View>
                 <Text
                   style={{
                     color: "#0F172A",
                     fontWeight: "600",
-                    fontSize: 13,
+                    fontSize: 16,
                     textAlign: "center",
                   }}
                 >
@@ -476,20 +377,20 @@ export default function DashboardScreen() {
                 <View
                   style={{
                     backgroundColor: "rgba(216, 180, 254, 0.4)",
-                    padding: 7,
+                    padding: 2,
                     borderRadius: 26,
                     alignItems: "center",
                     justifyContent: "center",
                     marginBottom: 14,
                   }}
                 >
-                  <Heart size={24} color="#7C3AED" />
+                  <Heart size={25} color="#7C3AED" />
                 </View>
                 <Text
                   style={{
                     color: "#0F172A",
                     fontWeight: "600",
-                    fontSize: 13,
+                    fontSize: 16,
                     textAlign: "center",
                   }}
                 >
@@ -502,9 +403,9 @@ export default function DashboardScreen() {
             <Text
               style={{
                 paddingHorizontal: 20,
-                fontSize: 11,
-                fontWeight: "800",
-                color: "#475569",
+                fontSize: 17,
+                fontWeight: "600",
+                color: "#282c33ff",
                 letterSpacing: 1,
                 marginBottom: 12,
                 textTransform: "uppercase",
@@ -558,7 +459,7 @@ export default function DashboardScreen() {
               </View>
               <View style={{ flexDirection: "row", gap: 12 }}>
                 <StatCard
-                  path="/dashboard/report/pregnancy-report"
+                  path="/dashboard/risk"
                   icon={AlertCircle}
                   iconColor="#E11D48"
                   bg="#FFE4E6"
@@ -671,9 +572,9 @@ export default function DashboardScreen() {
             <View
               style={{
                 paddingHorizontal: 20,
-                flexDirection: "row",
+                flexDirection: "column",
                 gap: 12,
-                marginTop: 24,
+                marginTop: 16,
               }}
             >
               <StatCard
@@ -710,8 +611,8 @@ export default function DashboardScreen() {
               >
                 <Text
                   style={{
-                    fontSize: 11,
-                    fontWeight: "800",
+                    fontSize: 14,
+                    fontWeight: "600",
                     color: "#475569",
                     letterSpacing: 1,
                     textTransform: "uppercase",
@@ -724,7 +625,7 @@ export default function DashboardScreen() {
                 >
                   <Text
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: "600",
                       color: "#475569",
                     }}

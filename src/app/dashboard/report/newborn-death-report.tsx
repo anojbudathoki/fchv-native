@@ -96,7 +96,9 @@ export default function NewbornDeathReportScreen() {
       <StatusBar barStyle="dark-content" />
       <CustomHeader
         title={t("reports.newborn_death_report.title")}
-        onBackPress={() => router.replace("/dashboard/report")}
+        onBackPress={() => {
+          router.replace("/dashboard/");
+        }}
       />
 
       <View className="flex-1">

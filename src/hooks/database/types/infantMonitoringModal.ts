@@ -13,6 +13,7 @@ export interface InfantMonitoringStoreType {
   skin_to_skin: number;
   early_breastfeeding: number;
   asphyxiated_newborn: number;
+  is_all_given: number;
   remarks?: string;
   reg_year?: number;
   reg_month?: number;

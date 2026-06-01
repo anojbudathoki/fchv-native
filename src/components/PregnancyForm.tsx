@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
-import { View, Text, Pressable } from "react-native";
-import { Calendar } from "lucide-react-native";
 import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
-import { CalendarPicker, BsToAd } from "react-native-nepali-picker";
+import { Calendar } from "lucide-react-native";
+import { useEffect, useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { BsToAd, CalendarPicker } from "react-native-nepali-picker";
+import { useLanguage } from "../context/LanguageContext";
+import { useToast } from "../context/ToastContext";
 import {
   getAllMothersList,
   getMotherProfile,
@@ -13,11 +16,9 @@ import {
   createPregnancy,
   getPregnancyByMotherId,
 } from "../hooks/database/models/PregnantWomenModal";
-import { useToast } from "../context/ToastContext";
-import { FieldLabel, BoxInput, SelectInput } from "./FormElements";
+import { BoxInput, FieldLabel } from "./FormElements";
 import { ProfilePicker } from "./ProfilePicker";
 import { Button } from "./button";
-import { useLanguage } from "../context/LanguageContext";
 
 const RISK_OPTIONS = [
   { value: "normal", en: "Normal", np: "सामान्य" },
@@ -27,8 +28,13 @@ const RISK_OPTIONS = [
 
 export default function PregnancyForm({
   id,
+  from,
+  mode,
+  onSwitchToMother,
 }: {
   id?: string;
+  from?: string;
+  mode?: string;
   onSwitchToMother?: () => void;
 }) {
   const router = useRouter();
@@ -103,21 +109,41 @@ export default function PregnancyForm({
           }
 
           if (pregnancy) {
-            setGravida(
-              pregnancy.gravida !== null ? String(pregnancy.gravida) : "",
-            );
-            setParity(
-              pregnancy.parity !== null ? String(pregnancy.parity) : "",
-            );
-            setLmp(pregnancy.lmp_date || "");
-            setEdd(pregnancy.expected_delivery_date || "");
-            setCaretakersName(pregnancy.caretakers_name || "");
-            setCaretakersPhone(pregnancy.caretakers_phone || "");
-            setRiskLevel(
-              (pregnancy.risk_level as "normal" | "moderate" | "high") ||
+            if (mode === "new") {
+              // If mode is new, we want to create a NEW record based on the previous pregnancy
+              // Increment gravida for the new pregnancy
+              const nextGravida = (pregnancy.gravida || 0) + 1;
+              setGravida(String(nextGravida));
+              setParity(
+                pregnancy.parity !== null ? String(pregnancy.parity) : "",
+              );
+              // Clean out dates for the new pregnancy
+              setLmp("");
+              setEdd("");
+              // Keep caretakers info as it's likely the same
+              setCaretakersName(pregnancy.caretakers_name || "");
+              setCaretakersPhone(pregnancy.caretakers_phone || "");
+              setRiskLevel("normal");
+              // IMPORTANT: Do not set pregnancyId so save() creates a new record
+              setPregnancyId(null);
+            } else {
+              // Standard edit or fill mode
+              setGravida(
+                pregnancy.gravida !== null ? String(pregnancy.gravida) : "",
+              );
+              setParity(
+                pregnancy.parity !== null ? String(pregnancy.parity) : "",
+              );
+              setLmp(pregnancy.lmp_date || "");
+              setEdd(pregnancy.expected_delivery_date || "");
+              setCaretakersName(pregnancy.caretakers_name || "");
+              setCaretakersPhone(pregnancy.caretakers_phone || "");
+              setRiskLevel(
+                (pregnancy.risk_level as "normal" | "moderate" | "high") ||
                 "normal",
-            );
-            setPregnancyId(pregnancy.id || null);
+              );
+              setPregnancyId(pregnancy.id || null);
+            }
           }
         } catch (e) {
           console.error("error fetching mother/pregnancy data", e);
@@ -137,7 +163,7 @@ export default function PregnancyForm({
         eddDate.setDate(eddDate.getDate() + 280);
         return eddDate.toISOString().split("T")[0];
       }
-    } catch (e) {}
+    } catch (e) { }
     return "";
   };
 
@@ -185,7 +211,15 @@ export default function PregnancyForm({
         risk_level: riskLevel,
       });
       showToast(t("pregnancy_form.messages.save_success"));
-      router.back();
+
+      if (from === "profile") {
+        router.replace({
+          pathname: "/dashboard/profile",
+          params: { id: selectedMotherId },
+        } as any);
+      } else {
+        router.replace("/dashboard/record");
+      }
     } catch (err) {
       console.error("Error saving form:", err);
       showToast(t("pregnancy_form.messages.save_error"));
@@ -197,7 +231,13 @@ export default function PregnancyForm({
   const motherOptions = mothers.map((m) => ({ label: m.name, value: m.id }));
 
   return (
-    <View style={{ flex: 1 }}>
+    <KeyboardAwareScrollView
+      style={{ flex: 1 }}
+      enableOnAndroid={true}
+      extraScrollHeight={100}
+      keyboardShouldPersistTaps="always"
+      showsVerticalScrollIndicator={false}
+    >
       <View className="pt-3">
         <ProfilePicker
           key={`picker-${mothers.length}-${id || "new"}`}
@@ -351,6 +391,6 @@ export default function PregnancyForm({
         weekTextStyle={{ fontWeight: "normal" }}
         titleTextStyle={{ fontWeight: "normal" }}
       />
-    </View>
+    </KeyboardAwareScrollView>
   );
 }

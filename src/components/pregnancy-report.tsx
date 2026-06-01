@@ -18,13 +18,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomHeader from "../../../components/CustomHeader";
-import Colors from "../../../constants/Colors";
-import { useLanguage } from "../../../context/LanguageContext";
+import CustomHeader from "./CustomHeader";
+import Colors from "../constants/Colors";
+import { useLanguage } from "../context/LanguageContext";
 import {
   getPregnantWomenList,
   PregnantWomenListItem,
-} from "../../../hooks/database/models/PregnantWomenModal";
+} from "../hooks/database/models/PregnantWomenModal";
 
 export default function PregnancyReportScreen() {
   const router = useRouter();
@@ -106,7 +106,9 @@ export default function PregnancyReportScreen() {
       <StatusBar barStyle="dark-content" />
       <CustomHeader
         title={t("reports.pregnancy.title")}
-        onBackPress={() => router.back()}
+        onBackPress={() => {
+          router.replace("/dashboard/");
+        }}
       />
 
       <View className="flex-1">
@@ -118,12 +120,6 @@ export default function PregnancyReportScreen() {
               {t("reports.common.search_placeholder")}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={handleDownload}
-            className="bg-slate-50 p-2.5 rounded-2xl border border-slate-100"
-          >
-            <Download size={20} color={Colors.primary} />
-          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -160,22 +156,20 @@ export default function PregnancyReportScreen() {
                       </Text>
                       {item.risk_level && (
                         <View
-                          className={`px-2 py-0.5 rounded-full ${
-                            item.risk_level === "high"
-                              ? "bg-red-100"
-                              : item.risk_level === "moderate"
-                                ? "bg-orange-100"
-                                : "bg-green-100"
-                          }`}
+                          className={`px-2 py-0.5 rounded-full ${item.risk_level === "high"
+                            ? "bg-red-100"
+                            : item.risk_level === "moderate"
+                              ? "bg-orange-100"
+                              : "bg-green-100"
+                            }`}
                         >
                           <Text
-                            className={`text-[10px] font-bold uppercase ${
-                              item.risk_level === "high"
-                                ? "text-red-600"
-                                : item.risk_level === "moderate"
-                                  ? "text-orange-600"
-                                  : "text-green-600"
-                            }`}
+                            className={`text-[10px] font-bold uppercase ${item.risk_level === "high"
+                              ? "text-red-600"
+                              : item.risk_level === "moderate"
+                                ? "text-orange-600"
+                                : "text-green-600"
+                              }`}
                           >
                             {item.risk_level === "high"
                               ? language === "en"

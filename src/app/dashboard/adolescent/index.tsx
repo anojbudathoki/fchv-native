@@ -1,18 +1,18 @@
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import { Search, Plus, Heart, ChevronRight, Trash2 } from "lucide-react-native";
-import { router, useFocusEffect } from "expo-router";
-import { useState, useCallback, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import CustomHeader from "@/components/CustomHeader";
 import { getAllAdolescentIfa } from "@/hooks/database/models/AdolescentIfaModel";
 import { AdolescentIfaStoreType } from "@/hooks/database/types/adolescentIfaModal";
+import { router, useFocusEffect } from "expo-router";
+import { ChevronRight, Heart, Plus, Search } from "lucide-react-native";
+import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function AdolescentManagementScreen() {
   const { t } = useTranslation();
@@ -63,11 +63,7 @@ export default function AdolescentManagementScreen() {
     <SafeAreaView className="flex-1 bg-[#F8FAFC] pt-10">
       <CustomHeader
         title={t("adolescent_page.title", "Adolescent Girls IFA")}
-        subtitle={t(
-          "adolescent_page.subtitle",
-          "Iron Folic Acid (IFA) distribution records",
-        )}
-        onBackPress={() => router.replace("/dashboard")}
+        onBackPress={() => router.back()}
         rightNode={
           <TouchableOpacity
             activeOpacity={0.8}
@@ -75,7 +71,7 @@ export default function AdolescentManagementScreen() {
             className="bg-primary/80 px-3 py-2.5 rounded-md items-center justify-center flex-row"
           >
             <Plus size={16} color="#ffffff" strokeWidth={3} />
-            <Text className="text-white font-bold text-xs ml-1.5 uppercase tracking-wider">
+            <Text className="text-white font-semibold text-md ml-1.5 uppercase tracking-wider">
               {t("adolescent_page.add_new", "Add New")}
             </Text>
           </TouchableOpacity>
@@ -146,13 +142,13 @@ export default function AdolescentManagementScreen() {
                       >
                         {item.phase1_completed
                           ? t(
-                              "adolescent_page.phase1_done",
-                              "Phase 1: Completed",
-                            )
+                            "adolescent_page.phase1_done",
+                            "Phase 1: Completed",
+                          )
                           : t(
-                              "adolescent_page.phase1_pending",
-                              "Phase 1: In Progress",
-                            )}
+                            "adolescent_page.phase1_pending",
+                            "Phase 1: In Progress",
+                          )}
                       </Text>
                     </View>
                     <View
@@ -163,13 +159,13 @@ export default function AdolescentManagementScreen() {
                       >
                         {item.phase2_completed
                           ? t(
-                              "adolescent_page.phase2_done",
-                              "Phase 2: Completed",
-                            )
+                            "adolescent_page.phase2_done",
+                            "Phase 2: Completed",
+                          )
                           : t(
-                              "adolescent_page.phase2_pending",
-                              "Phase 2: In Progress",
-                            )}
+                            "adolescent_page.phase2_pending",
+                            "Phase 2: In Progress",
+                          )}
                       </Text>
                     </View>
                   </View>
@@ -194,13 +190,13 @@ export default function AdolescentManagementScreen() {
               <Text className="text-slate-400 text-sm text-center leading-5 px-6">
                 {search
                   ? t(
-                      "adolescent_page.no_results_msg",
-                      "We couldn't find any adolescent girls matching your search.",
-                    )
+                    "adolescent_page.no_results_msg",
+                    "We couldn't find any adolescent girls matching your search.",
+                  )
                   : t(
-                      "adolescent_page.no_records_msg",
-                      "Start by adding a new adolescent girl distribution record.",
-                    )}
+                    "adolescent_page.no_records_msg",
+                    "Start by adding a new adolescent girl distribution record.",
+                  )}
               </Text>
             </View>
           )}

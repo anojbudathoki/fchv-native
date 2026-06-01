@@ -1,4 +1,7 @@
+import { Button } from "@/components/button";
 import CustomHeader from "@/components/CustomHeader";
+import { InputText } from "@/components/InputText";
+import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/context/ToastContext";
 import {
   createAdolescentIfa,
@@ -6,16 +9,13 @@ import {
 } from "@/hooks/database/models/AdolescentIfaModel";
 import * as Crypto from "expo-crypto";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Save } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   Alert,
   SafeAreaView,
   ScrollView,
   StatusBar,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -24,8 +24,7 @@ export default function AdolescentRegistrationForm() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { showToast } = useToast();
   const router = useRouter();
-  const { t, i18n } = useTranslation();
-  const isNp = i18n.language === "np";
+  const { language } = useLanguage()
 
   const [name, setName] = useState("");
   const [ageGroup, setAgeGroup] = useState<"10-14" | "15-19">("10-14");
@@ -74,7 +73,7 @@ export default function AdolescentRegistrationForm() {
   const validate = () => {
     const e: Record<string, string> = {};
     if (!name.trim())
-      e.name = isNp ? "किशोरीको नाम आवश्यक छ" : "Name is required";
+      e.name = language === "np" ? "किशोरीको नाम आवश्यक छ" : "Name is required";
     return e;
   };
 
@@ -110,7 +109,7 @@ export default function AdolescentRegistrationForm() {
 
       await createAdolescentIfa(payload);
       showToast(
-        isNp
+        language === "np"
           ? "रेकर्ड सफलतापूर्वक सुरक्षित गरियो"
           : "Record saved successfully",
       );
@@ -118,8 +117,8 @@ export default function AdolescentRegistrationForm() {
     } catch (error) {
       console.error(error);
       Alert.alert(
-        isNp ? "त्रुटि" : "Error",
-        isNp ? "रेकर्ड सेभ गर्न असफल भयो।" : "Failed to save record.",
+        language === "np" ? "त्रुटि" : "Error",
+        language === "np" ? "रेकर्ड सेभ गर्न असफल भयो।" : "Failed to save record.",
       );
     } finally {
       setIsLoading(false);
@@ -163,10 +162,10 @@ export default function AdolescentRegistrationForm() {
       <CustomHeader
         title={
           id
-            ? isNp
-              ? "किशोरी विवरण सम्पादन"
+            ? language === "np"
+              ? "किशोरी आइरन फोलिक एसिड विवरण सम्पादन"
               : "Edit Adolescent"
-            : isNp
+            : language === "np"
               ? "किशोरी लक्षित आइरन फोलिक एसिड वितरण"
               : "Adolescent IFA Form"
         }
@@ -179,61 +178,27 @@ export default function AdolescentRegistrationForm() {
       >
         <View style={{ paddingHorizontal: 20, paddingTop: 16 }}>
           {/* Adolescent Name */}
-          <View style={{ marginBottom: 20 }}>
-            <Text
-              style={{
-                color: "#334155",
-                fontSize: 14,
-                fontWeight: "500",
-                marginBottom: 8,
-              }}
-            >
-              {isNp ? "किशोरीको नाम" : "Adolescent's Name"}
-            </Text>
-            <TextInput
-              style={{
-                height: 52,
-                backgroundColor: "#FFFFFF",
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: errors.name ? "#FDA4AF" : "#E2E8F0",
-                paddingHorizontal: 16,
-                fontSize: 15,
-                color: "#1E293B",
-              }}
-              placeholder={isNp ? "पूरा नाम लेख्नुहोस्" : "Enter Full Name"}
-              placeholderTextColor="#94A3B8"
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                if (errors.name) setErrors({ ...errors, name: "" });
-              }}
-            />
-            {errors.name && (
-              <Text
-                style={{
-                  color: "#EF4444",
-                  fontSize: 12,
-                  marginTop: 4,
-                  marginLeft: 2,
-                }}
-              >
-                {errors.name}
-              </Text>
-            )}
-          </View>
+          <InputText
+            label={language === "np" ? "किशोरीको नाम" : "Adolescent's Name"}
+            placeholder={language === "np" ? "पूरा नाम लेख्नुहोस्" : "Enter Full Name"}
+            value={name}
+            onChangeText={setName}
+            errors={errors}
+            setErrors={setErrors}
+            errorKey="name"
+          />
 
           {/* Age Group Selection */}
           <View style={{ marginBottom: 24 }}>
             <Text
               style={{
                 color: "#334155",
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: "500",
                 marginBottom: 8,
               }}
             >
-              {isNp ? "उमेर समूह (वर्ष)" : "Age Group (Years)"}
+              {language === "np" ? "उमेर समूह" : "Age Group"}
             </Text>
             <View style={{ flexDirection: "row", gap: 12 }}>
               <TouchableOpacity
@@ -281,7 +246,7 @@ export default function AdolescentRegistrationForm() {
                     color: "#334155",
                   }}
                 >
-                  10 - 14 {isNp ? "वर्ष" : "Years"}
+                  10 - 14 {language === "np" ? "वर्ष" : "Years"}
                 </Text>
               </TouchableOpacity>
 
@@ -330,7 +295,7 @@ export default function AdolescentRegistrationForm() {
                     color: "#334155",
                   }}
                 >
-                  15 - 19 {isNp ? "वर्ष" : "Years"}
+                  15 - 19 {language === "np" ? "वर्ष" : "Years"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -345,7 +310,7 @@ export default function AdolescentRegistrationForm() {
                 fontWeight: "600",
               }}
             >
-              {isNp ? "पहिलो चरण (साउन - असोज)" : "Phase 1 (Shrawan - Ashwin)"}
+              {language === "np" ? "पहिलो चरण (साउन - असोज)" : "Phase 1 (Shrawan - Ashwin)"}
             </Text>
 
             <View style={{ height: 1, backgroundColor: "#F1F5F9", marginBottom: 15 }} />
@@ -364,9 +329,9 @@ export default function AdolescentRegistrationForm() {
               }}
             >
               <Text
-                style={{ color: "#475569", fontSize: 14, fontWeight: "500" }}
+                style={{ color: "#475569", fontSize: 15, fontWeight: "500" }}
               >
-                {isNp ? "१३ हप्ता खाएको छ?" : "13 Weeks Intake Completed?"}
+                {language === "np" ? "१३ हप्ता खाएको छ?" : "13 Weeks Intake Completed?"}
               </Text>
               <View
                 style={{
@@ -391,12 +356,12 @@ export default function AdolescentRegistrationForm() {
                 >
                   <Text
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: "600",
                       color: !p1Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {isNp ? "छैन" : "No"}
+                    {language === "np" ? "छैन" : "No"}
                   </Text>
                 </TouchableOpacity>
 
@@ -413,12 +378,12 @@ export default function AdolescentRegistrationForm() {
                 >
                   <Text
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: "600",
                       color: p1Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {isNp ? "छ" : "Yes"}
+                    {language === "np" ? "छ" : "Yes"}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -475,7 +440,7 @@ export default function AdolescentRegistrationForm() {
                 fontWeight: "600",
               }}
             >
-              {isNp ? "दोस्रो चरण (माघ - चैत)" : "Phase 2 (Magh - Chaitra)"}
+              {language === "np" ? "दोस्रो चरण (माघ - चैत)" : "Phase 2 (Magh - Chaitra)"}
             </Text>
 
             <View style={{ height: 1, backgroundColor: "#F1F5F9", marginBottom: 15 }} />
@@ -494,9 +459,9 @@ export default function AdolescentRegistrationForm() {
               }}
             >
               <Text
-                style={{ color: "#475569", fontSize: 14, fontWeight: "500" }}
+                style={{ color: "#475569", fontSize: 15, fontWeight: "500" }}
               >
-                {isNp ? "२६ हप्ता पूरा खाएको छ?" : "26 Weeks Total Completed?"}
+                {language === "np" ? "२६ हप्ता पूरा खाएको छ?" : "26 Weeks Total Completed?"}
               </Text>
               <View
                 style={{
@@ -521,12 +486,12 @@ export default function AdolescentRegistrationForm() {
                 >
                   <Text
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: "600",
                       color: !p2Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {isNp ? "छैन" : "No"}
+                    {language === "np" ? "छैन" : "No"}
                   </Text>
                 </TouchableOpacity>
 
@@ -543,12 +508,12 @@ export default function AdolescentRegistrationForm() {
                 >
                   <Text
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: "600",
                       color: p2Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {isNp ? "छ" : "Yes"}
+                    {language === "np" ? "छ" : "Yes"}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -597,65 +562,24 @@ export default function AdolescentRegistrationForm() {
           </View>
 
           {/* Remarks */}
-          <View style={{ marginBottom: 30 }}>
-            <Text
-              style={{
-                color: "#334155",
-                fontSize: 14,
-                fontWeight: "500",
-                marginBottom: 8,
-              }}
-            >
-              {isNp ? "Remarks" : "Remarks"}
-            </Text>
-            <TextInput
-              style={{
-                minHeight: 100,
-                backgroundColor: "#FFFFFF",
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: "#E2E8F0",
-                paddingHorizontal: 16,
-                paddingTop: 12,
-                fontSize: 15,
-                color: "#1E293B",
-                textAlignVertical: "top",
-              }}
-              placeholder={isNp ? "Enter remarks here" : "Enter remarks here"}
-              placeholderTextColor="#94A3B8"
-              value={remarks}
-              onChangeText={setRemarks}
-              multiline={true}
-              numberOfLines={4}
-            />
-          </View>
+          <InputText
+            label={language === "np" ? "कैफियत" : "Remarks"}
+            placeholder={language === "np" ? "यहाँ कैफियत लेख्नुहोस्..." : "Enter remarks here..."}
+            value={remarks}
+            onChangeText={setRemarks}
+            errors={errors}
+            setErrors={setErrors}
+            errorKey="remarks"
+            multiline={true}
+            numberOfLines={4}
+          />
 
           {/* Save Button */}
-          <TouchableOpacity
-            activeOpacity={0.8}
+          <Button
             onPress={handleSave}
-            disabled={isLoading}
-            className="bg-primary/80"
-            style={{
-              paddingVertical: 16,
-              paddingHorizontal: 24,
-              borderRadius: 10,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-            }}
-          >
-            <Save size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-            <Text style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "600" }}>
-              {isLoading
-                ? isNp
-                  ? "सुरक्षित गर्दै..."
-                  : "Saving..."
-                : isNp
-                  ? "सेभ गर्नुहोस्"
-                  : "Save Record"}
-            </Text>
-          </TouchableOpacity>
+            isLoading={isLoading}
+            title={language === "np" ? "सेभ गर्नुहोस्" : "Save Record"}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

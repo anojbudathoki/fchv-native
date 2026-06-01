@@ -17,6 +17,7 @@ interface CounselingModalProps {
   visible: boolean;
   onClose: () => void;
   motherId: string;
+  pregnancyId: string | null;
   motherName: string;
   existingTopics?: string | null;
   onSuccess: () => void;
@@ -27,6 +28,7 @@ export default function CounselingModal({
   visible,
   onClose,
   motherId,
+  pregnancyId,
   motherName,
   existingTopics,
   onSuccess,
@@ -60,13 +62,14 @@ export default function CounselingModal({
       const validTopics = topics.filter((t) => t.trim().length > 0);
       const payload = {
         mother_id: motherId,
+        pregnancy_id: pregnancyId,
         is_counseled: 1,
         counseled_topics: JSON.stringify(validTopics),
       };
       await saveCounseling(payload);
       showToast(
         t("profile.alerts.save_success") ||
-          "Counseling status updated successfully",
+        "Counseling status updated successfully",
       );
       onSuccess();
       onClose();

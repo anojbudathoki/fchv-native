@@ -4,7 +4,7 @@ import { X, ChevronDown, Save } from "lucide-react-native";
 import Dropdown from "react-native-input-select";
 
 export const FieldLabel = ({ label }: { label: string }) => (
-  <Text className="text-gray-800 text-[15px] mb-2">{label}</Text>
+  <Text className="text-gray-800 text-[16px] mb-2">{label}</Text>
 );
 
 export const SelectInput = ({ label, placeholder, value, options, onSelect, error, disabled }: any) => {
@@ -142,7 +142,7 @@ export const BoxInput = ({
 }) => (
   <View className="mb-4">
     {label && (
-      <Text className="text-slate-700 font-medium mb-1.5 ml-1">{label}</Text>
+      <Text className="text-slate-800 font-medium text-[16px] mb-1.5 ml-1">{label}</Text>
     )}
     <View
       className={`h-14 flex-row items-center rounded-md px-4 border ${
@@ -150,7 +150,7 @@ export const BoxInput = ({
       }`}
     >
       <TextInput
-        className="flex-1 text-slate-800 text-base h-full"
+        className="flex-1 text-slate-800 text-[16px] h-full"
         placeholder={placeholder}
         placeholderTextColor="#94a3b8"
         value={value}

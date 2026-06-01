@@ -14,13 +14,13 @@ export interface HmisRecordStoreType {
   edd_year: number | null;
   counseling_given: number | null; // 0 or 1
   checkup_12: number | null;
-  checkup_16: number | null;
-  checkup_20_24: number | null;
-  checkup_28: number | null;
-  checkup_32: number | null;
+  checkup_20: number | null;
+  checkup_26: number | null;
+  checkup_30: number | null;
   checkup_34: number | null;
   checkup_36: number | null;
-  checkup_38_40: number | null;
+  checkup_38: number | null;
+  checkup_40: number | null;
   checkup_other: string | null;
   iron_preg_received: number | null;
   iron_pnc_received: number | null;

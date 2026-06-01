@@ -26,7 +26,6 @@ export type MotherStoreType = {
   gravida: number | null;
   cover_photo: string | null;
   emergency_contact_number: string | null;
-  alias: string | null;
   partner_name: string | null;
   partner_mobile: string | null;
   partner_age: string | null;
@@ -62,7 +61,6 @@ export type CreateMotherPayload = {
   gravida?: number;
   cover_photo?: string;
   emergency_contact_number?: string;
-  alias?: string;
   partner_name?: string;
   partner_mobile?: string;
   partner_age?: string;
@@ -73,7 +71,6 @@ export type MotherSyncPayload = {
   id: string;
   first_name: string;
   last_name: string;
-  alias?: string | null;
   phone_number: string;
   date_of_birth: string;
   gravida?: number | null;

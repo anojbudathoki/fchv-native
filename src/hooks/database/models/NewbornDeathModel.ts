@@ -4,7 +4,7 @@ import { getDb } from "../db";
 import { NewbornDeathStoreType } from "../types/newbornDeathModal";
 
 export async function createNewbornDeath(
-  data: Partial<NewbornDeathStoreType>,
+  data: Partial<NewbornDeathStoreType> & { child_id?: string },
 ): Promise<void> {
   const db = await getDb();
   const now = new Date().toISOString();
@@ -41,6 +41,15 @@ export async function createNewbornDeath(
       now,
     ],
   );
+
+  if (data.child_id) {
+    await db.runAsync(
+      `UPDATE child_monitoring
+       SET status = 'dead', is_synced = 0, updated_at = ?
+       WHERE id = ? AND is_deleted = 0`,
+      [now, data.child_id],
+    );
+  }
 }
 
 export async function getAllNewbornDeaths(): Promise<NewbornDeathStoreType[]> {

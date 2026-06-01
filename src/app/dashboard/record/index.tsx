@@ -1,3 +1,4 @@
+import { useLanguage } from "@/context/LanguageContext";
 import { useFocusEffect, useRouter } from "expo-router";
 import {
   CalendarDays,
@@ -19,14 +20,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { AdToBs } from "react-native-nepali-picker";
 import {
   getAllMothersList,
   MotherListDbItem,
 } from "../../../hooks/database/models/MotherModel";
+import { toNepaliNumbers } from "../../../utils/dateHelper";
 
 export default function RecordScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { language } = useLanguage()
   const [records, setRecords] = useState<MotherListDbItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,10 +55,22 @@ export default function RecordScreen() {
     r.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const formatDate = (dateStr: string) => {
-    if (!dateStr || dateStr === "N/A" || dateStr === "-")
-      return t("record_page.na");
-    return dateStr;
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr || dateStr === "N/A" || dateStr === "-" || dateStr === "---")
+      return "---";
+
+    try {
+      const cleanDate = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
+      const bsDate = AdToBs(cleanDate);
+      return language === "np" ? toNepaliNumbers(bsDate) : bsDate;
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
+  const formatAge = (age: string | number | null | undefined) => {
+    if (age === null || age === undefined || age === "") return t("record_page.na");
+    return language === "np" ? toNepaliNumbers(String(age)) : String(age);
   };
 
   return (
@@ -71,21 +87,18 @@ export default function RecordScreen() {
             <ChevronLeft size={20} color="#1E293B" strokeWidth={2.5} />
           </TouchableOpacity>
           <View>
-            <Text className="text-xl font-bold text-slate-800 tracking-tight">
+            <Text className="text-[20px] font-bold text-slate-800 tracking-tight">
               {t("record_page.title")}
-            </Text>
-            <Text className="text-xs text-slate-400 font-bold mt-0.5 uppercase tracking-wider">
-              {t("record_page.subtitle")}
             </Text>
           </View>
         </View>
         <TouchableOpacity
           onPress={() => router.push("/dashboard/record/add-mother")}
           activeOpacity={0.8}
-          className="bg-primary/80 px-3 py-3 rounded-md items-center justify-center flex-row"
+          className="bg-primary/80 px-4 py-3 rounded-md items-center justify-center flex-row"
         >
           <Plus size={16} color="#ffffff" strokeWidth={3} />
-          <Text className="text-white font-bold text-xs ml-1.5 uppercase tracking-wider">
+          <Text className="text-white font-semibold text-md ml-1.5 uppercase tracking-wider">
             {t("record_page.new_entry")}
           </Text>
         </TouchableOpacity>
@@ -145,64 +158,64 @@ export default function RecordScreen() {
                     </View>
                     <View className="flex-1">
                       <Text
-                        className="text-base font-bold text-slate-800 leading-tight mb-1"
+                        className="text-lg font-bold text-slate-800 leading-tight mb-1"
                         numberOfLines={1}
                       >
                         {item.name}
                       </Text>
                       <View className="flex-row items-center">
-                        <Text className="text-slate-400 font-bold text-[11px] uppercase tracking-wide">
+                        <Text className="text-slate-600 font-semibold text-[14px] uppercase tracking-wide">
                           {t("record_page.age")}{" "}
-                          <Text className="text-slate-700 font-black">
-                            {item.age || t("record_page.na")}
+                          <Text className="text-slate-700 font-semibold">
+                            {formatAge(item.age)}
                           </Text>
                         </Text>
                         <View className="w-1 h-1 bg-slate-300 rounded-full mx-2.5" />
-                        <Text className="text-slate-400 font-bold text-[11px] uppercase tracking-wide">
+                        <Text className="text-slate-700 font-semibold text-[14px] uppercase tracking-wide">
                           {t("record_page.reg")}{" "}
-                          <Text className="text-slate-500 font-semibold">
-                            {formatDate(item.createdAt?.split("T")[0])}
+                          <Text className="text-slate-700 font-semibold text-[15px]">
+                            {formatDate(item.createdAt)}
                           </Text>
                         </Text>
                       </View>
                     </View>
                   </View>
                   <View className="bg-slate-50 p-2 rounded-2xl border border-slate-100">
-                    <ChevronRight size={14} color="#94A3B8" strokeWidth={3} />
+                    <ChevronRight size={16} color="#8195afff" strokeWidth={3} />
                   </View>
                 </View>
 
                 {/* Minimalist Date Metadata Row */}
                 <View className="mt-4 pt-4 border-t border-slate-50 flex-row justify-between">
-                  <View className="flex-col gap-1">
+                  <View className="flex-col gap-1 items-center">
                     <View className="flex-row gap-1 items-center">
                       <CalendarDays
                         size={14}
-                        color="#94A3B8"
+                        color="#646f7eff"
                         strokeWidth={2.5}
                         className="mr-1.5"
                       />
-                      <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                      <Text className="text-slate-600 text-[13px] font-semibold uppercase tracking-wider">
                         {t("record_page.lmp_date")}:{" "}
                       </Text>
                     </View>
-                    <Text className="text-slate-700 ml-5 text-xs font-black">
-                      {formatDate(item.lmp)}
+                    <Text className="text-slate-700 ml-5 text-[15px] font-semibold">
+                      {item.lmp ? language === "np" ? toNepaliNumbers(item.lmp) : item.lmp : "---"}
                     </Text>
                   </View>
                   <View className="flex-col gap-1 items-center">
                     <View className="flex-row items-center gap-1">
                       <CalendarDays
                         size={14}
-                        color="#94A3B8"
+                        color="#646f7eff"
                         strokeWidth={2.5}
                         className="mr-1.5"
                       />
-                      <Text className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                      <Text className="text-slate-600 text-[13px] font-semibold uppercase tracking-wider">
                         {t("record_page.edd_date")}:{" "}
                       </Text>
                     </View>
-                    <Text className="text-slate-700 ml-5 text-xs font-black">
+                    <Text className="text-slate-700 ml-5 text-[15px] font-semibold">
                       {formatDate(item.edd)}
                     </Text>
                   </View>

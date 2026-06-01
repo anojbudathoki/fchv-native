@@ -97,7 +97,9 @@ export default function ChildMonitoringReportScreen() {
       <StatusBar barStyle="dark-content" />
       <CustomHeader
         title={t("reports.child_monitoring_report.title")}
-        onBackPress={() => router.replace("/dashboard/report")}
+        onBackPress={() => {
+          router.replace("/dashboard/");
+        }}
       />
 
       <ScrollView
