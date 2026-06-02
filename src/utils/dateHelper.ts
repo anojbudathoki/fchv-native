@@ -16,6 +16,46 @@ export const adToBs = (date: Date): { year: number; month: number } => {
     };
 };
 
+export const bsToAd = (bsDateStr: string): string => {
+    try {
+        if (!bsDateStr) return "";
+        const nd = new NepaliDate(bsDateStr.replace(/-/g, '/'));
+        return nd.toJsDate().toISOString().split('T')[0];
+    } catch (e) {
+        return bsDateStr;
+    }
+};
+
+/**
+ * Formats a BS date string based on the language.
+ * If language is 'np', returns BS date in Nepali numbers.
+ * If language is 'en', returns AD date.
+ */
+export const formatBsDate = (bsDate: string | null | undefined, language: string): string => {
+    if (!bsDate || bsDate === "N/A" || bsDate === "-" || bsDate === "---") return "---";
+    if (language === "np") return toNepaliNumbers(bsDate);
+    return bsToAd(bsDate);
+};
+
+/**
+ * Formats an AD date string based on the language.
+ * If language is 'en', returns AD date.
+ * If language is 'np', returns BS date in Nepali numbers.
+ */
+export const formatAdDate = (adDate: string | null | undefined, language: string): string => {
+    if (!adDate || adDate === "N/A" || adDate === "-" || adDate === "---") return "---";
+    if (language === "np") {
+        try {
+            const cleanDate = adDate.includes("T") ? adDate.split("T")[0] : adDate;
+            const nd = new NepaliDate(new Date(cleanDate));
+            return toNepaliNumbers(nd.format('YYYY-MM-DD'));
+        } catch (e) {
+            return adDate;
+        }
+    }
+    return adDate.includes("T") ? adDate.split("T")[0] : adDate;
+};
+
 /** @deprecated Use getCurrentNepaliDate() instead */
 export const getCurrentNepaliMonth = (): string => {
     const { year, month } = getCurrentNepaliDate();

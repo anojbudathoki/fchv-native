@@ -49,7 +49,7 @@ const TabItem = ({ tab, isActive, onPress }: any) => {
         alignItems: "center",
         justifyContent: "center",
         height: "100%",
-        paddingBottom: 15,
+        paddingBottom: 30,
       }}
     >
       <Animated.View

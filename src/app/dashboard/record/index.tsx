@@ -1,15 +1,14 @@
+import CustomHeader from "@/components/CustomHeader";
 import { useLanguage } from "@/context/LanguageContext";
 import { useFocusEffect, useRouter } from "expo-router";
 import {
   CalendarDays,
-  ChevronLeft,
   ChevronRight,
   Plus,
   Search,
-  User,
+  User
 } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -20,17 +19,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { AdToBs } from "react-native-nepali-picker";
 import {
   getAllMothersList,
   MotherListDbItem,
 } from "../../../hooks/database/models/MotherModel";
-import { toNepaliNumbers } from "../../../utils/dateHelper";
+import { formatAdDate, formatBsDate, toNepaliNumbers } from "../../../utils/dateHelper";
 
 export default function RecordScreen() {
   const router = useRouter();
-  const { t } = useTranslation();
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const [records, setRecords] = useState<MotherListDbItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,18 +52,6 @@ export default function RecordScreen() {
     r.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const formatDate = (dateStr: string | null | undefined) => {
-    if (!dateStr || dateStr === "N/A" || dateStr === "-" || dateStr === "---")
-      return "---";
-
-    try {
-      const cleanDate = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
-      const bsDate = AdToBs(cleanDate);
-      return language === "np" ? toNepaliNumbers(bsDate) : bsDate;
-    } catch (e) {
-      return dateStr;
-    }
-  };
 
   const formatAge = (age: string | number | null | undefined) => {
     if (age === null || age === undefined || age === "") return t("record_page.na");
@@ -78,31 +63,19 @@ export default function RecordScreen() {
       <StatusBar barStyle="dark-content" />
 
       {/* App Header */}
-      <View className="px-4 pt-6 pb-4 flex-row items-center justify-between bg-[#F8FAFC]">
-        <View className="flex-row items-center">
+      <CustomHeader
+        title={t("record_page.title")}
+        onBackPress={() => router.back()}
+        rightNode={
           <TouchableOpacity
-            onPress={() => router.back()}
-            className="mr-2 p-2 rounded-2xl"
+            onPress={() => router.push("/dashboard/record/add-mother")}
+            className="bg-primary/80 px-4 py-3 rounded-md items-center justify-center flex-row"
           >
-            <ChevronLeft size={20} color="#1E293B" strokeWidth={2.5} />
+            <Plus size={16} color="#ffffff" strokeWidth={3} />
+            <Text className="text-white font-semibold text-md ml-1.5 uppercase tracking-wider">{t("record_page.new_entry")}</Text>
           </TouchableOpacity>
-          <View>
-            <Text className="text-[20px] font-bold text-slate-800 tracking-tight">
-              {t("record_page.title")}
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          onPress={() => router.push("/dashboard/record/add-mother")}
-          activeOpacity={0.8}
-          className="bg-primary/80 px-4 py-3 rounded-md items-center justify-center flex-row"
-        >
-          <Plus size={16} color="#ffffff" strokeWidth={3} />
-          <Text className="text-white font-semibold text-md ml-1.5 uppercase tracking-wider">
-            {t("record_page.new_entry")}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        }
+      />
 
       {loading ? (
         <View className="flex-1 items-center justify-center">
@@ -115,13 +88,13 @@ export default function RecordScreen() {
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
+          contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 120 }}
         >
           {/* Search Bar */}
-          <View className="flex-row items-center rounded-xl bg-white mb-6 px-4 h-12 border border-slate-100">
+          <View className="flex-row items-center rounded-xl bg-white mb-6 px-4 border border-slate-100 mt-2">
             <Search size={18} color="#94A3B8" strokeWidth={2.5} />
             <TextInput
-              className="flex-1 ml-3 text-slate-700 font-semibold text-sm h-full"
+              className="flex-1 ml-3 text-slate-700 font-semibold text-md py-4 h-full"
               placeholder={t("record_page.search_placeholder")}
               placeholderTextColor="#94A3B8"
               value={searchQuery}
@@ -167,14 +140,14 @@ export default function RecordScreen() {
                         <Text className="text-slate-600 font-semibold text-[14px] uppercase tracking-wide">
                           {t("record_page.age")}{" "}
                           <Text className="text-slate-700 font-semibold">
-                            {formatAge(item.age)}
+                            {language === "np" ? toNepaliNumbers(String(item.age)) : item.age}
                           </Text>
                         </Text>
                         <View className="w-1 h-1 bg-slate-300 rounded-full mx-2.5" />
                         <Text className="text-slate-700 font-semibold text-[14px] uppercase tracking-wide">
                           {t("record_page.reg")}{" "}
                           <Text className="text-slate-700 font-semibold text-[15px]">
-                            {formatDate(item.createdAt)}
+                            {formatAdDate(item.createdAt, language)}
                           </Text>
                         </Text>
                       </View>
@@ -200,7 +173,7 @@ export default function RecordScreen() {
                       </Text>
                     </View>
                     <Text className="text-slate-700 ml-5 text-[15px] font-semibold">
-                      {item.lmp ? language === "np" ? toNepaliNumbers(item.lmp) : item.lmp : "---"}
+                      {formatBsDate(item.lmp, language)}
                     </Text>
                   </View>
                   <View className="flex-col gap-1 items-center">
@@ -216,7 +189,7 @@ export default function RecordScreen() {
                       </Text>
                     </View>
                     <Text className="text-slate-700 ml-5 text-[15px] font-semibold">
-                      {formatDate(item.edd)}
+                      {formatAdDate(item.edd, language)}
                     </Text>
                   </View>
                 </View>

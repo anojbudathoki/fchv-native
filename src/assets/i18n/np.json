@@ -995,7 +995,9 @@
       "status": "जन्म मिति अवस्था",
       "baby_weight": "शिशुको तौल",
       "date_of_birth": "जन्म मिति",
-      "years": "वर्ष"
+      "years": "वर्ष",
+      "months": "महिना",
+      "days": "दिन"
     },
     "actions": {
       "edit_profile": "बच्चाको विवरण सम्पादन गर्नुहोस्"
@@ -1098,5 +1100,36 @@
     "delete_confirm_message": "के तपाईं पक्का हुनुहुन्छ कि भर्खरैको काउन्सिलिङ हटाउन चाहनुहुन्छ?",
     "delete_confirm_yes": "हो, हटाउनुहोस्",
     "delete_confirm_no": "रद्द गर्नुहोस्"
+  },
+  "mothers_group_meeting": {
+    "title": "आमा समूहको बैठक",
+    "fchv_name": "FCHV को नाम",
+    "fchv_name_placeholder": "पूरा नाम",
+    "meeting_date": "बैठक मिति",
+    "select_date": "मिति छान्नुहोस्",
+    "meeting_location": "बैठक स्थान",
+    "location_placeholder": "स्थानको नाम",
+    "ward_no": "वडा नं.",
+    "attendees_count": "उपस्थित सदस्य संख्या",
+    "discussed_topics": "छलफल गरिएका विषयहरू",
+    "discussed_topics_placeholder": "बैठकमा छलफल भएका मुख्य बुँदाहरू...",
+    "decisions": "निर्णय/कार्ययोजना",
+    "decisions_placeholder": "बैठकबाट भएका निर्णयहरू...",
+    "save_record": "रेकर्ड सुरक्षित गर्नुहोस्",
+    "form_error": "कृपया आवश्यक विवरणहरू भर्नुहोस् (मिति र स्थान)",
+    "save_error": "रेकर्ड सुरक्षित गर्न समस्या भयो",
+    "card_title_2": "छलफल र निर्णय",
+    "mothers_group": "आमा समूह बैठकहरू",
+    "meetings_title": "बैठकहरू",
+    "review_subtitle": "विगतका जमघट र सामुदायिक प्रगतिहरूको समीक्षा गर्नुहोस्।",
+    "record_new": "नयाँ रेकर्ड",
+    "attendees": "सहभागीहरू",
+    "no_meetings": "अहिलेसम्म कुनै बैठक रेकर्ड गरिएको छैन।",
+    "meeting_default_topic": "बैठक",
+    "empty_title": "अहिलेसम्म कुनै बैठकको रेकर्ड थपिएको छैन",
+    "empty_subtitle": "अहिलेसम्म कुनै समूह बैठकको विवरण थपिएको छैन। नयाँ रेकर्ड थप्न माथिको नयाँ रेकर्ड बटनमा क्लिक गर्नुहोस्",
+    "no_topics_recorded": "कुनै विषय रेकर्ड गरिएको छैन।",
+    "no_decisions_recorded": "कुनै निर्णय रेकर्ड गरिएको छैन।",
+    "loading": "लोड हुँदैछ..."
   }
 }

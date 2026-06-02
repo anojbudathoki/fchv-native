@@ -2,12 +2,12 @@ import ChildCounselingSection from "@/app/dashboard/child/ChildCounselingSection
 import CustomHeader from "@/components/CustomHeader";
 import VaccinationSection from "@/components/profile/VaccinationSection";
 import Colors from "@/constants/Colors";
+import { useLanguage } from "@/context/LanguageContext";
 import { getInfantMonitoringById } from "@/hooks/database/models/InfantMonitoringModel";
 import { InfantMonitoringStoreType } from "@/hooks/database/types/infantMonitoringModal";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { Activity, Baby, Edit2, MapPin, Smile } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
     ActivityIndicator,
     SafeAreaView,
@@ -24,8 +24,41 @@ const toNepaliNumbers = (num: number | string) => {
     return String(num).replace(/[0-9]/g, (match) => nepaliDigits[parseInt(match)]);
 };
 
+const calculateAge = (dobString: string, currentLanguage: string, t: any) => {
+    if (!dobString) return "---";
+    const dob = new Date(dobString);
+    const now = new Date();
+
+    let years = now.getFullYear() - dob.getFullYear();
+    let months = now.getMonth() - dob.getMonth();
+    let days = now.getDate() - dob.getDate();
+
+    if (days < 0) {
+        months--;
+        const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += lastMonth.getDate();
+    }
+
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    if (currentLanguage === 'np') {
+        const yearStr = years > 0 ? `${toNepaliNumbers(years)} ${t("child_profile.identity.years")}` : "";
+        const monthStr = months > 0 ? `${toNepaliNumbers(months)} ${t("child_profile.identity.months")}` : "";
+        const dayStr = days > 0 ? `${toNepaliNumbers(days)} ${t("child_profile.identity.days")}` : "";
+        return `${yearStr} ${monthStr} ${dayStr}`.trim() || `० ${t("child_profile.identity.days")}`;
+    } else {
+        const yearStr = years > 0 ? `${years} ${years === 1 ? 'Year' : 'Years'}` : "";
+        const monthStr = months > 0 ? `${months} ${months === 1 ? 'Month' : 'Months'}` : "";
+        const dayStr = days > 0 ? `${days} ${days === 1 ? 'Day' : 'Days'}` : "";
+        return `${yearStr} ${monthStr} ${dayStr}`.trim() || `0 Days`;
+    }
+};
+
 export default function ChildProfileScreen() {
-    const { t } = useTranslation();
+    const { t, language } = useLanguage();
     const router = useRouter();
     const { id, from } = useLocalSearchParams<{ id: string, from?: string }>();
 
@@ -139,7 +172,7 @@ export default function ChildProfileScreen() {
                                     </TouchableOpacity>
                                 </View>
                                 <Text className="text-[#64748B] text-[15px] mt-1 font-medium">
-                                    {t("child_profile.dob_label")}: {record.date_of_birth ? toNepaliNumbers(AdToBs(record.date_of_birth)) : "---"}
+                                    {t("child_profile.dob_label")}: {language === 'en' ? record.date_of_birth : record.date_of_birth ? toNepaliNumbers(AdToBs(record.date_of_birth)) : "---"}
                                 </Text>
                                 <TouchableOpacity onPress={() => router.push({
                                     pathname: "/dashboard/profile",
@@ -158,7 +191,7 @@ export default function ChildProfileScreen() {
                                     {t("child_profile.age")}
                                 </Text>
                                 <Text className="text-[15px] font-bold text-[#334155]">
-                                    {toNepaliNumbers(1)} {t("child_profile.identity.years")} {toNepaliNumbers(1)} महिना
+                                    {calculateAge(record.date_of_birth || "", language, t)}
                                 </Text>
                             </View>
                             <View className="flex-1 bg-[#F8FAFC] py-3 rounded-xl items-center border border-slate-100">
@@ -166,7 +199,7 @@ export default function ChildProfileScreen() {
                                     {t("child_profile.reg_date")}
                                 </Text>
                                 <Text className="text-[15px] font-bold text-[#334155]">
-                                    {record.created_at ? toNepaliNumbers(AdToBs(record.created_at.split('T')[0])) : "---"}
+                                    {language === 'en' ? record.created_at.split('T')[0] : record.created_at ? toNepaliNumbers(AdToBs(record.created_at.split('T')[0])) : "---"}
                                 </Text>
                             </View>
                         </View>

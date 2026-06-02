@@ -36,7 +36,7 @@ export default function CustomHeader({
 
   return (
     <View 
-      className={`flex-row items-center justify-between bg-white px-5 pb-4 ${className}`}
+      className={`flex-row items-center justify-between bg-white px-5 ${className}`}
       style={containerStyle}
     >
       <View className="flex-row items-center flex-1">

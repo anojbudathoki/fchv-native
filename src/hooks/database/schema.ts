@@ -309,4 +309,21 @@ CREATE TABLE IF NOT EXISTS child_vaccination (
 );
 CREATE INDEX IF NOT EXISTS idx_child_vaccination_child_id ON child_vaccination(child_id);
 
+CREATE TABLE IF NOT EXISTS mothers_group_meetings (
+    id TEXT PRIMARY KEY,
+    meeting_date TEXT NOT NULL,
+    meeting_location TEXT NOT NULL,
+    ward_no TEXT,
+    fchv_name TEXT,
+    attendees_count INTEGER DEFAULT 0,
+    discussed_topics TEXT,
+    decisions TEXT,
+    reg_year INTEGER,
+    reg_month INTEGER,
+    is_synced INTEGER NOT NULL DEFAULT 0,
+    is_deleted INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
 `;

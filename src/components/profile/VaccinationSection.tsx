@@ -116,7 +116,7 @@ export default function VaccinationSection({ childId, childName }: VaccinationSe
                                     <View className="flex-row items-center">
                                         <Calendar size={10} color="#64748B" />
                                         <Text className="text-slate-500 text-[11px] ml-1 font-medium">
-                                            {language === 'np' ? "मिति:" : "Date:"} {formatDate(v.given_date)}
+                                            {language === 'np' ? "मिति:" : "Date:"} {language === 'en' ? v.given_date.split('T')[0] : formatDate(v.given_date)}
                                         </Text>
                                     </View>
                                 )}

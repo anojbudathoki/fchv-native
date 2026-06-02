@@ -1,10 +1,10 @@
 import CustomHeader from "@/components/CustomHeader";
+import { useLanguage } from "@/context/LanguageContext";
 import { getAllInfantMonitorings } from "@/hooks/database/models/InfantMonitoringModel";
 import { InfantMonitoringStoreType } from "@/hooks/database/types/infantMonitoringModal";
 import { router, useFocusEffect } from "expo-router";
 import { Baby, Calendar, ChevronRight, Plus, Search } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   SafeAreaView,
   ScrollView,
@@ -16,7 +16,7 @@ import {
 import { AdToBs } from "react-native-nepali-picker";
 
 export default function ChildManagementScreen() {
-  const { t } = useTranslation();
+  const { t, language } = useLanguage();
   const [infants, setInfants] = useState<InfantMonitoringStoreType[]>([]);
   const [filteredInfants, setFilteredInfants] = useState<InfantMonitoringStoreType[]>([]);
   const [search, setSearch] = useState("");
@@ -53,14 +53,12 @@ export default function ChildManagementScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC] pt-8">
+    <SafeAreaView className="flex-1 bg-[#F8FAFC] pt-10">
       <CustomHeader
         title={t("child_page.title")}
-        subtitle={t("child_page.subtitle")}
         onBackPress={() => router.back()}
         rightNode={
           <TouchableOpacity
-            activeOpacity={0.8}
             onPress={() => router.push("/dashboard/child/add-child")}
             className="bg-primary/80 px-3 py-2.5 rounded-md items-center justify-center flex-row"
           >
@@ -100,33 +98,33 @@ export default function ChildManagementScreen() {
                 className="bg-white p-4 rounded-md flex-row items-center border border-gray-100 shadow-sm"
               >
                 {/* Avatar */}
-                <View className="w-14 h-14 bg-indigo-50 rounded-[18px] items-center justify-center border border-indigo-100">
+                <View className="w-14 h-14 bg-indigo-50 rounded-md items-center justify-center border border-indigo-100">
                   <Baby size={24} color="#6366F1" strokeWidth={2} />
                 </View>
 
                 {/* Info */}
                 <View className="flex-1 ml-4 justify-center">
-                  <Text className="text-slate-800 text-base font-bold mb-1" numberOfLines={1}>
+                  <Text className="text-slate-800 text-xl font-bold mb-1" numberOfLines={1}>
                     {item.baby_name || t("child_page.unnamed_baby")}
                   </Text>
 
                   <View className="flex-row items-center mb-1">
-                    <Text className="text-slate-500 font-medium text-[13px]" numberOfLines={1}>
-                      {t("child_page.mother")}: <Text className="text-slate-700">{item.mother_name || t("child_page.unknown")}</Text>
+                    <Text className="text-slate-600 font-medium text-[15px]" numberOfLines={1}>
+                      {t("child_page.mother")}: <Text className="text-slate-800">{item.mother_name || t("child_page.unknown")}</Text>
                     </Text>
                   </View>
 
                   <View className="flex-row items-center">
-                    <Calendar size={12} color="#94A3B8" />
-                    <Text className="text-slate-400 text-[11px] font-medium ml-1" numberOfLines={1}>
-                      {item.date_of_birth ? AdToBs(item.date_of_birth) : 'N/A'} {t("child_page.bs")}
+                    <Calendar size={12} color="#5f6670ff" />
+                    <Text className="text-slate-500 text-[13px] font-medium ml-1" numberOfLines={1}>
+                      {language === 'en' ? item.date_of_birth : AdToBs(item.date_of_birth || '')}
                     </Text>
                   </View>
                 </View>
 
                 {/* Action */}
                 <View className="w-10 h-10 bg-slate-50 rounded-full items-center justify-center">
-                  <ChevronRight size={20} color="#94A3B8" />
+                  <ChevronRight size={22} color="#778291ff" />
                 </View>
               </TouchableOpacity>
             ))

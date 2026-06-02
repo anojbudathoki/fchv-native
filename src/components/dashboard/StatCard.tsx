@@ -37,7 +37,7 @@ const StatCard = ({ icon: Icon, iconColor, iconBg = "transparent", bg = "white",
             </View>
             <View>
               <Text style={{ color: "#0F172A", fontSize: 20, fontWeight: "600", letterSpacing: -0.5 }}>{value}</Text>
-              <Text style={{ color: "#64748B", fontSize: 15, fontWeight: "500", textTransform: "uppercase", letterSpacing: 0.5, marginTop: 2 }} numberOfLines={1}>{label}</Text>
+              <Text style={{ color: "#64748B", fontSize: 15, fontWeight: "500", marginTop: 2 }} numberOfLines={1}>{label}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -48,12 +48,12 @@ const StatCard = ({ icon: Icon, iconColor, iconBg = "transparent", bg = "white",
   if (layout === "minimal") {
     return (
       <Animated.View style={{ flex: 1, opacity: animValue, transform: [{ translateY: animValue.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }] }}>
-        <TouchableOpacity activeOpacity={0.8} onPress={() => router.push(path as any)}>
+        <TouchableOpacity onPress={() => router.push(path as any)}>
           <View style={{ backgroundColor: bg, borderRadius: 16, padding: 16, paddingVertical: 20, flexDirection: "row", alignItems: "center", gap: 12 }}>
             <View style={{ width: 4, height: 24, backgroundColor: iconColor, borderRadius: 4 }} />
             <View>
               <Text style={{ color: "#0F172A", fontSize: 24, fontWeight: "800", letterSpacing: -0.5 }}>{value}</Text>
-              <Text style={{ color: "#475569", fontSize: 14, fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.5, marginTop: 2 }} numberOfLines={1}>{label}</Text>
+              <Text style={{ color: "#475569", fontSize: 14, fontWeight: "600", marginTop: 2 }} numberOfLines={1}>{label}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -63,7 +63,7 @@ const StatCard = ({ icon: Icon, iconColor, iconBg = "transparent", bg = "white",
 
   return (
     <Animated.View style={{ flex: 1, opacity: animValue, transform: [{ translateY: animValue.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }] }}>
-      <TouchableOpacity activeOpacity={0.8} onPress={() => router.push(path as any)}>
+      <TouchableOpacity onPress={() => router.push(path as any)}>
         <View style={{ backgroundColor: bg, borderRadius: 16, padding: 12, borderWidth: bg === "white" ? 1 : 0, borderColor: "rgba(241, 245, 249, 0.8)" }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             {Icon && (
@@ -73,7 +73,7 @@ const StatCard = ({ icon: Icon, iconColor, iconBg = "transparent", bg = "white",
             )}
           </View>
           <Text style={{ color: bg === "#FFE4E6" ? "#BE123C" : "#0F172A", fontSize: 27, fontWeight: "800", letterSpacing: -0.5 }}>{value}</Text>
-          <Text style={{ color: bg === "#FFE4E6" ? "#E11D48" : "#64748B", fontSize: 14, fontWeight: "500", marginTop: 2 }} numberOfLines={1}>{label}</Text>
+          <Text style={{ color: bg === "#FFE4E6" ? "#E11D48" : "#64748B", fontSize: 15, fontWeight: "500", marginTop: 2 }} numberOfLines={1}>{label}</Text>
         </View>
       </TouchableOpacity>
     </Animated.View>

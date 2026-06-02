@@ -43,7 +43,7 @@ import { getVisitsByMotherId } from "../../../hooks/database/models/VisitModel";
 import { HmisRecordStoreType } from "../../../hooks/database/types/hmisRecordModal";
 import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDeathModal";
 import { NewbornDeathStoreType } from "../../../hooks/database/types/newbornDeathModal";
-import { toNepaliNumbers } from "../../../utils/dateHelper";
+import { formatBsDate, toNepaliNumbers } from "../../../utils/dateHelper";
 import SupplementsScreen from "./supplements";
 
 const SectionTitle = ({ title, icon: Icon, colorClass, bgColor = "bg-white" }: any) => (
@@ -473,11 +473,7 @@ export default function HmisRecordProfileScreen() {
                       {t("profile.identity.lmp_date")}
                     </Text>
                     <Text className="text-[16px] font-semibold text-slate-800">
-                      {formatBsDateDisplay(
-                        pregnancy?.lmp_date || mother?.lmp,
-                        'BS',
-                        language
-                      )}
+                      {formatBsDate(pregnancy.lmp_date, language)}
                     </Text>
                   </View>
                 </View>
@@ -491,11 +487,7 @@ export default function HmisRecordProfileScreen() {
                       {t("profile.quick_stats.reg_date")}
                     </Text>
                     <Text className="text-slate-800 font-semibold text-[16px]">
-                      {formatBsDateDisplay(
-                        mother?.regDate,
-                        'AD',
-                        language
-                      )}
+                      {language === 'en' ? pregnancy.created_at.split('T')[0] : pregnancy.created_at ? toNepaliNumbers(AdToBs(pregnancy.created_at.split('T')[0])) : "---"}
                     </Text>
                   </View>
                 </View>
@@ -535,7 +527,7 @@ export default function HmisRecordProfileScreen() {
                     </Text>
                     <Text className="text-[15px] font-semibold text-slate-800 mt-0.5">
                       {t("profile.countdown.edd", {
-                        date: formatBsDateDisplay(eddDate, 'AD', language)
+                        date: formatBsDate(pregnancy.lmp_date, language)
                       })}
                     </Text>
                   </View>

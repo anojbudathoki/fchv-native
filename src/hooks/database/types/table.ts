@@ -2,6 +2,7 @@ type TableType =
   | "mother"
   | "pregnancy"
   | "pregnancy_staging"
+  | "mothers_group_meetings"
 
 type SyncTableType = Extract<
   TableType,

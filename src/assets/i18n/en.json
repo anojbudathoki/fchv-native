@@ -391,7 +391,7 @@
     },
     "anc": {
       "title": "ANC Visits",
-      "wk12": "Within 12 Weeks",
+      "wk12": "12 Weeks",
       "wk20": "20 Weeks",
       "wk26": "26 Weeks",
       "wk30": "30 Weeks",
@@ -997,7 +997,9 @@
       "status": "Birth Status",
       "baby_weight": "Baby Weight",
       "date_of_birth": "Date of Birth",
-      "years": "Years"
+      "years": "Years",
+      "months": "Months",
+      "days": "Days"
     },
     "actions": {
       "edit_profile": "Edit Child Profile"
@@ -1074,9 +1076,9 @@
   "counseling_section": {
     "malnutrition_screening": "Malnutrition Screening",
     "muac_condition": "MUAC (Condition)",
-    "muac_normal": "Normal (Green)",
-    "muac_risk": "Risk (Yellow)",
-    "muac_severe": "Severe (Red)",
+    "muac_normal": "Normal",
+    "muac_risk": "Risk",
+    "muac_severe": "Severe",
     "weight_kg": "Weight (kg.)",
     "height_cm": "Height (cm.)",
     "weight_short": "Weight",
@@ -1100,5 +1102,36 @@
     "delete_confirm_message": "Are you sure you want to remove the latest counseling entry?",
     "delete_confirm_yes": "Yes, Delete",
     "delete_confirm_no": "Cancel"
+  },
+  "mothers_group_meeting": {
+    "title": "Mothers' Group Meeting",
+    "fchv_name": "Name of FCHV",
+    "fchv_name_placeholder": "Full Name",
+    "meeting_date": "Meeting Date",
+    "select_date": "Select Date",
+    "meeting_location": "Meeting Place",
+    "location_placeholder": "Place Name",
+    "ward_no": "Ward No.",
+    "attendees_count": "No. of Attendees",
+    "discussed_topics": "Discussed Topics",
+    "discussed_topics_placeholder": "Main points discussed in the meeting...",
+    "decisions": "Decisions/Action Plan",
+    "decisions_placeholder": "Decisions made from the meeting...",
+    "save_record": "Save Record",
+    "form_error": "Please fill required fields (Date & Location)",
+    "save_error": "Error saving record",
+    "card_title_2": "Discussion and Decision",
+    "mothers_group": "Mothers' Group Meetings",
+    "meetings_title": "Meetings",
+    "review_subtitle": "Review past gatherings and community progress.",
+    "record_new": "Record New",
+    "attendees": "Attendees",
+    "no_meetings": "No meetings recorded yet.",
+    "meeting_default_topic": "MEETING",
+    "empty_title": "No meeting records have been added yet.",
+    "empty_subtitle": "No group meeting records have been added yet. Click the New Record button above to add a new record.",
+    "no_topics_recorded": "No topics recorded.",
+    "no_decisions_recorded": "No decisions recorded.",
+    "loading": "Loading..."
   }
 }

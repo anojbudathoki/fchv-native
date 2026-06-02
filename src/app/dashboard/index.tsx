@@ -293,7 +293,7 @@ export default function DashboardScreen() {
                 marginBottom: 24,
               }}
             >
-              <View className="flex-1 gap-2 flex-row">
+              <View className="flex-1 gap-4 flex-row">
 
                 <TouchableOpacity
                   onPress={() => router.push("/dashboard/record")}
@@ -366,14 +366,14 @@ export default function DashboardScreen() {
                 </TouchableOpacity>
               </View>
 
-              <View className="flex-1 gap-2 flex-row">
+              <View className="flex-1 gap-4 flex-row">
 
                 <TouchableOpacity
                   onPress={() => router.push("/dashboard/adolescent")}
                   style={{
                     flex: 1,
                     backgroundColor: "#F3E8FF",
-                    padding: 18,
+                    padding: 16,
                     paddingHorizontal: 10,
                     borderRadius: 20,
                     alignItems: "center",
@@ -404,7 +404,7 @@ export default function DashboardScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => router.push("/dashboard/mother-group-meeting" as any)}
+                  onPress={() => router.push("/dashboard/mothers-group" as any)}
                   style={{
                     flex: 1,
                     backgroundColor: "#FEF3C7",
@@ -434,7 +434,7 @@ export default function DashboardScreen() {
                       textAlign: "center",
                     }}
                   >
-                    {language === "np" ? "आमा समूहको बैठक" : "Mothers' Group Meeting"}
+                    {language === "np" ? "आमा समूहको बैठक" : "Mother's Group Meeting"}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -445,7 +445,7 @@ export default function DashboardScreen() {
             <Text
               style={{
                 paddingHorizontal: 20,
-                fontSize: 17,
+                fontSize: 16,
                 fontWeight: "600",
                 color: "#282c33ff",
                 letterSpacing: 1,
@@ -599,9 +599,9 @@ export default function DashboardScreen() {
                   <View>
                     <Text
                       style={{
-                        color: "#0F172A",
+                        color: "#15213bff",
                         fontSize: 18,
-                        fontWeight: "800",
+                        fontWeight: "700",
                         letterSpacing: -0.5,
                       }}
                     >

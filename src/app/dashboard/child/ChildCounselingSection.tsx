@@ -393,9 +393,9 @@ export default function ChildCounselingSection({
           if (log.height) extraInfo += ` ${log.height}cm`;
 
           return (
-            <View key={index} className={`flex-row items-center ${canDelete ? "bg-blue-50 border border-blue-100" : "bg-slate-50 border border-slate-100"} px-2.5 py-1 rounded-full`}>
+            <View key={index} className={`flex-row items-center ${canDelete ? "bg-blue-50 border border-blue-100" : "bg-slate-50 border border-slate-100"} px-2.5 py-1 rounded-md`}>
               <View className={`w-1.5 h-1.5 rounded-full mr-1.5 ${canDelete ? "bg-blue-400" : "bg-slate-300"}`} />
-              <Text className="text-[10px] text-slate-600 font-bold">
+              <Text className="text-[11px] text-slate-600 font-bold">
                 {language === "np" ? toNepaliNumbers(index + 1) : index + 1} • {dateStr}
                 {extraInfo}
               </Text>
@@ -405,7 +405,7 @@ export default function ChildCounselingSection({
                   className="ml-1.5 bg-white rounded-full p-0.5 border border-blue-100"
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
-                  <Trash2 size={9} color="#DC2626" />
+                  <Trash2 size={10} color="#DC2626" />
                 </TouchableOpacity>
               )}
             </View>
