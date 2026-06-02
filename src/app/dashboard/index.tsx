@@ -12,7 +12,6 @@ import {
   Users
 } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -46,6 +45,7 @@ import { useTodo } from "../../hooks/useTodo";
 import { Skeleton } from "@/components/common/Skeleton"; // Checking if this exists, if not I'll use a View
 import StatCard from "@/components/dashboard/StatCard";
 import TrendChart from "@/components/dashboard/TrendChart";
+import { useLanguage } from "@/context/LanguageContext";
 import { getRecentNepaliMonthBuckets } from "../../utils/dateHelper";
 import { getMunicipalityById, getWardById } from "../../utils/locationHelper";
 
@@ -72,7 +72,7 @@ const buildDashboardTrend = (rows: TrendRow[], isNepali: boolean) => {
 
 export default function DashboardScreen() {
   const router = useRouter();
-  const { t, i18n } = useTranslation();
+  const { language, t } = useLanguage();
   const { isConnected } = useOnlineStatus();
   const [motherCount, setMotherCount] = useState(0);
   const [pregnancyCount, setPregnancyCount] = useState(0);
@@ -250,7 +250,7 @@ export default function DashboardScreen() {
           });
           setUnder29Days(u29);
           setDays29To59Months(u59m);
-          const isNepali = i18n.language.startsWith("ne");
+          const isNepali = language === "np";
           setPregnancyTrend(buildDashboardTrend(pTrend, isNepali));
           setChildTrend(buildDashboardTrend(cTrend, isNepali));
           setMotherTrend(buildDashboardTrend(mTrend, isNepali));
@@ -263,7 +263,7 @@ export default function DashboardScreen() {
       };
 
       load();
-    }, [fetchTodos, i18n.language, t]),
+    }, [fetchTodos, language, t]),
   );
 
   return (
@@ -287,116 +287,158 @@ export default function DashboardScreen() {
             <View
               style={{
                 paddingHorizontal: 20,
-                flexDirection: "row",
+                flexDirection: "column",
                 gap: 12,
                 marginTop: 20,
                 marginBottom: 24,
               }}
             >
-              <TouchableOpacity
-                onPress={() => router.push("/dashboard/record")}
-                style={{
-                  flex: 1,
-                  backgroundColor: "#E0F2FE",
-                  padding: 18,
-                  paddingHorizontal: 10,
-                  borderRadius: 20,
-                  alignItems: "center",
-                }}
-              >
-                <View
-                  style={{
-                    backgroundColor: "rgba(186, 230, 253, 0.5)",
-                    padding: 6,
-                    borderRadius: 26,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 14,
-                  }}
-                >
-                  <UserPlus size={25} color="#0284C7" />
-                </View>
-                <Text
-                  style={{
-                    color: "#0F172A",
-                    fontWeight: "600",
-                    fontSize: 16,
-                    textAlign: "center",
-                  }}
-                >
-                  {t("dashboard.quick_actions.register_mother")}
-                </Text>
-              </TouchableOpacity>
+              <View className="flex-1 gap-2 flex-row">
 
-              <TouchableOpacity
-                onPress={() => router.push("/dashboard/child")}
-                style={{
-                  flex: 1,
-                  backgroundColor: "#D1FAE5",
-                  padding: 18,
-                  paddingHorizontal: 10,
-                  borderRadius: 20,
-                  alignItems: "center",
-                }}
-              >
-                <View
+                <TouchableOpacity
+                  onPress={() => router.push("/dashboard/record")}
                   style={{
-                    backgroundColor: "rgba(167, 243, 208, 0.5)",
-                    padding: 6,
-                    borderRadius: 26,
+                    flex: 1,
+                    backgroundColor: "#E0F2FE",
+                    padding: 18,
+                    paddingHorizontal: 10,
+                    borderRadius: 20,
                     alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 14,
                   }}
                 >
-                  <Smile size={25} color="#059669" />
-                </View>
-                <Text
-                  style={{
-                    color: "#0F172A",
-                    fontWeight: "600",
-                    fontSize: 16,
-                    textAlign: "center",
-                  }}
-                >
-                  {t("dashboard.quick_actions.register_child")}
-                </Text>
-              </TouchableOpacity>
+                  <View
+                    style={{
+                      backgroundColor: "rgba(186, 230, 253, 0.5)",
+                      padding: 6,
+                      borderRadius: 26,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 14,
+                    }}
+                  >
+                    <UserPlus size={25} color="#0284C7" />
+                  </View>
+                  <Text
+                    style={{
+                      color: "#0F172A",
+                      fontWeight: "600",
+                      fontSize: 16,
+                      textAlign: "center",
+                    }}
+                  >
+                    {t("dashboard.quick_actions.register_mother")}
+                  </Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => router.push("/dashboard/adolescent")}
-                style={{
-                  flex: 1,
-                  backgroundColor: "#F3E8FF",
-                  padding: 18,
-                  paddingHorizontal: 10,
-                  borderRadius: 20,
-                  alignItems: "center",
-                }}
-              >
-                <View
+                <TouchableOpacity
+                  onPress={() => router.push("/dashboard/child")}
                   style={{
-                    backgroundColor: "rgba(216, 180, 254, 0.4)",
-                    padding: 2,
-                    borderRadius: 26,
+                    flex: 1,
+                    backgroundColor: "#D1FAE5",
+                    padding: 18,
+                    paddingHorizontal: 10,
+                    borderRadius: 20,
                     alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 14,
                   }}
                 >
-                  <Heart size={25} color="#7C3AED" />
-                </View>
-                <Text
+                  <View
+                    style={{
+                      backgroundColor: "rgba(167, 243, 208, 0.5)",
+                      padding: 6,
+                      borderRadius: 26,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 14,
+                    }}
+                  >
+                    <Smile size={25} color="#059669" />
+                  </View>
+                  <Text
+                    style={{
+                      color: "#0F172A",
+                      fontWeight: "600",
+                      fontSize: 16,
+                      textAlign: "center",
+                    }}
+                  >
+                    {t("dashboard.quick_actions.register_child")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View className="flex-1 gap-2 flex-row">
+
+                <TouchableOpacity
+                  onPress={() => router.push("/dashboard/adolescent")}
                   style={{
-                    color: "#0F172A",
-                    fontWeight: "600",
-                    fontSize: 16,
-                    textAlign: "center",
+                    flex: 1,
+                    backgroundColor: "#F3E8FF",
+                    padding: 18,
+                    paddingHorizontal: 10,
+                    borderRadius: 20,
+                    alignItems: "center",
                   }}
                 >
-                  {t("dashboard.quick_actions.add_adolescent")}
-                </Text>
-              </TouchableOpacity>
+                  <View
+                    style={{
+                      backgroundColor: "rgba(216, 180, 254, 0.4)",
+                      padding: 2,
+                      borderRadius: 26,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 14,
+                    }}
+                  >
+                    <Heart size={25} color="#7C3AED" />
+                  </View>
+                  <Text
+                    style={{
+                      color: "#0F172A",
+                      fontWeight: "600",
+                      fontSize: 16,
+                      textAlign: "center",
+                    }}
+                  >
+                    {t("dashboard.quick_actions.add_adolescent")}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => router.push("/dashboard/mother-group-meeting" as any)}
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#FEF3C7",
+                    padding: 18,
+                    paddingHorizontal: 10,
+                    borderRadius: 20,
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      backgroundColor: "rgba(253, 224, 71, 0.4)",
+                      padding: 6,
+                      borderRadius: 26,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 14,
+                    }}
+                  >
+                    <Users size={25} color="#D97706" />
+                  </View>
+                  <Text
+                    style={{
+                      color: "#0F172A",
+                      fontWeight: "600",
+                      fontSize: 16,
+                      textAlign: "center",
+                    }}
+                  >
+                    {language === "np" ? "आमा समूहको बैठक" : "Mothers' Group Meeting"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
             </View>
 
             {/* Stats Section - Community Pulse */}
@@ -499,6 +541,37 @@ export default function DashboardScreen() {
               />
             </View>
 
+            {/* Health Summary Mini Cards */}
+            <View
+              style={{
+                paddingHorizontal: 20,
+                flexDirection: "column",
+                gap: 12,
+                marginTop: 16,
+              }}
+            >
+              <StatCard
+                layout="compact"
+                path="/dashboard/report/child-monitoring-report"
+                icon={Baby}
+                iconColor="#059669"
+                iconBg="#D1FAE5"
+                value={under29Days}
+                label={t("dashboard.health_summary.under_29_days")}
+                delay={100}
+              />
+              <StatCard
+                layout="compact"
+                path="/dashboard/report/child-monitoring-report"
+                icon={Baby}
+                iconColor="#0284C7"
+                iconBg="#E0F2FE"
+                value={days29To59Months}
+                label={t("dashboard.health_summary.29_to_59_months")}
+                delay={200}
+              />
+            </View>
+
             {/* Charts Section */}
             <View
               style={{
@@ -566,37 +639,6 @@ export default function DashboardScreen() {
                   </View>
                 )}
               </View>
-            </View>
-
-            {/* Health Summary Mini Cards */}
-            <View
-              style={{
-                paddingHorizontal: 20,
-                flexDirection: "column",
-                gap: 12,
-                marginTop: 16,
-              }}
-            >
-              <StatCard
-                layout="compact"
-                path="/dashboard/report/child-monitoring-report"
-                icon={Baby}
-                iconColor="#059669"
-                iconBg="#D1FAE5"
-                value={under29Days}
-                label={t("dashboard.health_summary.under_29_days")}
-                delay={100}
-              />
-              <StatCard
-                layout="compact"
-                path="/dashboard/report/child-monitoring-report"
-                icon={Baby}
-                iconColor="#0284C7"
-                iconBg="#E0F2FE"
-                value={days29To59Months}
-                label={t("dashboard.health_summary.29_to_59_months")}
-                delay={200}
-              />
             </View>
 
             {/* Recent Activity */}
