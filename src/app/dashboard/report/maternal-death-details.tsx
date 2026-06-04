@@ -1,28 +1,26 @@
+import { ReportDetailsSkeleton } from "@/components/common/ReportDetailsSkeleton";
 import { calculateAge } from "@/utils/parse";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Activity,
-  Baby,
   Calendar,
   HeartPulse,
   Info,
   MapPin,
   Navigation,
-  User,
+  User
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   ScrollView,
   StatusBar,
   Text,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import municipalitiesData from "../../../assets/json/municipalities.json";
 import CustomHeader from "../../../components/CustomHeader";
-import Colors from "../../../constants/Colors";
 import { getAllMaternalDeaths } from "../../../hooks/database/models/MaternalDeathModel";
 import {
   getMotherProfile,
@@ -64,8 +62,13 @@ export default function MaternalDeathDetailsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-50 justify-center items-center">
-        <ActivityIndicator size="large" color={Colors.primary} />
+      <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+        <StatusBar barStyle="dark-content" />
+        <CustomHeader
+          title={t("reports.maternal_death_report.title")}
+          onBackPress={() => router.back()}
+        />
+        <ReportDetailsSkeleton />
       </SafeAreaView>
     );
   }

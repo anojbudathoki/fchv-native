@@ -179,7 +179,7 @@ export default function MotherForm({ id, onSuccess }: { id?: string, onSuccess?:
             <Text className={`text-base ${dobBs ? "text-[#1E293B]" : "text-[#b8bbbeff]"}`}>
               {dobBs || t("mother_form.dob_placeholder")}
             </Text>
-            <Calendar size={18} color="#0056D2" />
+            <Calendar size={18} color="#475569" />
           </View>
           {errors.dob ? (
             <Text className="text-red-500 text-xs mt-1 ml-1 font-medium">{errors.dob}</Text>

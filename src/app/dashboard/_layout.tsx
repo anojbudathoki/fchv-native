@@ -75,6 +75,13 @@ export default function DashboardLayout() {
             drawerItemStyle: { display: "none" },
           }}
         />
+        <Drawer.Screen
+          name="risk"
+          options={{
+            title: "Risk",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
       </Drawer>
       <BottomNavigation />
     </View>

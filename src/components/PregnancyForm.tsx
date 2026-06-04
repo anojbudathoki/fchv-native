@@ -2,7 +2,7 @@ import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
 import { Calendar } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StatusBar, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import { useLanguage } from "../context/LanguageContext";
@@ -238,9 +238,10 @@ export default function PregnancyForm({
       keyboardShouldPersistTaps="always"
       showsVerticalScrollIndicator={false}
     >
+      <StatusBar barStyle="dark-content" className="bg-white" />
       <View className="pt-3">
         <ProfilePicker
-          key={`picker-${mothers.length}-${id || "new"}`}
+          // key={`picker-${mothers.length}-${id || "new"}`}
           label={t("pregnancy_form.select_mother")}
           placeholder={
             isLoading
@@ -298,7 +299,7 @@ export default function PregnancyForm({
           >
             {lmp || t("pregnancy_form.select_lmp")}
           </Text>
-          <Calendar size={18} color="#0056D2" />
+          <Calendar size={18} color="#475569" />
         </View>
       </Pressable>
       {errors.lmp ? (
@@ -320,9 +321,9 @@ export default function PregnancyForm({
 
       <View className="mb-4">
         <ProfilePicker
-          label={language === "np" ? "जोखिम स्तर" : "Risk Level"}
+          label={t("add_record.basic_info.risk_label")}
           placeholder={
-            language === "np" ? "जोखिम स्तर छान्नुहोस्" : "Select Risk Level"
+            t("add_record.basic_info.risk_placeholder")
           }
           selectedValue={riskLevel}
           onValueChange={(val) =>

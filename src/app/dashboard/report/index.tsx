@@ -12,22 +12,21 @@ import {
 } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   ScrollView,
   StatusBar,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { AdToBs } from "react-native-nepali-picker";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Colors from "../../../constants/Colors";
 import { useLanguage } from "../../../context/LanguageContext";
 
 // Database models
+import { Skeleton } from "@/components/common/Skeleton";
 import CustomHeader from "@/components/CustomHeader";
 import { getAllInfantMonitorings } from "../../../hooks/database/models/InfantMonitoringModel";
 import { getAllMaternalDeaths } from "../../../hooks/database/models/MaternalDeathModel";
@@ -45,6 +44,31 @@ import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDe
 import { NewbornDeathStoreType } from "../../../hooks/database/types/newbornDeathModal";
 import { toNepaliNumbers } from "../../../utils/dateHelper";
 import { getWardById } from "../../../utils/locationHelper";
+
+const RecordCardSkeleton = () => (
+  <View className="bg-white rounded-2xl px-3 py-5 mb-4 flex-row items-center border border-slate-200">
+    <View className="w-16 h-16 rounded-full bg-slate-50 items-center justify-center border border-slate-100">
+      <Skeleton width={32} height={32} borderRadius={16} />
+    </View>
+    <View className="flex-1 ml-5 gap-2.5">
+      <View className="flex-row items-center justify-between">
+        <Skeleton width="50%" height={20} borderRadius={6} />
+        <Skeleton width={64} height={24} borderRadius={12} />
+      </View>
+      <View className="flex-row items-center">
+        <Skeleton width={14} height={14} borderRadius={4} style={{ marginRight: 6 }} />
+        <Skeleton width="40%" height={14} borderRadius={4} />
+      </View>
+      <View className="flex-row items-center">
+        <Skeleton width={14} height={14} borderRadius={4} style={{ marginRight: 6 }} />
+        <Skeleton width="45%" height={14} borderRadius={4} />
+      </View>
+    </View>
+    <View className="ml-4">
+      <Skeleton width={20} height={20} borderRadius={10} />
+    </View>
+  </View>
+);
 
 const AnimatedTouchableOpacity =
   Animated.createAnimatedComponent(TouchableOpacity);
@@ -530,9 +554,10 @@ export default function ReportScreen() {
       {/* Main List */}
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100, paddingTop: 10 }}>
         {loading ? (
-          <View className="py-20 items-center justify-center">
-            <ActivityIndicator size="large" color={Colors.primary} />
-            <Text className="text-slate-400 font-bold mt-4">{t("reports.loading_reports")}</Text>
+          <View>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <RecordCardSkeleton key={i} />
+            ))}
           </View>
         ) : records.length === 0 ? (
           <View className="py-20 items-center justify-center">

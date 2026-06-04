@@ -1,3 +1,4 @@
+import { ReportListSkeleton } from "@/components/common/ReportListSkeleton";
 import { useFocusEffect, useRouter } from "expo-router";
 import {
   Baby,
@@ -10,16 +11,14 @@ import {
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   ScrollView,
   StatusBar,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "../../../components/CustomHeader";
-import Colors from "../../../constants/Colors";
 import { getAllNewbornDeaths } from "../../../hooks/database/models/NewbornDeathModel";
 import { NewbornDeathStoreType } from "../../../hooks/database/types/newbornDeathModal";
 
@@ -83,14 +82,6 @@ export default function NewbornDeathReportScreen() {
     };
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-[#F8FAFC]">
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView className="flex-1 bg-[#F8FAFC]">
       <StatusBar barStyle="dark-content" />
@@ -119,78 +110,86 @@ export default function NewbornDeathReportScreen() {
           showsVerticalScrollIndicator={false}
           className="flex-1 px-4 pt-2"
         >
-          {data.map((item) => {
-            const genderStyle = getGenderColor(item.gender);
-            return (
-              <TouchableOpacity
-                key={item.id}
-                activeOpacity={0.7}
-                onPress={() =>
-                  router.push({
-                    pathname: "/dashboard/report/newborn-death-details",
-                    params: { id: item.id },
-                  })
-                }
-                className="bg-white rounded-2xl p-4 mb-3 border border-slate-100 shadow-sm shadow-slate-200/50"
-              >
-                {/* Top Row: Baby info + Gender badge */}
-                <View className="flex-row items-center justify-between mb-3">
-                  <View className="flex-row items-center flex-1">
-                    <View className="w-11 h-11 bg-orange-50 rounded-full items-center justify-center mr-3 border border-orange-100">
-                      <Baby size={20} color="#EA580C" />
+          {loading ? (
+            <View>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <ReportListSkeleton key={i} />
+              ))}
+            </View>
+          ) : (
+            data.map((item) => {
+              const genderStyle = getGenderColor(item.gender);
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  activeOpacity={0.7}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/dashboard/report/newborn-death-details",
+                      params: { id: item.id },
+                    })
+                  }
+                  className="bg-white rounded-2xl p-4 mb-3 border border-slate-100 shadow-sm shadow-slate-200/50"
+                >
+                  {/* Top Row: Baby info + Gender badge */}
+                  <View className="flex-row items-center justify-between mb-3">
+                    <View className="flex-row items-center flex-1">
+                      <View className="w-11 h-11 bg-orange-50 rounded-full items-center justify-center mr-3 border border-orange-100">
+                        <Baby size={20} color="#EA580C" />
+                      </View>
+                      <View className="flex-1">
+                        <Text
+                          className="text-[16px] font-bold text-slate-900 mb-0.5"
+                          numberOfLines={1}
+                        >
+                          {item.baby_name || "Unnamed Baby"}
+                        </Text>
+                        <Text className="text-[12px] font-medium text-slate-500">
+                          Mother: {item.mother_name}
+                        </Text>
+                      </View>
                     </View>
-                    <View className="flex-1">
-                      <Text
-                        className="text-[16px] font-bold text-slate-900 mb-0.5"
-                        numberOfLines={1}
-                      >
-                        {item.baby_name || "Unnamed Baby"}
-                      </Text>
-                      <Text className="text-[12px] font-medium text-slate-500">
-                        Mother: {item.mother_name}
-                      </Text>
-                    </View>
-                  </View>
-                  <View
-                    className={`px-2.5 py-1 rounded-lg ${genderStyle.bg} border ${genderStyle.border}`}
-                  >
-                    <Text
-                      className={`text-[11px] font-bold ${genderStyle.text}`}
+                    <View
+                      className={`px-2.5 py-1 rounded-lg ${genderStyle.bg} border ${genderStyle.border}`}
                     >
-                      {getGenderLabel(item.gender)}
-                    </Text>
+                      <Text
+                        className={`text-[11px] font-bold ${genderStyle.text}`}
+                      >
+                        {getGenderLabel(item.gender)}
+                      </Text>
+                    </View>
                   </View>
-                </View>
 
-                {/* Bottom Row: Date + Age + Arrow */}
-                <View className="flex-row items-center bg-slate-50 rounded-xl p-3">
-                  <Calendar size={14} color="#64748B" />
-                  <Text className="text-[13px] font-semibold text-slate-700 ml-2">
-                    {formatNepaliDate(
-                      item.birth_year,
-                      item.birth_month,
-                      item.birth_day,
-                    )}
-                  </Text>
-                  <View className="mx-2 w-1 h-1 rounded-full bg-slate-300" />
-                  <Clock size={12} color="#64748B" />
-                  <Text className="text-[12px] font-bold text-orange-600 ml-1">
-                    {item.death_age_days}{" "}
-                    {t("newborn_death_modal.age_unit_days")}
-                  </Text>
-                  <View className="flex-1" />
-                  <View className="flex-row items-center">
-                    <Text className="text-[12px] font-bold text-primary mr-1">
-                      View
+                  {/* Bottom Row: Date + Age + Arrow */}
+                  <View className="flex-row items-center bg-slate-50 rounded-xl p-3">
+                    <Calendar size={14} color="#64748B" />
+                    <Text className="text-[13px] font-semibold text-slate-700 ml-2">
+                      {formatNepaliDate(
+                        item.birth_year,
+                        item.birth_month,
+                        item.birth_day,
+                      )}
                     </Text>
-                    <ChevronRight size={14} color="#0056D2" />
+                    <View className="mx-2 w-1 h-1 rounded-full bg-slate-300" />
+                    <Clock size={12} color="#64748B" />
+                    <Text className="text-[12px] font-bold text-orange-600 ml-1">
+                      {item.death_age_days}{" "}
+                      {t("newborn_death_modal.age_unit_days")}
+                    </Text>
+                    <View className="flex-1" />
+                    <View className="flex-row items-center">
+                      <Text className="text-[12px] font-bold text-primary mr-1">
+                        View
+                      </Text>
+                      <ChevronRight size={14} color="#0056D2" />
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+                </TouchableOpacity>
+              );
+            })
+          )}
 
-          {data.length === 0 && (
+          {!loading && data.length === 0 && (
             <View className="py-20 items-center justify-center">
               <Baby size={48} color="#CBD5E1" />
               <Text className="text-slate-400 font-medium mt-4">

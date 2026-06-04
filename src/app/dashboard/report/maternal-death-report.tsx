@@ -1,3 +1,4 @@
+import { ReportListSkeleton } from "@/components/common/ReportListSkeleton";
 import { useFocusEffect, useRouter } from "expo-router";
 import {
   Calendar,
@@ -9,18 +10,16 @@ import {
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   Alert,
   ScrollView,
   Share,
   StatusBar,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "../../../components/CustomHeader";
-import Colors from "../../../constants/Colors";
 import { getAllMaternalDeaths } from "../../../hooks/database/models/MaternalDeathModel";
 import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDeathModal";
 
@@ -118,14 +117,6 @@ export default function MaternalDeathReportScreen() {
     return `${y}/${m.toString().padStart(2, "0")}/${d.toString().padStart(2, "0")} BS`;
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
@@ -154,57 +145,65 @@ export default function MaternalDeathReportScreen() {
           showsVerticalScrollIndicator={false}
           className="flex-1 px-4 pt-4"
         >
-          {data.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              activeOpacity={0.7}
-              onPress={() =>
-                router.push({
-                  pathname: "/dashboard/report/maternal-death-details",
-                  params: { id: item.id },
-                })
-              }
-              className="bg-white rounded-2xl p-4 mb-4 border border-slate-100 shadow-sm shadow-slate-200/50"
-            >
-              <View className="flex-row items-center justify-between mb-3">
-                <View className="flex-row items-center flex-1">
-                  <View className="w-10 h-10 bg-red-50 rounded-full items-center justify-center mr-3 border border-red-100">
-                    <User size={18} color="#EF4444" />
-                  </View>
-                  <View className="flex-1">
-                    <Text
-                      className="text-[16px] font-bold text-slate-900 mb-0.5"
-                      numberOfLines={1}
-                    >
-                      {item.mother_name}
-                    </Text>
-                    <Text className="text-[12px] font-medium text-slate-500">
-                      Age: {item.mother_age || "-"}
-                    </Text>
+          {loading ? (
+            <View>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <ReportListSkeleton key={i} />
+              ))}
+            </View>
+          ) : (
+            data.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.7}
+                onPress={() =>
+                  router.push({
+                    pathname: "/dashboard/report/maternal-death-details",
+                    params: { id: item.id },
+                  })
+                }
+                className="bg-white rounded-2xl p-4 mb-4 border border-slate-100 shadow-sm shadow-slate-200/50"
+              >
+                <View className="flex-row items-center justify-between mb-3">
+                  <View className="flex-row items-center flex-1">
+                    <View className="w-10 h-10 bg-red-50 rounded-full items-center justify-center mr-3 border border-red-100">
+                      <User size={18} color="#EF4444" />
+                    </View>
+                    <View className="flex-1">
+                      <Text
+                        className="text-[16px] font-bold text-slate-900 mb-0.5"
+                        numberOfLines={1}
+                      >
+                        {item.mother_name}
+                      </Text>
+                      <Text className="text-[12px] font-medium text-slate-500">
+                        Age: {item.mother_age || "-"}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
 
-              <View className="flex-row items-center bg-slate-50 rounded-xl p-3">
-                <Calendar size={14} color="#64748B" />
-                <Text className="text-[13px] font-semibold text-slate-700 ml-2 flex-1">
-                  {formatNepaliDate(
-                    item.death_year,
-                    item.death_month,
-                    item.death_day,
-                  )}
-                </Text>
-                <View className="flex-row items-center">
-                  <Text className="text-[12px] font-bold text-primary mr-1">
-                    View Details
+                <View className="flex-row items-center bg-slate-50 rounded-xl p-3">
+                  <Calendar size={14} color="#64748B" />
+                  <Text className="text-[13px] font-semibold text-slate-700 ml-2 flex-1">
+                    {formatNepaliDate(
+                      item.death_year,
+                      item.death_month,
+                      item.death_day,
+                    )}
                   </Text>
-                  <ChevronRight size={14} color="#0056D2" />
+                  <View className="flex-row items-center">
+                    <Text className="text-[12px] font-bold text-primary mr-1">
+                      View Details
+                    </Text>
+                    <ChevronRight size={14} color="#0056D2" />
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))}
+              </TouchableOpacity>
+            ))
+          )}
 
-          {data.length === 0 && (
+          {!loading && data.length === 0 && (
             <View className="py-20 items-center justify-center">
               <Text className="text-slate-400 font-medium">
                 {t("reports.common.no_data")}

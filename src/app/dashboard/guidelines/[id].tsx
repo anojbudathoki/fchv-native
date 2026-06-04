@@ -1,35 +1,22 @@
-import { useState, useRef, useCallback } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  Animated,
-  PanResponder,
-} from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
-import { CheckCircle2 } from "lucide-react-native";
-import { useLanguage } from "@/context/LanguageContext";
-import CustomHeader from "@/components/CustomHeader";
 import learnContent from "@/assets/data/learnContent.json";
-import {
-  FileText,
-  Activity,
-  Heart,
-  Baby,
-  HeartPulse,
-  Stethoscope,
-  Users,
-  Droplet,
-  Syringe,
-  Brain,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react-native";
 import AppSegmentedControl from "@/components/common/AppSegmentedControl";
-
-const SWIPE_THRESHOLD = 60;
+import CustomHeader from "@/components/CustomHeader";
+import { useLanguage } from "@/context/LanguageContext";
+import { router, useLocalSearchParams } from "expo-router";
+import {
+  Activity, Baby, Brain, CheckCircle2, ChevronDown,
+  ChevronUp, Droplet, FileText, Heart, HeartPulse,
+  Stethoscope, Syringe, Users
+} from "lucide-react-native";
+import { useRef, useState } from "react";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View
+} from "react-native";
 
 const CONFIG: Record<string, any> = {
   maternal_health: {
@@ -83,11 +70,11 @@ const CONFIG: Record<string, any> = {
     bg: "bg-cyan-100",
     image: require("@/assets/images/newborn_care.png"),
   },
-  birth_prep: { icon: Stethoscope, color: "#3B82F6", bg: "bg-blue-100" },
-  family_planning: { icon: Users, color: "#8B5CF6", bg: "bg-purple-100" },
-  breastfeeding: { icon: Droplet, color: "#22C55E", bg: "bg-green-100" },
-  vaccination: { icon: Syringe, color: "#3B82F6", bg: "bg-blue-100" },
-  mental_health: { icon: Brain, color: "#8B5CF6", bg: "bg-purple-100" },
+  birth_prep: { icon: Stethoscope, color: "#3B82F6", bg: "bg-blue-100", image: require("@/assets/images/ready-for-delivery.png") },
+  family_planning: { icon: Users, color: "#8B5CF6", bg: "bg-purple-100", image: require("@/assets/images/family-planning.png") },
+  breastfeeding: { icon: Droplet, color: "#22C55E", bg: "bg-green-100", image: require("@/assets/images/breast-feeding.png") },
+  vaccination: { icon: Syringe, color: "#3B82F6", bg: "bg-blue-100", image: require("@/assets/images/vaccination.png") },
+  mental_health: { icon: Brain, color: "#8B5CF6", bg: "bg-purple-100", image: require("@/assets/images/mental-health.png") },
 };
 
 const TRIMESTER_COLORS = [
@@ -131,13 +118,13 @@ const ExpandablePointsCard = ({ points, renderMarkdown }: any) => {
       >
         <View className="flex-1 mr-3">
           <Text
-            className="text-[14px] text-gray-800 leading-6"
+            className="text-[16px] text-gray-800 leading-6"
             numberOfLines={expanded ? undefined : 3}
           >
             {renderMarkdown(firstPoint)}
           </Text>
           {!expanded && (
-            <Text className="text-[12px] text-blue-500 mt-1 font-bold">
+            <Text className="text-[14px] text-blue-500 mt-1 font-bold">
               Tap to see more details...
             </Text>
           )}
@@ -154,7 +141,7 @@ const ExpandablePointsCard = ({ points, renderMarkdown }: any) => {
           {restPoints.map((point: string, pIdx: number) => (
             <View key={pIdx} className="flex-row">
               <View className="w-2 h-2 rounded-full bg-blue-500 mt-2" />
-              <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">
+              <Text className="text-[15px] text-gray-700 ml-3 flex-1 leading-6">
                 {renderMarkdown(point)}
               </Text>
             </View>
@@ -174,18 +161,18 @@ const ExpandableMethodCard = ({ title, points, renderMarkdown }: any) => {
   const restPoints = points.slice(1);
 
   return (
-    <View className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden mb-3">
+    <View className="bg-white border border-gray-100 rounded-xl overflow-hidden mb-3">
       <TouchableOpacity
         onPress={() => setExpanded(!expanded)}
         activeOpacity={0.7}
         className="p-4 flex-row items-center justify-between"
       >
         <View className="flex-1 mr-3">
-          <Text className="text-[15px] font-bold text-gray-800 leading-6">
+          <Text className="text-[17px] font-bold text-gray-800 leading-6">
             {title}
           </Text>
           <Text
-            className="text-[14px] text-gray-600 mt-1 leading-6"
+            className="text-[15px] text-gray-600 mt-1 leading-6"
             numberOfLines={expanded ? undefined : 2}
           >
             {renderMarkdown(firstPoint)}
@@ -203,7 +190,7 @@ const ExpandableMethodCard = ({ title, points, renderMarkdown }: any) => {
           {restPoints.map((point: string, pIdx: number) => (
             <View key={pIdx} className="flex-row">
               <View className="w-2 h-2 rounded-full bg-blue-500 mt-2" />
-              <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">
+              <Text className="text-[15px] text-gray-700 ml-3 flex-1 leading-6">
                 {renderMarkdown(point)}
               </Text>
             </View>
@@ -217,86 +204,58 @@ const ExpandableMethodCard = ({ title, points, renderMarkdown }: any) => {
 export default function GuidelineDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { language, t } = useLanguage();
-  const [activeTab, setActiveTab] = useState(0);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
-
-  // Use a ref to track activeTab for PanResponder (avoids stale closure)
-  const activeTabRef = useRef(0);
-
-  const switchTab = useCallback(
-    (newIndex: number) => {
-      if (newIndex < 0 || newIndex > 2) return;
-      const direction = newIndex > activeTabRef.current ? -1 : 1;
-
-      // Animate out
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 120,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: direction * 30,
-          duration: 120,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        activeTabRef.current = newIndex;
-        setActiveTab(newIndex);
-        slideAnim.setValue(-direction * 30);
-
-        // Animate in
-        Animated.parallel([
-          Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 180,
-            useNativeDriver: true,
-          }),
-          Animated.timing(slideAnim, {
-            toValue: 0,
-            duration: 180,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      });
-    },
-    [fadeAnim, slideAnim],
-  );
+  const [tabIndex, setTabIndex] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const { width } = useWindowDimensions();
+  const screenContentWidth = width - 40; // Parent padding horizontal 20 + 20
 
   const isMaternalHealth = id === "maternal_health";
   const isCheckups = id === "checkups";
   const isTabsView = isMaternalHealth || isCheckups;
-  const maxTabs = isMaternalHealth ? 2 : isCheckups ? 1 : 0;
+  const langKey = language === "np" ? "np" : "en";
 
-  // PanResponder for swipe gestures — operates at JS level, no conflict with React Navigation
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Only capture horizontal swipes (not vertical scrolling)
-        return (
-          Math.abs(gestureState.dx) > Math.abs(gestureState.dy * 1.5) &&
-          Math.abs(gestureState.dx) > 15
-        );
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        if (
-          gestureState.dx < -SWIPE_THRESHOLD &&
-          activeTabRef.current < maxTabs
-        ) {
-          switchTab(activeTabRef.current + 1);
-        } else if (
-          gestureState.dx > SWIPE_THRESHOLD &&
-          activeTabRef.current > 0
-        ) {
-          switchTab(activeTabRef.current - 1);
-        }
-      },
-    }),
-  ).current;
+  const tabData: any[] = isMaternalHealth
+    ? [
+      (learnContent as any)["first_trimester_detailed"]?.[langKey],
+      (learnContent as any)["second_trimester_detailed"]?.[langKey],
+      (learnContent as any)["third_trimester_detailed"]?.[langKey],
+    ]
+    : isCheckups
+      ? [
+        (learnContent as any)["anc"]?.[langKey],
+        (learnContent as any)["pnc"]?.[langKey],
+      ]
+      : [];
+
+  const tabTitles = isMaternalHealth
+    ? [
+      t("learn_details.trimesters.first"),
+      t("learn_details.trimesters.second"),
+      t("learn_details.trimesters.third"),
+    ]
+    : isCheckups
+      ? [
+        t("learn_page.guidelines.anc") || "ANC",
+        t("learn_page.guidelines.pnc") || "PNC",
+      ]
+      : [];
+
+  const maxTabs = tabData.length - 1;
+
+  const handleTabPress = (index: number) => {
+    setTabIndex(index);
+    scrollViewRef.current?.scrollTo({ x: index * screenContentWidth, y: 0, animated: true });
+  };
+
+  const handleScrollEnd = (e: any) => {
+    const x = e.nativeEvent.contentOffset.x;
+    const scrollIndex = Math.round(x / screenContentWidth);
+    if (scrollIndex !== tabIndex && scrollIndex >= 0 && scrollIndex <= maxTabs) {
+      setTabIndex(scrollIndex);
+    }
+  };
 
   const dataPrefix = isCheckups ? null : (learnContent as any)[id as string];
-  const langKey = language === "np" ? "np" : "en";
   const content: any = dataPrefix
     ? dataPrefix[langKey as keyof typeof dataPrefix]
     : null;
@@ -336,40 +295,15 @@ export default function GuidelineDetailScreen() {
     });
   };
 
-  const tabData: any[] = isMaternalHealth
-    ? [
-        (learnContent as any)["first_trimester_detailed"]?.[langKey],
-        (learnContent as any)["second_trimester_detailed"]?.[langKey],
-        (learnContent as any)["third_trimester_detailed"]?.[langKey],
-      ]
-    : isCheckups
-      ? [
-          (learnContent as any)["anc"]?.[langKey],
-          (learnContent as any)["pnc"]?.[langKey],
-        ]
-      : [];
-
-  const tabTitles = isMaternalHealth
-    ? [
-        t("learn_details.trimesters.first"),
-        t("learn_details.trimesters.second"),
-        t("learn_details.trimesters.third"),
-      ]
-    : isCheckups
-      ? [
-          t("learn_page.guidelines.anc_checkup") || "ANC",
-          t("learn_page.guidelines.pnc_checkup") || "PNC",
-        ]
-      : [];
-
+  const activeTab = tabIndex > maxTabs ? maxTabs : tabIndex;
   const activeTabData = tabData[activeTab];
   const activeColor = TRIMESTER_COLORS[activeTab] || TRIMESTER_COLORS[0];
 
   const pageTitle = isTabsView
     ? activeTabData?.title ||
-      (isMaternalHealth
-        ? t("learn_page.hero_title_np")
-        : t("learn_page.guidelines.checkups"))
+    (isMaternalHealth
+      ? t("learn_page.hero_title_np")
+      : t("learn_page.guidelines.checkups"))
     : content?.title || t("learn_details.details");
 
   return (
@@ -410,7 +344,7 @@ export default function GuidelineDetailScreen() {
           </Text>
         )}
         {!isTabsView && content?.description && (
-          <Text className="text-[14px] text-gray-600 mb-6 ml-1 leading-6">
+          <Text className="text-[16px] text-gray-700 mb-6 ml-1 leading-6">
             {content.description}
           </Text>
         )}
@@ -420,7 +354,7 @@ export default function GuidelineDetailScreen() {
           content?.key_points &&
           content.key_points.length > 0 && (
             <>
-              <Text className="text-md font-bold text-gray-800 mb-4 ml-1">
+              <Text className="text-[17px] font-bold text-gray-800 mb-4 ml-1">
                 {t("learn_details.key_points")}
               </Text>
 
@@ -435,7 +369,7 @@ export default function GuidelineDetailScreen() {
                       color="#10B981"
                       className="mt-[2px]"
                     />
-                    <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">
+                    <Text className="text-[16px] text-gray-800 ml-3 flex-1 leading-6">
                       {renderMarkdown(point)}
                     </Text>
                   </View>
@@ -447,7 +381,7 @@ export default function GuidelineDetailScreen() {
         {isTabsView && tabData.length > 0 ? (
           <View>
             {isMaternalHealth && (
-              <Text className="text-md font-bold text-gray-800 mb-4 ml-1">
+              <Text className="text-[17px] font-bold text-gray-800 mb-4 ml-1">
                 {t("learn_details.detailed_trimester_guide")}
               </Text>
             )}
@@ -456,112 +390,120 @@ export default function GuidelineDetailScreen() {
             <View className="mb-6 px-1">
               <AppSegmentedControl
                 values={tabTitles}
-                segmentIndex={activeTab}
-                setSegmentIndex={switchTab}
+                segmentIndex={tabIndex}
+                setSegmentIndex={handleTabPress}
                 size="large"
               />
             </View>
 
-            {/* Swipeable Tab Content */}
-            <View {...panResponder.panHandlers}>
-              {activeTabData ? (
-                <Animated.View
-                  style={{
-                    opacity: fadeAnim,
-                    transform: [{ translateX: slideAnim }],
-                  }}
-                >
-                  {isCheckups && activeTabData.title && (
-                    <Text className="text-xl font-bold text-gray-800 mb-2 ml-1">
-                      {activeTabData.title}
-                    </Text>
-                  )}
-                  {isCheckups && activeTabData.description && (
-                    <Text className="text-[14px] text-gray-600 mb-6 ml-1 leading-6">
-                      {activeTabData.description}
-                    </Text>
-                  )}
-                  {isMaternalHealth && activeTabData.title && (
-                    <Text className="text-md font-bold text-gray-800 mb-2 ml-1">
-                      {activeTabData.title}
-                    </Text>
-                  )}
-                  {isMaternalHealth && activeTabData.description && (
-                    <Text className="text-[13px] text-gray-600 mb-6 ml-1 leading-6">
-                      {activeTabData.description}
-                    </Text>
-                  )}
-
-                  {isCheckups &&
-                    activeTabData.key_points &&
-                    activeTabData.key_points.length > 0 && (
-                      <View className="mb-6 mt-2">
-                        <Text className="text-md font-bold text-gray-800 mb-3 ml-1">
-                          {t("learn_details.key_points")}
-                        </Text>
-                        <View className="gap-3">
-                          {activeTabData.key_points.map(
-                            (point: string, index: number) => (
-                              <View
-                                key={index}
-                                className="flex-row bg-white border border-gray-100 p-4 rounded-xl"
-                              >
-                                <CheckCircle2
-                                  size={22}
-                                  color={activeColor.accent}
-                                  className="mt-[2px]"
-                                />
-                                <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">
-                                  {renderMarkdown(point)}
-                                </Text>
-                              </View>
-                            ),
-                          )}
-                        </View>
-                      </View>
-                    )}
-
-                  {activeTabData.sections?.map((section: any, idx: number) => (
-                    <View key={`section-${activeTab}-${idx}`} className="mb-6">
-                      <Text className="text-[15px] font-bold text-gray-800 mb-3 ml-1">
-                        {(section.title || section.category || "").replace(
-                          /###\s*/g,
-                          "",
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handleScrollEnd}
+              scrollEventThrottle={16}
+            >
+              {tabData.map((tabItem, itemIndex) => {
+                const activeColor = TRIMESTER_COLORS[itemIndex] || TRIMESTER_COLORS[0];
+                return (
+                  <View key={`tab-content-${itemIndex}`} style={{ width: screenContentWidth }}>
+                    {tabItem ? (
+                      <View>
+                        {isCheckups && tabItem.title && (
+                          <Text className="text-[17px] font-bold text-gray-800 mb-2 ml-1">
+                            {tabItem.title}
+                          </Text>
                         )}
-                      </Text>
-                      <View className="gap-2.5">
-                        {section.points?.map((point: string, pIdx: number) => (
-                          <View
-                            key={`point-${activeTab}-${idx}-${pIdx}`}
-                            className={`flex-row bg-white border border-gray-100 p-3.5 rounded-xl`}
-                          >
-                            <View
-                              className={`w-2 h-2 rounded-lg mt-2`}
-                              style={{ backgroundColor: activeColor.accent }}
-                            />
-                            <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">
-                              {renderMarkdown(point)}
+                        {isCheckups && tabItem.description && (
+                          <Text className="text-[16px] text-gray-600 mb-6 ml-1 leading-6">
+                            {tabItem.description}
+                          </Text>
+                        )}
+                        {isMaternalHealth && tabItem.title && (
+                          <Text className="text-[17px] font-bold text-gray-800 mb-2 ml-1">
+                            {tabItem.title}
+                          </Text>
+                        )}
+                        {isMaternalHealth && tabItem.description && (
+                          <Text className="text-[16px] text-gray-600 mb-6 ml-1 leading-6">
+                            {tabItem.description}
+                          </Text>
+                        )}
+
+                        {isCheckups &&
+                          tabItem.key_points &&
+                          tabItem.key_points.length > 0 && (
+                            <View className="mb-6 mt-2">
+                              <Text className="text-[17px] font-bold text-gray-800 mb-3 ml-1">
+                                {t("learn_details.key_points")}
+                              </Text>
+                              <View className="gap-3">
+                                {tabItem.key_points.map(
+                                  (point: string, index: number) => (
+                                    <View
+                                      key={index}
+                                      className="flex-row bg-white border border-gray-100 p-4 rounded-xl"
+                                    >
+                                      <CheckCircle2
+                                        size={22}
+                                        color={activeColor.accent}
+                                        className="mt-[2px]"
+                                      />
+                                      <Text className="text-[16px] text-gray-800 ml-3 flex-1 leading-6">
+                                        {renderMarkdown(point)}
+                                      </Text>
+                                    </View>
+                                  ),
+                                )}
+                              </View>
+                            </View>
+                          )}
+
+                        {tabItem.sections?.map((section: any, idx: number) => (
+                          <View key={`section-${itemIndex}-${idx}`} className="mb-6">
+                            <Text className="text-[16px] font-bold text-gray-800 mb-3 ml-1">
+                              {(section.title || section.category || "").replace(
+                                /###\s*/g,
+                                "",
+                              )}
                             </Text>
+                            <View className="gap-2.5">
+                              {section.points?.map((point: string, pIdx: number) => (
+                                <View
+                                  key={`point-${itemIndex}-${idx}-${pIdx}`}
+                                  className={`flex-row bg-white border border-gray-100 p-3.5 rounded-xl`}
+                                >
+                                  <View
+                                    className={`w-2 h-2 rounded-lg mt-2`}
+                                    style={{ backgroundColor: activeColor.accent }}
+                                  />
+                                  <Text className="text-[16px] text-gray-800 ml-3 flex-1 leading-6">
+                                    {renderMarkdown(point)}
+                                  </Text>
+                                </View>
+                              ))}
+                            </View>
                           </View>
                         ))}
                       </View>
-                    </View>
-                  ))}
-                </Animated.View>
-              ) : (
-                <View className="py-8 items-center">
-                  <Text className="text-gray-400">
-                    {t("learn_details.no_content")}
-                  </Text>
-                </View>
-              )}
-            </View>
+                    ) : (
+                      <View className="py-8 items-center">
+                        <Text className="text-gray-400">
+                          {t("learn_details.no_content")}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                );
+              })}
+            </ScrollView>
           </View>
         ) : !isTabsView ? (
           <View>
             {content.sections?.map((section: any, idx: number) => (
               <View key={`section-${idx}`} className="mt-2 mb-6">
-                <Text className="text-[15px] font-bold text-gray-800 mb-3 ml-1">
+                <Text className="text-[16px] font-bold text-gray-800 mb-3 ml-1">
                   {(section.title || section.category || "").replace(
                     /###\s*/g,
                     "",
@@ -593,7 +535,7 @@ export default function GuidelineDetailScreen() {
                         className="flex-row bg-white border border-gray-100 p-3.5 rounded-xl"
                       >
                         <View className="w-2 h-2 rounded-full bg-blue-500 mt-2" />
-                        <Text className="text-[14px] text-gray-700 ml-3 flex-1 leading-6">
+                        <Text className="text-[16px] text-gray-800 ml-3 flex-1 leading-6">
                           {renderMarkdown(point)}
                         </Text>
                       </View>

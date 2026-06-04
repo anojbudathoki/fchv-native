@@ -1,19 +1,18 @@
+import { ReportListSkeleton } from "@/components/common/ReportListSkeleton";
 import { useFocusEffect, useRouter } from "expo-router";
 import { ChevronRight, User } from "lucide-react-native";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   Alert,
   ScrollView,
   StatusBar,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "../../../components/CustomHeader";
-import Colors from "../../../constants/Colors";
 
 import { AdToBs } from "react-native-nepali-picker";
 import {
@@ -109,11 +108,10 @@ export default function ChildMonitoringReportScreen() {
       >
         <View className="px-4">
           {loading ? (
-            <View className="py-20 items-center justify-center">
-              <ActivityIndicator color={Colors.primary} size="large" />
-              <Text className="text-slate-500 mt-4">
-                {t("reports.common.loading")}
-              </Text>
+            <View>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <ReportListSkeleton key={i} />
+              ))}
             </View>
           ) : data.length === 0 ? (
             <View className="py-20 items-center justify-center bg-white rounded-2xl border border-slate-100 shadow-sm shadow-slate-200/50">

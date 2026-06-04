@@ -30,7 +30,8 @@ const AppSegmentedControl = ({
       }}
       backgroundColor="#f3f4f6"
       fontStyle={{
-        color: "#333"
+        color: "#333",
+        fontSize: 16
       }}
       activeFontStyle={{
         color: "#333"

@@ -1,4 +1,4 @@
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Skeleton } from "@/components/common/Skeleton";
 import { useLanguage } from "@/context/LanguageContext";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -13,14 +13,14 @@ import {
   User
 } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { AdToBs, BsToAd } from "react-native-nepali-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "../../../components/CustomHeader";
 import MaternalDeathModal from "../../../components/forms/MaternalDeathModal";
 import NewbornDeathModal from "../../../components/forms/NewbornDeathModal";
 import CounselingReferralSection from "../../../components/profile/CounselingReferralSection";
 import FamilyPlanningSection from "../../../components/profile/FamilyPlanningSection";
-import Colors from "../../../constants/Colors";
 import { useToast } from "../../../context/ToastContext";
 import { getInfantMonitoringByMother } from "../../../hooks/database/models/InfantMonitoringModel";
 import { getMaternalDeathByMother } from "../../../hooks/database/models/MaternalDeathModel";
@@ -37,6 +37,67 @@ import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDe
 import { NewbornDeathStoreType } from "../../../hooks/database/types/newbornDeathModal";
 import { formatBsDate, toNepaliNumbers } from "../../../utils/dateHelper";
 import SupplementsScreen from "./supplements";
+
+const ProfileSkeleton = () => {
+  return (
+    <ScrollView
+      className="flex-1"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 100, paddingTop: 12 }}
+    >
+      <View className="px-4 gap-y-4">
+        {/* Main Identity Card Skeleton */}
+        <View className="bg-white p-6 rounded-xl border border-slate-100">
+          <View className="flex-row w-full mb-6">
+            <Skeleton width={80} height={80} borderRadius={40} style={{ marginRight: 20 }} />
+            <View className="flex-1 justify-center gap-2">
+              <Skeleton width="40%" height={16} borderRadius={4} />
+              <Skeleton width="80%" height={28} borderRadius={6} />
+              <Skeleton width="60%" height={16} borderRadius={4} />
+            </View>
+          </View>
+          <View className="flex-row items-center justify-between border-t border-slate-100 pt-5">
+            <Skeleton width="40%" height={20} borderRadius={4} />
+            <Skeleton width="40%" height={20} borderRadius={4} />
+          </View>
+        </View>
+
+        {/* Dates Grid Skeleton */}
+        <View className="flex-row gap-3">
+          <View className="flex-1 bg-white p-4 rounded-xl flex-row items-center border border-slate-100">
+            <Skeleton width={40} height={40} borderRadius={20} style={{ marginRight: 12 }} />
+            <View className="flex-1 gap-1">
+              <Skeleton width="60%" height={12} borderRadius={4} />
+              <Skeleton width="80%" height={16} borderRadius={4} />
+            </View>
+          </View>
+          <View className="flex-1 bg-white p-4 rounded-xl flex-row items-center border border-slate-100">
+            <Skeleton width={40} height={40} borderRadius={20} style={{ marginRight: 12 }} />
+            <View className="flex-1 gap-1">
+              <Skeleton width="60%" height={12} borderRadius={4} />
+              <Skeleton width="80%" height={16} borderRadius={4} />
+            </View>
+          </View>
+        </View>
+
+        {/* Sections Skeletons */}
+        <View className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+          <View className="p-4 border-b border-slate-50 flex-row items-center">
+            <Skeleton width={32} height={32} borderRadius={16} style={{ marginRight: 12 }} />
+            <Skeleton width="50%" height={24} borderRadius={4} />
+          </View>
+          <View className="p-4 flex-row flex-wrap justify-between">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <View key={i} className="w-[47%] mb-3">
+                <Skeleton width="100%" height={48} borderRadius={8} />
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
 
 const SectionTitle = ({ title, icon: Icon, colorClass, bgColor = "bg-white" }: any) => (
   <View className={`flex-row items-center p-4 rounded-t-xl ${bgColor} border-b border-slate-50`}>
@@ -298,11 +359,13 @@ export default function HmisRecordProfileScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center bg-[#F8FAFC]">
-        <ActivityIndicator size="large" color={Colors.primary} />
-        <Text className="mt-4 text-slate-500 font-medium">
-          {t("profile.states.loading")}
-        </Text>
+      <SafeAreaView className="flex-1 bg-white">
+        <StatusBar barStyle="dark-content" />
+        <CustomHeader
+          title={t("profile.title")}
+          onBackPress={() => router.back()}
+        />
+        <ProfileSkeleton />
       </SafeAreaView>
     );
   }

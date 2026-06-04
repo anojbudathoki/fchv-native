@@ -1,19 +1,19 @@
-import { useCallback, useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronDown, ChevronUp, Pill, Lightbulb } from "lucide-react-native";
-import * as LucideIcons from "lucide-react-native";
-import { useRouter } from "expo-router";
-import { useLanguage } from "@/context/LanguageContext";
-import CustomHeader from "@/components/CustomHeader";
 import nutritionData from "@/assets/data/nutritionData.json";
 import AppSegmentedControl from "@/components/common/AppSegmentedControl";
+import CustomHeader from "@/components/CustomHeader";
+import { useLanguage } from "@/context/LanguageContext";
+import { useRouter } from "expo-router";
+import * as LucideIcons from "lucide-react-native";
+import { ChevronDown, ChevronUp, Lightbulb, Pill } from "lucide-react-native";
+import { useCallback, useState } from "react";
+import {
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type TabType = "pregnant" | "child";
 
@@ -50,7 +50,7 @@ function NutritionCard({
   return (
     <TouchableOpacity
       onPress={() => setExpanded((prev) => !prev)}
-      className="bg-white rounded-3xl mb-4 border border-gray-100 overflow-hidden"
+      className="bg-white rounded-xl mb-4 border border-gray-200 overflow-hidden"
     >
       {/* Header Row */}
       <View className="flex-row items-center p-4">
@@ -62,11 +62,11 @@ function NutritionCard({
         </View>
 
         <View className="flex-1">
-          <Text className="text-[#1E293B] font-bold text-base">
+          <Text className="text-[#1E293B] font-bold text-lg">
             {content.title}
           </Text>
           <Text
-            className="text-gray-500 font-medium text-[13px] mt-1 leading-[18px]"
+            className="text-gray-500 font-medium text-[14px] mt-1 leading-[18px]"
             numberOfLines={expanded ? undefined : 2}
           >
             {content.desc}
@@ -86,7 +86,7 @@ function NutritionCard({
       {expanded && (
         <View className="px-4 pb-4">
           {/* Divider */}
-          <View className="h-[1px] bg-gray-100 mb-3" />
+          <View className="h-[1px] bg-white mb-3" />
 
           {/* Dosage */}
           <View
@@ -96,13 +96,13 @@ function NutritionCard({
             <View className="flex-row items-center mb-1.5">
               <Pill size={14} color={item.color} strokeWidth={2.5} />
               <Text
-                className="font-bold text-xs ml-1.5"
+                className="font-bold text-md ml-1.5"
                 style={{ color: item.color }}
               >
                 {t("nutrition_page.dosage_label")}
               </Text>
             </View>
-            <Text className="text-[#1E293B] font-bold text-[13px] leading-[18px]">
+            <Text className="text-[#1E293B] font-bold text-[15px] leading-[18px]">
               {content.dosage}
             </Text>
           </View>
@@ -111,14 +111,14 @@ function NutritionCard({
           <View className="bg-[#FFFBEB] rounded-2xl p-3">
             <View className="flex-row items-center mb-2">
               <Lightbulb size={14} color="#D97706" strokeWidth={2.5} />
-              <Text className="text-[#D97706] font-bold text-xs ml-1.5">
+              <Text className="text-[#D97706] font-bold text-md ml-1.5">
                 {t("nutrition_page.tips_label")}
               </Text>
             </View>
             {content.tips.map((tip, i) => (
               <View key={i} className="flex-row mb-1.5">
-                <Text className="text-[#92400E] font-bold text-xs mr-2">•</Text>
-                <Text className="text-[#92400E] font-medium text-[13px] leading-[18px] flex-1">
+                <Text className="text-[#92400E] font-bold text-md mr-2">•</Text>
+                <Text className="text-[#92400E] font-medium text-[15px] leading-[18px] flex-1">
                   {tip}
                 </Text>
               </View>
@@ -131,9 +131,10 @@ function NutritionCard({
 }
 
 export default function NutritionsScreen() {
-  const [activeTab, setActiveTab] = useState<TabType>("pregnant");
+  const [tabIndex, setTabIndex] = useState(0);
   const { t, language } = useLanguage();
   const router = useRouter();
+  const activeTab: TabType = tabIndex === 0 ? "pregnant" : "child";
 
   const items: NutritionItem[] =
     activeTab === "pregnant"
@@ -145,8 +146,8 @@ export default function NutritionsScreen() {
   }, [router]);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView className="flex-1 bg-white">
+      <StatusBar barStyle="dark-content" className="bg-white" />
 
       <CustomHeader
         title={t("nutrition_page.title")}
@@ -154,12 +155,10 @@ export default function NutritionsScreen() {
         className="pt-4 pb-3 px-5"
       />
 
-      <View className="px-5 mt-2 mb-4">
+      <View className="px-5 mt-3 mb-4">
         <AppSegmentedControl
-          segmentIndex={activeTab === "pregnant" ? 0 : 1}
-          setSegmentIndex={(index) =>
-            setActiveTab(index === 0 ? "pregnant" : "child")
-          }
+          segmentIndex={tabIndex}
+          setSegmentIndex={setTabIndex}
           values={["pregnant", "child"]}
           label={[
             t("nutrition_page.tabs.pregnant"),

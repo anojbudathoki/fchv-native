@@ -39,11 +39,11 @@ const TabIndicator = ({
           >
             <Icon
               size={20}
-              color={isActive ? "#3B82F6" : "#94A3B8"}
+              color={isActive ? "#475569" : "#7f8b9bff"}
               strokeWidth={isActive ? 2.5 : 2}
             />
             <Text
-              className={`ml-2 font-semibold ${isActive ? "text-[#3B82F6]" : "text-gray-400"}`}
+              className={`ml-2 font-semibold text-md ${isActive ? "text-[#475569] text-lg" : "text-gray-500"}`}
             >
               {t.label}
             </Text>

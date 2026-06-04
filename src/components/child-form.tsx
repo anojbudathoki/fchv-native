@@ -2,6 +2,7 @@ import CustomHeader from "@/components/CustomHeader";
 import { BoxInput } from "@/components/FormElements";
 import { ProfilePicker } from "@/components/ProfilePicker";
 import TextArea from "@/components/TextArea";
+import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/context/ToastContext";
 import {
   createInfantMonitoring,
@@ -18,35 +19,31 @@ import {
 } from "@/utils/data";
 import * as Crypto from "expo-crypto";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Calendar as CalendarIcon, Save } from "lucide-react-native";
+import { Calendar as CalendarIcon, Check } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Alert, Pressable, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "./button";
 
 export default function ChildRegistrationForm() {
   const { id, motherId, from } = useLocalSearchParams<{ id: string; motherId?: string; from?: string }>();
   const { showToast } = useToast();
   const router = useRouter();
-  const { t, i18n } = useTranslation();
-  const isEn = i18n.language === "en";
+  const { t, language } = useLanguage();
 
   const BABY_WEIGHT_OPTIONS = [
     {
-      label_en: "Normal Weight",
-      label_np: "सामान्य तौल",
+      label: t("child_form.options.normal"),
       value: "normal",
     },
     {
-      label_en: "Low Weight",
-      label_np: "कम तौल",
+      label: t("child_form.options.low"),
       value: "low",
     },
     {
-      label_en: "Very Low Weight",
-      label_np: "धेरै कम तौल",
+      label: t("child_form.options.very_low"),
       value: "very_low",
     },
   ];
@@ -161,7 +158,6 @@ export default function ChildRegistrationForm() {
         is_all_given: allGiven,
         remarks: remarks,
       };
-
       await createInfantMonitoring(payload);
       showToast(t("child_form.messages.save_success", "Record saved successfully"));
       if (from === "profile" && selectedMotherId) {
@@ -211,12 +207,12 @@ export default function ChildRegistrationForm() {
 
   return (
     <SafeAreaView className="flex-1 pb-7">
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" className="bg-white" />
       <CustomHeader
         title={
           id
-            ? t("child_profile.child_form.edit_child", "Edit Child Monitoring")
-            : t("child_profile.child_form.new_child", "New Child Monitoring")
+            ? t("child_form.edit_child", "Edit Child Monitoring")
+            : t("child_form.new_child", "New Child Monitoring")
         }
         onBackPress={() => {
           if (from === "profile" && selectedMotherId) {
@@ -239,8 +235,8 @@ export default function ChildRegistrationForm() {
         <View className="bg-white px-4 mb-16 py-5">
           {/* Mother Selection */}
           <ProfilePicker
-            label={t("child_form.select_mother", "आमा छनौट गर्नुहोस्")}
-            placeholder={t("child_form.select_mother_placeholder", "Select Mother")}
+            label={t("child_form.select_mother")}
+            placeholder={t("child_form.select_mother_placeholder")}
             options={motherOptions}
             selectedValue={selectedMotherId}
             onValueChange={(val: string) => {
@@ -254,8 +250,8 @@ export default function ChildRegistrationForm() {
           {/* Baby Info */}
           <View className="">
             <BoxInput
-              label={t("child_form.baby_name", "शिशुको नाम")}
-              placeholder={t("child_form.baby_name_placeholder", "Baby Name")}
+              label={t("child_form.baby_name")}
+              placeholder={t("child_form.baby_name_placeholder")}
               value={babyName}
               onChangeText={(text) => {
                 setBabyName(text);
@@ -266,7 +262,7 @@ export default function ChildRegistrationForm() {
 
             <View className="mb-4">
               <Text className="text-slate-800 text-[16px] mb-1.5 ml-1">
-                {t("child_form.date_of_birth", "जन्म मिति (B.S.)")}
+                {t("child_form.date_of_birth")}
               </Text>
               <Pressable
                 onPress={() => setShowDatePicker(true)}
@@ -280,7 +276,7 @@ export default function ChildRegistrationForm() {
                   <Text
                     className={`text-[16px] ml-3 ${birthDateBs ? "text-slate-800" : "text-slate-400"}`}
                   >
-                    {birthDateBs || t("child_form.select_date", "मिति छान्नुहोस्")}
+                    {birthDateBs || t("child_form.select_date")}
                   </Text>
                 </View>
               </Pressable>
@@ -303,7 +299,7 @@ export default function ChildRegistrationForm() {
                     console.error("BS to AD conversion error:", e);
                   }
                 }}
-                language={i18n.language === "en" ? "en" : "np"}
+                language={language === "en" ? "en" : "np"}
                 theme="light"
                 brandColor="#0056D2"
                 date={birthDateBs || undefined}
@@ -316,10 +312,10 @@ export default function ChildRegistrationForm() {
 
           {/* Birth Details */}
           <ProfilePicker
-            label={t("child_form.birth_place", "शिशु जन्म स्थान")}
-            placeholder={t("child_form.select_birth_place", "Select Birth Place")}
+            label={t("child_form.birth_place")}
+            placeholder={t("child_form.select_birth_place")}
             options={BIRTH_PLACE_OPTIONS.map((opt) => ({
-              label: isEn ? opt.en_label : opt.np_label,
+              label: language === "en" ? opt.en_label : opt.np_label,
               value: opt.value,
             }))}
             selectedValue={birthPlace}
@@ -332,21 +328,20 @@ export default function ChildRegistrationForm() {
               onPress={() =>
                 setSkilledBirthAttended(skilledBirthAttended ? 0 : 1)
               }
-              className={`flex-row items-center p-4 rounded-xl border ${skilledBirthAttended ? "bg-emerald-50 border-emerald-300" : "bg-white border-slate-200"}`}
+              className={`flex-row items-center p-4 rounded-xl border ${skilledBirthAttended ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
             >
               <View
-                className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${skilledBirthAttended ? "bg-emerald-500 border-emerald-500" : "border-slate-300 bg-white"}`}
+                className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${skilledBirthAttended ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
               >
                 {skilledBirthAttended ? (
-                  <Text className="text-white text-xs">✔</Text>
+                  <Text className="text-white text-xs"><Check color="#555" strokeWidth={3} size={15} /></Text>
                 ) : null}
               </View>
               <Text
-                className={`text-[16px] flex-1 ${skilledBirthAttended ? "text-emerald-800" : "text-slate-800"}`}
+                className={`text-[16px] flex-1 ${skilledBirthAttended ? "text-black" : "text-slate-800"}`}
               >
                 {t(
-                  "child_form.skilled_birth_attended",
-                  "दक्ष स्वास्थ्यकर्मीद्वारा प्रसूति गराएको",
+                  "child_form.skilled_birth_attended"
                 )}
               </Text>
             </TouchableOpacity>
@@ -354,21 +349,20 @@ export default function ChildRegistrationForm() {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => setFchvPresent(fchvPresent ? 0 : 1)}
-              className={`flex-row items-center p-4 rounded-xl border ${fchvPresent ? "bg-emerald-50 border-emerald-300" : "bg-white border-slate-200"}`}
+              className={`flex-row items-center p-4 rounded-xl border ${fchvPresent ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
             >
               <View
-                className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${fchvPresent ? "bg-emerald-500 border-emerald-500" : "border-slate-300 bg-white"}`}
+                className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${fchvPresent ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
               >
                 {fchvPresent ? (
-                  <Text className="text-white text-xs">✔</Text>
+                  <Text className="text-white text-xs"><Check color="#555" strokeWidth={3} size={15} /></Text>
                 ) : null}
               </View>
               <Text
-                className={`text-[16px] flex-1 ${fchvPresent ? "text-emerald-800" : "text-slate-800"}`}
+                className={`text-[16px] flex-1 ${fchvPresent ? "text-black" : "text-slate-800"}`}
               >
                 {t(
-                  "child_form.fchv_present",
-                  "महिला स्वास्थ्य स्वयंसेविका उपस्थित भएको",
+                  "child_form.fchv_present"
                 )}
               </Text>
             </TouchableOpacity>
@@ -377,7 +371,7 @@ export default function ChildRegistrationForm() {
           {/* Child Status */}
           <View className="mt-6">
             <Text className="text-slate-800 text-[16px] mb-3 ml-1">
-              {t("child_form.child_status", "शिशुको अवस्था (Status)")}
+              {t("child_form.child_status")}
             </Text>
             <View className="flex-row gap-x-4">
               {CHILD_STATUS_OPTIONS.map((opt) => (
@@ -397,7 +391,7 @@ export default function ChildRegistrationForm() {
                   <Text
                     className={`text-[16px] ${status === opt.value ? "text-primary-800" : "text-slate-800"}`}
                   >
-                    {isEn ? opt.en_label : opt.np_label}
+                    {language === "en" ? opt.en_label : opt.np_label}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -407,10 +401,10 @@ export default function ChildRegistrationForm() {
           {/* Health Indicators */}
           <View className="mt-6">
             <ProfilePicker
-              label={t("child_form.baby_weight", "शिशुको तौल")}
-              placeholder={t("child_form.select_weight", "Select Weight")}
+              label={t("child_form.baby_weight")}
+              placeholder={t("child_form.select_weight")}
               options={BABY_WEIGHT_OPTIONS.map((opt) => ({
-                label: isEn ? opt.label_en : opt.label_np,
+                label: opt.label,
                 value: opt.value,
               }))}
               selectedValue={babyWeight}
@@ -428,13 +422,13 @@ export default function ChildRegistrationForm() {
                 className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${asphyxiatedNewborn ? "bg-rose-500 border-rose-500" : "border-slate-300 bg-white"}`}
               >
                 {asphyxiatedNewborn ? (
-                  <Text className="text-white text-xs">✔</Text>
+                  <Text className="text-white text-xs"><Check color="#fff" strokeWidth={3} size={15} /></Text>
                 ) : null}
               </View>
               <Text
                 className={`text-[16px] flex-1 ${asphyxiatedNewborn ? "text-rose-800" : "text-slate-800"}`}
               >
-                {t("child_profile.child_form.asphyxiated_newborn", "निसासिएको शिशु (Asphyxiated)")}
+                {t("child_form.asphyxiated_newborn")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -442,7 +436,7 @@ export default function ChildRegistrationForm() {
           {/* Newborn Care Options */}
           <View className="mt-6">
             <Text className="text-slate-800 text-[16px] mb-3 ml-1">
-              {t("child_form.newborn_care", "नवजात शिशु स्याहार")}
+              {t("child_form.newborn_care")}
             </Text>
             <View className="gap-y-3">
               {NEWBORN_CARE_OPTIONS.map((option) => {
@@ -452,19 +446,19 @@ export default function ChildRegistrationForm() {
                     key={option.value}
                     activeOpacity={0.7}
                     onPress={() => toggleNewbornCare(option.value)}
-                    className={`flex-row items-center p-4 rounded-xl border ${isSelected ? "bg-emerald-50 border-emerald-300" : "bg-white border-slate-200"}`}
+                    className={`flex-row items-center p-4 rounded-xl border ${isSelected ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
                   >
                     <View
-                      className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${isSelected ? "bg-emerald-500 border-emerald-500" : "border-slate-300 bg-white"}`}
+                      className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${isSelected ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
                     >
                       {isSelected ? (
-                        <Text className="text-white text-xs">✔</Text>
+                        <Text className="text-white text-xs"><Check color="#555" strokeWidth={3} size={15} /></Text>
                       ) : null}
                     </View>
                     <Text
-                      className={`text-[16px] flex-1 ${isSelected ? "text-emerald-800" : "text-slate-800"}`}
+                      className={`text-[16px] flex-1 ${isSelected ? "text-black" : "text-slate-800"}`}
                     >
-                      {isEn ? option.en_label : option.np_label}
+                      {t(`child_form.options.${option.value}`)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -475,24 +469,20 @@ export default function ChildRegistrationForm() {
           {/* Remarks & Save */}
           <View className="mt-6">
             <TextArea
-              label={t("child_profile.child_form.remarks")}
-              placeholder={t("child_profile.child_form.remarks_placeholder")}
+              label={t("child_form.remarks")}
+              placeholder={t("child_form.remarks_placeholder")}
               value={remarks}
               onChangeText={setRemarks}
               numberOfLines={4}
             />
-            <TouchableOpacity
+
+            <Button
               onPress={handleSave}
-              disabled={isLoading}
-              className={`h-14 mt-6 mb-5 items-center justify-center rounded-xl flex-row ${isLoading ? "bg-primary" : "bg-primary/80"}`}
-            >
-              <Save size={22} color="white" />
-              <Text className="text-white font-medium text-lg ml-2">
-                {isLoading
-                  ? t("child_profile.child_form.saving")
-                  : t("child_profile.child_form.save_record")}
-              </Text>
-            </TouchableOpacity>
+              isLoading={isLoading}
+              title={
+                t("child_form.save_record")
+              }
+            />
           </View>
         </View>
       </KeyboardAwareScrollView>

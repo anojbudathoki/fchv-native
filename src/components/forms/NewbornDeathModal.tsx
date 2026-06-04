@@ -1,24 +1,24 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { Calendar, ChevronDown, X } from "lucide-react-native";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  Modal,
-  TextInput,
   Alert,
-  ActivityIndicator
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View
 } from "react-native";
+import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Calendar, Save, X, ChevronDown } from "lucide-react-native";
-import { CalendarPicker, AdToBs, BsToAd } from "react-native-nepali-picker";
-import { ProfilePicker } from "../ProfilePicker";
 import { getInfantMonitoringsByMother } from "../../hooks/database/models/InfantMonitoringModel";
 import { createNewbornDeath } from "../../hooks/database/models/NewbornDeathModel";
+import { HmisRecordStoreType } from "../../hooks/database/types/hmisRecordModal";
 import { InfantMonitoringStoreType } from "../../hooks/database/types/infantMonitoringModal";
 import { NewbornDeathStoreType } from "../../hooks/database/types/newbornDeathModal";
-import { HmisRecordStoreType } from "../../hooks/database/types/hmisRecordModal";
-import { useTranslation } from "react-i18next";
+import { Button } from "../button";
+import { ProfilePicker } from "../ProfilePicker";
 
 interface NewbornDeathModalProps {
   visible: boolean;
@@ -159,9 +159,9 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
     // Remove non-numeric characters and leading zeros
     const cleanValue = v.replace(/[^0-9]/g, '').replace(/^0+/, '');
     const num = cleanValue === '' ? 0 : parseInt(cleanValue, 10);
-    
+
     setDeathAgeValue(num);
-    
+
     if (deathAgeUnit === 'days' && num >= 28) {
       setBirthCondition('');
       setBirthConditionOther('');
@@ -293,7 +293,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
       visible={visible}
       onRequestClose={onClose}
     >
-      <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+      <SafeAreaView className="flex-1 bg-white">
         {/* Header */}
         <View className="flex-row items-center justify-between px-5 py-4 bg-white border-b border-slate-100">
           <View className="flex-1 mr-3">
@@ -342,7 +342,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
                   <Pressable
                     key={g.v}
                     onPress={() => { setGender(g.v as any); setErrGender(false); }}
-                    className={`flex-1 p-4 rounded-md border flex-row items-center ${gender === g.v
+                    className={`flex-1 p-4 rounded-xl border flex-row items-center ${gender === g.v
                       ? 'bg-blue-50 border-[#0056D2]'
                       : errGender ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'
                       }`}
@@ -361,7 +361,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
               <FieldLabel label={t("newborn_death_modal.birth_date")} hasError={false} />
               <Pressable
                 onPress={() => setShowNewbornDatePicker(true)}
-                className="bg-white border border-slate-200 px-4 py-2.5 rounded-md flex-row items-center justify-between"
+                className="bg-white border border-slate-200 px-4 py-2.5 rounded-xl flex-row items-center justify-between"
               >
                 <View className="flex-row items-center">
                   <Text className="text-slate-800 text-[15px] font-medium">
@@ -399,7 +399,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
               <FieldLabel label={t("newborn_death_modal.death_age")} hasError={false} />
 
               {/* Age Input with Integrated Dropdown */}
-              <View className="flex-row items-center bg-white border border-slate-200 rounded-md px-4 py-1.5 justify-between">
+              <View className="flex-row items-center bg-white border border-slate-200 rounded-xl px-4 py-1.5 justify-between">
                 <TextInput
                   keyboardType="numeric"
                   placeholder="0"
@@ -408,8 +408,8 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
                   onChangeText={handleAgeValueChange}
                   value={deathAgeValue === 0 ? '' : deathAgeValue.toString()}
                 />
-                                
-                <Pressable 
+
+                <Pressable
                   onPress={() => {
                     Alert.alert(
                       t("newborn_death_modal.death_age"),
@@ -421,13 +421,13 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
                       ]
                     );
                   }}
-                  className="flex-row items-center px-3 py-2 rounded-lg"
+                  className="flex-row items-center px-3 py-2 rounded-xl"
                 >
                   <Text className="text-[14px] font-semibold mr-1.5">
                     {deathAgeUnit === 'days' ? t("newborn_death_modal.age_unit_days") : t("newborn_death_modal.age_unit_months")}
                   </Text>
                   <View className="bg-blue-50 rounded-full p-1">
-                    <ChevronDown size={14} color="#000" /> 
+                    <ChevronDown size={14} color="#000" />
                   </View>
                 </Pressable>
               </View>
@@ -446,7 +446,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
                     <Pressable
                       key={c.v}
                       onPress={() => { setBirthCondition(c.v); setErrBirthCondition(false); }}
-                      className={`flex-1 p-4 rounded-md border flex-row items-center ${birthCondition === c.v
+                      className={`flex-1 p-4 rounded-xl border flex-row items-center ${birthCondition === c.v
                         ? 'bg-blue-50 border-[#0056D2]'
                         : errBirthCondition ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'
                         }`}
@@ -479,7 +479,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
                   <Pressable
                     key={c.v}
                     onPress={() => { setCauseOfDeath(c.v); setErrCauseOfDeath(false); }}
-                    className={`w-full p-4 rounded-md border flex-row items-center ${causeOfDeath === c.v
+                    className={`w-full p-4 rounded-xl border flex-row items-center ${causeOfDeath === c.v
                       ? 'bg-blue-50 border-[#0056D2]'
                       : errCauseOfDeath ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'
                       }`}
@@ -516,7 +516,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
                   <Pressable
                     key={c.value}
                     onPress={() => { setDeathPlace(c.value); setErrDeathPlace(false); }}
-                    className={`w-full p-4 rounded-md border flex-row items-center ${deathPlace === c.value
+                    className={`w-full p-4 rounded-xl border flex-row items-center ${deathPlace === c.value
                       ? 'bg-blue-50 border-[#0056D2]'
                       : errDeathPlace ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'
                       }`}
@@ -548,7 +548,7 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
               <FieldLabel label={t("newborn_death_modal.remarks")} hasError={false} required={false} />
               <TextInput
                 placeholder={t("newborn_death_modal.remarks_placeholder")}
-                className="bg-white border border-slate-200 p-4 rounded-md text-slate-900 min-h-[100px] text-[16px]"
+                className="bg-white border border-slate-200 p-4 rounded-xl text-slate-900 min-h-[100px] text-[16px]"
                 multiline
                 placeholderTextColor="#94A3B8"
                 textAlignVertical="top"
@@ -561,20 +561,12 @@ export default function NewbornDeathModal({ visible, onClose, record, children: 
         </ScrollView>
 
         <View className="p-5 bg-white border-t border-slate-100">
-          <Pressable
+          <Button
             onPress={handleSave}
-            disabled={submitting}
-            className={`w-full py-4 rounded-lg flex-row items-center justify-center active:opacity-80 ${submitting ? 'bg-slate-400' : 'bg-primary/80'}`}
-          >
-            {submitting ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <>
-                <Save size={20} color="white" />
-                <Text className="text-white font-semibold text-[16px] ml-2 tracking-wide">{t("newborn_death_modal.save")}</Text>
-              </>
-            )}
-          </Pressable>
+            isLoading={submitting}
+            title={t("newborn_death_modal.save")}
+          />
+
         </View>
       </SafeAreaView>
     </Modal>

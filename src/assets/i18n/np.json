@@ -210,7 +210,9 @@
       "breastfeeding": "स्तनपान मार्गदर्शन",
       "vaccination": "खोप तालिका",
       "checkups": "ANC तथा PNC जाँच",
-      "mental_health": "मानसिक स्वास्थ्य"
+      "mental_health": "मानसिक स्वास्थ्य",
+      "anc": "ANC",
+      "pnc": "PNC"
     },
     "maternal_health": {
       "title": "मातृ स्वास्थ्य मार्गदर्शन",
@@ -285,6 +287,8 @@
       "edd_date": "सुत्केरी हुने मिति (EDD)",
       "select_edd": "EDD मिति छान्नुहोस्",
       "counseling_given": "परामर्श दिइएको छ?",
+      "risk_label": "जोखिम स्तर",
+      "risk_placeholder": "जोखिम स्तर छान्नुहोस्",
       "yes": "छ (Yes)"
     },
     "anc_visits": {
@@ -974,8 +978,20 @@
       "deselect_all": "सबै हटाउनुहोस्",
       "phase1_total": "१३ हप्ता खाएको छ?",
       "phase2_total": "२६ हप्ता पूरा खाएको छ?",
-      "yes": "हो",
-      "no": "होइन"
+      "yes": "छ",
+      "no": "छैन",
+      "remarks": "कैफियत",
+      "remarks_placeholder": "यहाँ कैफियत लेख्नुहोस्...",
+      "messages": {
+        "save_success": "रेकर्ड सफलतापूर्वक सुरक्षित गरियो",
+        "save_error": "रेकर्ड सेभ गर्न असफल भयो"
+      },
+      "validation": {
+        "error": "त्रुटि"
+      },
+      "buttons": {
+        "save": "सेभ गर्नुहोस्"
+      }
     }
   },
   "child_page": {
@@ -1031,48 +1047,58 @@
       "dropped_out": "उपचार गर्दा गर्दै स्वास्थ्य संस्था जान छोडेको हो?",
       "no_weight_gain": "उपचार गर्दा पनि तौल वृद्धि भएको छैन?"
     },
-    "child_form": {
-      "edit_child": "शिशु अनुगमन सम्पादन",
-      "new_child": "नयाँ शिशु अनुगमन",
-      "select_mother": "आमा छनौट गर्नुहोस्",
-      "select_mother_placeholder": "आमा छान्नुहोस्",
-      "baby_name": "शिशुको नाम",
-      "baby_name_placeholder": "शिशुको नाम लेख्नुहोस्",
-      "date_of_birth": "जन्म मिति (वि.सं.)",
-      "select_date": "मिति छान्नुहोस्",
-      "birth_place": "शिशु जन्म स्थान",
-      "select_birth_place": "जन्म स्थान छान्नुहोस्",
-      "skilled_birth_attended": "दक्ष स्वास्थ्यकर्मीद्वारा प्रसूति गराएको",
-      "fchv_present": "महिला स्वास्थ्य स्वयंसेविका उपस्थित भएको",
-      "child_status": "शिशुको अवस्था (Status)",
-      "baby_weight": "शिशुको तौल",
-      "select_weight": "तौल छान्नुहोस्",
-      "normal_weight": "सामान्य तौल",
-      "low_weight": "कम तौल",
-      "very_low_weight": "धेरै कम तौल",
-      "asphyxiated_newborn": "निसासिएको शिशु",
-      "newborn_care": "नवजात शिशु स्याहार",
-      "remarks": "कैफियत",
-      "remarks_placeholder": "यहाँ कैफियत लेख्नुहोस्...",
-      "saving": "सुरक्षित गर्दै...",
-      "save_record": "रेकर्ड सेभ गर्नुहोस्",
-      "validation": {
-        "mother_required": "आमा छनौट गर्न आवश्यक छ",
-        "baby_name_required": "शिशुको नाम आवश्यक छ",
-        "birth_date_required": "जन्म मिति आवश्यक छ",
-        "fill_fields": "कृपया सबै आवश्यक क्षेत्रहरू भर्नुहोस्"
-      },
-      "messages": {
-        "save_success": "रेकर्ड सफलतापूर्वक सुरक्षित गरियो",
-        "save_failed": "रेकर्ड सुरक्षित गर्न असफल भयो"
-      }
-    },
     "age": "उमेर",
     "reg_date": "दर्ता मिति",
     "gender": "लिङ्ग",
     "boy": "छोरा",
     "girl": "छोरी",
     "dob_label": "जन्म मिति"
+  },
+  "child_form": {
+    "edit_child": "शिशु अनुगमन सम्पादन",
+    "new_child": "नयाँ शिशु अनुगमन",
+    "select_mother": "आमा छनौट गर्नुहोस्",
+    "select_mother_placeholder": "आमा छान्नुहोस्",
+    "baby_name": "शिशुको नाम",
+    "baby_name_placeholder": "शिशुको नाम लेख्नुहोस्",
+    "date_of_birth": "जन्म मिति (वि.सं.)",
+    "select_date": "मिति छान्नुहोस्",
+    "birth_place": "शिशु जन्म स्थान",
+    "select_birth_place": "जन्म स्थान छान्नुहोस्",
+    "skilled_birth_attended": "दक्ष स्वास्थ्यकर्मीद्वारा प्रसूति गराएको",
+    "fchv_present": "महिला स्वास्थ्य स्वयंसेविका उपस्थित भएको",
+    "child_status": "शिशुको अवस्था",
+    "baby_weight": "शिशुको तौल",
+    "select_weight": "तौल छान्नुहोस्",
+    "asphyxiated_newborn": "निसासिएको शिशु",
+    "newborn_care": "नवजात शिशु स्याहार",
+    "remarks": "कैफियत",
+    "remarks_placeholder": "यहाँ कैफियत लेख्नुहोस्...",
+    "saving": "सुरक्षित गर्दै...",
+    "save_record": "रेकर्ड सेभ गर्नुहोस्",
+    "validation": {
+      "mother_required": "आमा छनौट गर्न आवश्यक छ",
+      "baby_name_required": "शिशुको नाम आवश्यक छ",
+      "birth_date_required": "जन्म मिति आवश्यक छ",
+      "fill_fields": "कृपया सबै आवश्यक क्षेत्रहरू भर्नुहोस्",
+      "error": "त्रुटि"
+    },
+    "messages": {
+      "save_success": "रेकर्ड सफलतापूर्वक सुरक्षित गरियो",
+      "save_failed": "रेकर्ड सुरक्षित गर्न असफल भयो"
+    },
+    "options": {
+      "home": "घर",
+      "institution": "स्वास्थ्य संस्था",
+      "alive": "जीवित",
+      "dead": "मृत",
+      "normal": "सामान्य तौल",
+      "low": "कम तौल",
+      "very_low": "धेरै कम तौल",
+      "umbilical_ointment": "नाभी मलम लगाएको",
+      "skin_to_skin": "जन्मने बित्तिकै छातीमा टाँसेर राखेको",
+      "early_breastfeeding": "१ घण्टा भित्र स्तनपान गराएको"
+    }
   },
   "counseling_section": {
     "malnutrition_screening": "कुपोषण स्क्रिनिङ",

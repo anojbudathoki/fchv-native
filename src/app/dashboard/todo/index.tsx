@@ -1,4 +1,5 @@
 import ConfirmActionModal from "@/components/common/ConfirmActionModal";
+import { Skeleton } from "@/components/common/Skeleton";
 import CustomHeader from "@/components/CustomHeader";
 import { InputText } from "@/components/InputText";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -20,7 +21,6 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -45,6 +45,25 @@ import {
   TodoItem,
   updateTodo,
 } from "../../../hooks/database/models/TodoModel";
+
+const TodoSkeleton = () => (
+  <View className="bg-white rounded-xl p-4 mb-4 border border-slate-200 flex-row items-center">
+    <View className="mr-3 mt-0.5">
+      <Skeleton width={24} height={24} borderRadius={6} />
+    </View>
+    <View className="flex-1 gap-2">
+      <Skeleton width="60%" height={20} borderRadius={6} />
+      <Skeleton width="80%" height={14} borderRadius={4} />
+      <View className="flex-row items-center mt-1 gap-4">
+        <Skeleton width={60} height={12} borderRadius={4} />
+        <Skeleton width={80} height={12} borderRadius={4} />
+      </View>
+    </View>
+    <View className="flex-row items-center ml-2 gap-x-2">
+      <Skeleton width={36} height={36} borderRadius={12} />
+    </View>
+  </View>
+);
 
 type Priority = "URGENT" | "MEDIUM" | "NORMAL";
 
@@ -335,9 +354,15 @@ export default function TasksScreen() {
         className="flex-1 bg-[#E8F3FF] rounded-2xl p-4 items-center"
       >
         <ClipboardList size={26} color="#475569" strokeWidth={2} />
-        <Text className="text-[22px] font-bold text-slate-700 mt-2">
-          {String(stats.pending).padStart(2, "0")}
-        </Text>
+        <View className="mt-2 h-[32px] justify-center">
+          {loading ? (
+            <Skeleton width={30} height={24} borderRadius={6} />
+          ) : (
+            <Text className="text-[22px] font-bold text-slate-700">
+              {String(stats.pending).padStart(2, "0")}
+            </Text>
+          )}
+        </View>
         <Text className="text-[13px] font-medium text-slate-500 mt-0.5">
           {t("todo_tasks.pending")}
         </Text>
@@ -349,9 +374,15 @@ export default function TasksScreen() {
         className="flex-1 bg-[#D1FAE5] rounded-2xl p-4 items-center"
       >
         <CheckCircle size={26} color="#059669" strokeWidth={2} />
-        <Text className="text-[22px] font-black text-emerald-700 mt-2">
-          {String(stats.done).padStart(2, "0")}
-        </Text>
+        <View className="mt-2 h-[32px] justify-center">
+          {loading ? (
+            <Skeleton width={30} height={24} borderRadius={6} />
+          ) : (
+            <Text className="text-[22px] font-black text-emerald-700">
+              {String(stats.done).padStart(2, "0")}
+            </Text>
+          )}
+        </View>
         <Text className="text-[13px] font-medium text-emerald-600 mt-0.5">
           {t("todo_tasks.done")}
         </Text>
@@ -363,9 +394,15 @@ export default function TasksScreen() {
         className="flex-1 bg-[#FFE4E6] rounded-2xl p-4 items-center"
       >
         <AlertCircle size={26} color="#E11D48" strokeWidth={2} />
-        <Text className="text-[22px] font-black text-rose-700 mt-2">
-          {String(stats.urgent).padStart(2, "0")}
-        </Text>
+        <View className="mt-2 h-[32px] justify-center">
+          {loading ? (
+            <Skeleton width={30} height={24} borderRadius={6} />
+          ) : (
+            <Text className="text-[22px] font-black text-rose-700">
+              {String(stats.urgent).padStart(2, "0")}
+            </Text>
+          )}
+        </View>
         <Text className="text-[13px] font-medium text-rose-600 mt-0.5">
           {t("todo_tasks.urgent")}
         </Text>
@@ -742,8 +779,10 @@ export default function TasksScreen() {
 
         <View className="px-6">
           {loading ? (
-            <View className="py-20 items-center justify-center">
-              <ActivityIndicator size="large" color="#356169" />
+            <View>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <TodoSkeleton key={i} />
+              ))}
             </View>
           ) : todos.length === 0 ? (
             <View className="py-10 items-center justify-center bg-white rounded-3xl border border-slate-100">

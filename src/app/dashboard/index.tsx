@@ -268,7 +268,7 @@ export default function DashboardScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#F8FAFC" }}>
-      <StatusBar backgroundColor="#f9fafb" />
+      <StatusBar backgroundColor="#fff" />
       <TopHeader />
 
       <KeyboardAvoidingView
@@ -463,7 +463,7 @@ export default function DashboardScreen() {
                   iconColor="#475569"
                   bg="white"
                   value={motherCount}
-                  label={t("dashboard.stats_labels.mothers", "Total Mothers")}
+                  label={t("dashboard.stats_labels.mothers")}
                   delay={0}
                 />
                 <StatCard
@@ -472,7 +472,7 @@ export default function DashboardScreen() {
                   iconColor="#475569"
                   bg="white"
                   value={pregnancyCount}
-                  label={t("dashboard.stats_labels.pregnant", "Pregnant Women")}
+                  label={t("dashboard.stats_labels.pregnant")}
                   delay={100}
                 />
               </View>

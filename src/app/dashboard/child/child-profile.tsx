@@ -1,16 +1,79 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import ChildCounselingSection from "@/app/dashboard/child/ChildCounselingSection";
+import { Skeleton } from "@/components/common/Skeleton";
 import CustomHeader from "@/components/CustomHeader";
 import VaccinationSection from "@/components/profile/VaccinationSection";
-import Colors from "@/constants/Colors";
 import { useLanguage } from "@/context/LanguageContext";
 import { getInfantMonitoringById } from "@/hooks/database/models/InfantMonitoringModel";
 import { InfantMonitoringStoreType } from "@/hooks/database/types/infantMonitoringModal";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { Activity, Baby, Edit2, MapPin, Smile } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { AdToBs } from "react-native-nepali-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const ChildProfileSkeleton = () => (
+    <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100, paddingTop: 12 }}
+    >
+        <View className="px-4 gap-y-3">
+            {/* Identity Card */}
+            <View className="bg-white p-5 rounded-2xl border border-slate-100">
+                <View className="flex-row items-start">
+                    <Skeleton width={56} height={56} borderRadius={28} style={{ marginRight: 16 }} />
+                    <View className="flex-1 gap-2">
+                        <Skeleton width="60%" height={22} borderRadius={6} />
+                        <Skeleton width="80%" height={14} borderRadius={4} />
+                        <Skeleton width="50%" height={14} borderRadius={4} />
+                    </View>
+                </View>
+                <View className="flex-row gap-3 mt-5">
+                    <View className="flex-1 bg-slate-50 py-3 rounded-xl items-center border border-slate-100">
+                        <Skeleton width="40%" height={12} borderRadius={4} style={{ marginBottom: 6 }} />
+                        <Skeleton width="60%" height={18} borderRadius={4} />
+                    </View>
+                    <View className="flex-1 bg-slate-50 py-3 rounded-xl items-center border border-slate-100">
+                        <Skeleton width="40%" height={12} borderRadius={4} style={{ marginBottom: 6 }} />
+                        <Skeleton width="60%" height={18} borderRadius={4} />
+                    </View>
+                </View>
+            </View>
+
+            {/* Birth Info Grid */}
+            <View className="flex-row gap-3">
+                <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 flex-row items-center">
+                    <Skeleton width={40} height={40} borderRadius={20} style={{ marginRight: 12 }} />
+                    <View className="flex-1 gap-1">
+                        <Skeleton width="60%" height={12} borderRadius={4} />
+                        <Skeleton width="80%" height={16} borderRadius={4} />
+                    </View>
+                </View>
+                <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 flex-row items-center">
+                    <Skeleton width={40} height={40} borderRadius={20} style={{ marginRight: 12 }} />
+                    <View className="flex-1 gap-1">
+                        <Skeleton width="60%" height={12} borderRadius={4} />
+                        <Skeleton width="80%" height={16} borderRadius={4} />
+                    </View>
+                </View>
+            </View>
+
+            {/* Vaccination Section Skeleton */}
+            <View className="bg-white rounded-2xl border border-slate-100 overflow-hidden mt-2">
+                <View className="p-4 border-b border-slate-50 flex-row items-center">
+                    <Skeleton width={32} height={32} borderRadius={16} style={{ marginRight: 12 }} />
+                    <Skeleton width="45%" height={22} borderRadius={4} />
+                </View>
+                <View className="p-4 gap-3">
+                    {[1, 2, 3, 4].map((i) => (
+                        <Skeleton key={i} width="100%" height={52} borderRadius={10} />
+                    ))}
+                </View>
+            </View>
+        </View>
+    </ScrollView>
+);
 
 const toNepaliNumbers = (num: number | string) => {
     const nepaliDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
@@ -88,11 +151,13 @@ export default function ChildProfileScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView className="flex-1 justify-center items-center bg-[#F8FAFC]">
-                <ActivityIndicator size="large" color={Colors.primary} />
-                <Text className="mt-4 text-slate-500 font-medium">
-                    {t("profile.states.loading")}
-                </Text>
+            <SafeAreaView className="flex-1 bg-white">
+                <StatusBar barStyle="dark-content" />
+                <CustomHeader
+                    title={t("child_profile.title")}
+                    onBackPress={() => router.back()}
+                />
+                <ChildProfileSkeleton />
             </SafeAreaView>
         );
     }

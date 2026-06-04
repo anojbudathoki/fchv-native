@@ -1,3 +1,4 @@
+import { ReportDetailsSkeleton } from "@/components/common/ReportDetailsSkeleton";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Activity,
@@ -11,16 +12,14 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   ScrollView,
   StatusBar,
   Text,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import municipalitiesData from "../../../assets/json/municipalities.json";
 import CustomHeader from "../../../components/CustomHeader";
-import Colors from "../../../constants/Colors";
 import {
   getMotherProfile,
   MotherProfileDbItem,
@@ -97,8 +96,13 @@ export default function NewbornDeathDetailsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-[#F8FAFC] justify-center items-center">
-        <ActivityIndicator size="large" color={Colors.primary} />
+      <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+        <StatusBar barStyle="dark-content" />
+        <CustomHeader
+          title="Newborn Death Details"
+          onBackPress={() => router.back()}
+        />
+        <ReportDetailsSkeleton />
       </SafeAreaView>
     );
   }

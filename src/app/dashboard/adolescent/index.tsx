@@ -1,13 +1,32 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "@/components/CustomHeader";
+import { Skeleton } from "@/components/common/Skeleton";
 import { getAllAdolescentIfa } from "@/hooks/database/models/AdolescentIfaModel";
 import { AdolescentIfaStoreType } from "@/hooks/database/types/adolescentIfaModal";
 import { router, useFocusEffect } from "expo-router";
-import { ChevronRight, Heart, Plus, Search } from "lucide-react-native";
+import { Edit, Heart, Plus, Search } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
+const AdolescentCardSkeleton = () => (
+  <View className="bg-white p-4 rounded-2xl flex-row items-center border border-gray-100 mb-3 mx-1">
+    <View className="w-14 h-14 bg-slate-50 rounded-[18px] items-center justify-center border border-slate-100">
+      <Skeleton width={32} height={32} borderRadius={16} />
+    </View>
+    <View className="flex-1 ml-4 gap-2">
+      <Skeleton width="60%" height={20} borderRadius={6} />
+      <Skeleton width="45%" height={14} borderRadius={4} />
+      <View className="flex-row gap-2 mt-1">
+        <Skeleton width="35%" height={22} borderRadius={11} />
+        <Skeleton width="35%" height={22} borderRadius={11} />
+      </View>
+    </View>
+    <View className="w-10 h-10 bg-slate-50 rounded-full items-center justify-center">
+      <Skeleton width={20} height={20} borderRadius={10} />
+    </View>
+  </View>
+);
 export default function AdolescentManagementScreen() {
   const { t } = useTranslation();
   const [records, setRecords] = useState<AdolescentIfaStoreType[]>([]);
@@ -15,6 +34,7 @@ export default function AdolescentManagementScreen() {
     AdolescentIfaStoreType[]
   >([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const loadRecords = async () => {
     try {
@@ -23,6 +43,8 @@ export default function AdolescentManagementScreen() {
       filterData(data, search);
     } catch (err) {
       console.error("Failed to load adolescent records:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,25 +100,29 @@ export default function AdolescentManagementScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Search Section */}
-        <View className="px-5 mt-3 flex-row items-center gap-3">
-          <View className="flex-1 flex-row items-center bg-white px-4 py-1.5 rounded-md border border-gray-200">
-            <Search size={20} color="#94A3B8" />
-            <TextInput
-              className="flex-1 ml-3 text-[15px] text-[#1E293B]"
-              placeholder={t(
-                "adolescent_page.search_placeholder",
-                "Search by name...",
-              )}
-              placeholderTextColor="#94A3B8"
-              value={search}
-              onChangeText={setSearch}
-            />
+        {!loading && (
+          <View className="px-5 mt-3 flex-row items-center gap-3">
+            <View className="flex-1 flex-row items-center bg-white px-4 py-1.5 rounded-md border border-gray-200">
+              <Search size={20} color="#94A3B8" />
+              <TextInput
+                className="flex-1 ml-3 text-[15px] text-[#1E293B]"
+                placeholder={t(
+                  "adolescent_page.search_placeholder",
+                  "Search by name...",
+                )}
+                placeholderTextColor="#94A3B8"
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
           </View>
-        </View>
+        )}
 
         {/* List Content */}
         <View className="px-3 gap-y-4 pt-3">
-          {filteredRecords.length > 0 ? (
+          {loading ? (
+            [1, 2, 3, 4, 5].map((i) => <AdolescentCardSkeleton key={i} />)
+          ) : filteredRecords.length > 0 ? (
             filteredRecords.map((item) => (
               <TouchableOpacity
                 key={item.id}
@@ -168,7 +194,7 @@ export default function AdolescentManagementScreen() {
                 {/* Delete and Edit Chevron */}
                 <View className="flex-row items-center gap-x-2">
                   <View className="w-10 h-10 bg-slate-50 rounded-full items-center justify-center">
-                    <ChevronRight size={20} color="#94A3B8" />
+                    <Edit size={20} color="#94A3B8" />
                   </View>
                 </View>
               </TouchableOpacity>

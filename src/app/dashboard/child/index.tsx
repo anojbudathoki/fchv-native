@@ -1,24 +1,44 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "@/components/CustomHeader";
+import { Skeleton } from "@/components/common/Skeleton";
 import { useLanguage } from "@/context/LanguageContext";
 import { getAllInfantMonitorings } from "@/hooks/database/models/InfantMonitoringModel";
 import { InfantMonitoringStoreType } from "@/hooks/database/types/infantMonitoringModal";
 import { router, useFocusEffect } from "expo-router";
 import { Baby, Calendar, ChevronRight, Plus, Search } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { AdToBs } from "react-native-nepali-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const ChildCardSkeleton = () => (
+  <View className="bg-white p-4 rounded-2xl flex-row items-center border border-gray-100">
+    <Skeleton width={56} height={56} borderRadius={8} />
+    <View className="flex-1 ml-4 gap-2">
+      <Skeleton width="55%" height={22} borderRadius={6} />
+      <Skeleton width="70%" height={14} borderRadius={4} />
+      <Skeleton width="40%" height={12} borderRadius={4} />
+    </View>
+    <Skeleton width={40} height={40} borderRadius={20} />
+  </View>
+);
 
 export default function ChildManagementScreen() {
   const { t, language } = useLanguage();
   const [infants, setInfants] = useState<InfantMonitoringStoreType[]>([]);
   const [filteredInfants, setFilteredInfants] = useState<InfantMonitoringStoreType[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const loadInfants = async () => {
-    const data = await getAllInfantMonitorings();
-    setInfants(data);
-    filterData(data, search);
+    try {
+      const data = await getAllInfantMonitorings();
+      setInfants(data);
+      filterData(data, search);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useFocusEffect(
@@ -48,6 +68,7 @@ export default function ChildManagementScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <StatusBar barStyle="dark-content" className="bg-white" />
       <CustomHeader
         title={t("child_page.title")}
         onBackPress={() => router.back()}
@@ -83,7 +104,9 @@ export default function ChildManagementScreen() {
 
         {/* List Content */}
         <View className="px-3 gap-y-4 pt-3">
-          {filteredInfants.length > 0 ? (
+          {loading ? (
+            [1, 2, 3, 4, 5].map((i) => <ChildCardSkeleton key={i} />)
+          ) : filteredInfants.length > 0 ? (
             filteredInfants.map((item) => (
               <TouchableOpacity
                 key={item.id}

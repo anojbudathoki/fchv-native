@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLanguage } from "../../context/LanguageContext";
 
 const { width } = Dimensions.get("window");
@@ -43,13 +44,11 @@ const TabItem = ({ tab, isActive, onPress }: any) => {
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={onPress}
-      // className="border-t border-gray-100"
       style={{
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        height: "100%",
-        paddingBottom: 30,
+        paddingBottom: 15,
       }}
     >
       <Animated.View
@@ -62,14 +61,14 @@ const TabItem = ({ tab, isActive, onPress }: any) => {
         }}
       >
         <Icon
-          size={20}
+          size={21}
           color={isActive ? "#475569" : "#64748B"}
           strokeWidth={isActive ? 2.5 : 2}
         />
       </Animated.View>
       <Text
         style={{
-          fontSize: 10,
+          fontSize: 12,
           fontWeight: isActive ? "700" : "600",
           color: isActive ? "#475569" : "#64748B",
         }}
@@ -85,6 +84,7 @@ export default function BottomNavigation() {
   const pathname = usePathname();
   const { language } = useLanguage();
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const showEvent =
@@ -166,6 +166,8 @@ export default function BottomNavigation() {
         left: 0,
         right: 0,
         backgroundColor: "white",
+        borderTopWidth: 1,
+        borderTopColor: "#f1f5f9",
       }}
     >
       <View
@@ -173,8 +175,8 @@ export default function BottomNavigation() {
           flexDirection: "row",
           alignItems: "center",
           backgroundColor: "white",
-          // paddingBottom: 15,
-          paddingTop: 10,
+          paddingTop: 12,
+          paddingBottom: Math.max(insets.bottom),
         }}
       >
         {tabs.map((tab) => {

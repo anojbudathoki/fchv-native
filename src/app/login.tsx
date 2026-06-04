@@ -1,9 +1,9 @@
+import { Button } from "@/components/button";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Eye, EyeOff, Lock, User } from "lucide-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -12,7 +12,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -127,7 +127,7 @@ export default function LoginScreen() {
               >
                 {t("login.health_id_label")}
               </Text>
-              <View className="flex-row items-center h-14 rounded-md border border-gray-300 px-4 bg-white">
+              <View className="flex-row items-center h-14 rounded-xl border border-gray-300 px-4 bg-white">
                 <User size={20} color="#94A3B8" strokeWidth={2} />
                 <TextInput
                   className="flex-1 ml-3 text-base"
@@ -154,7 +154,7 @@ export default function LoginScreen() {
                   {t("login.password_label")}
                 </Text>
               </View>
-              <View className="flex-row items-center h-14 rounded-md border border-gray-300 px-4 bg-white">
+              <View className="flex-row items-center h-14 rounded-xl border border-gray-300 px-4 bg-white">
                 <Lock size={20} color="#94A3B8" strokeWidth={2} />
                 <TextInput
                   className="flex-1 ml-3 text-base"
@@ -188,20 +188,11 @@ export default function LoginScreen() {
             ) : null}
 
             {/* Login Button */}
-            <TouchableOpacity
-              activeOpacity={0.85}
+            <Button
               onPress={handleLogin}
-              disabled={isLoading}
-              className="w-full h-14 mt-3 bg-primary/80 rounded-lg items-center justify-center flex-row"
-            >
-              {isLoading ? (
-                <ActivityIndicator color="white" size="small" />
-              ) : (
-                <Text className="text-white font-semibold text-lg tracking-wide">
-                  {t("login.login_button")}
-                </Text>
-              )}
-            </TouchableOpacity>
+              isLoading={isLoading}
+              title={t("login.login_button")}
+            />
           </View>
 
           {/* Footer moved outside ScrollView to stay at bottom */}

@@ -36,7 +36,7 @@ export default function CustomHeader({
 
   return (
     <View 
-      className={`flex-row items-center justify-between bg-white px-5 border-b border-gray-100 ${className}`}
+      className={`flex-row items-center justify-between bg-white px-5 border-b border-gray-200 ${className}`}
       style={containerStyle}
     >
       <View className="flex-row items-center flex-1">
@@ -47,7 +47,7 @@ export default function CustomHeader({
           <ChevronLeft size={22} color={Colors.textPrimary || "#1E293B"} strokeWidth={2.5} />
         </TouchableOpacity>
         <View className="flex-1">
-          <Text className="font-semibold text-xl" style={{ color: Colors.textPrimary || "#1E293B" }}>
+          <Text className="font-semibold text-[19px]" style={{ color: Colors.textPrimary || "#1E293B" }}>
             {title}
           </Text>
           {subtitle && (

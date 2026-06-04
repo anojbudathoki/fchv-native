@@ -1,15 +1,14 @@
+import { Skeleton } from "@/components/common/Skeleton";
 import CustomHeader from "@/components/CustomHeader";
-import Colors from "@/constants/Colors";
 import { getDb } from "@/hooks/database/db";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   ScrollView,
   StatusBar,
   Text,
-  View,
+  View
 } from "react-native";
 import { AdToBs } from "react-native-nepali-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -174,14 +173,6 @@ export default function ServiceReportScreen() {
     );
   };
 
-  if (loading) {
-    return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
@@ -202,23 +193,32 @@ export default function ServiceReportScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="p-4">
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View className="border border-slate-300 rounded-lg overflow-hidden bg-white shadow-sm">
-              <View className="flex-row">
-                {monthsGroup.map((group, groupIdx) => (
-                  <View
-                    key={groupIdx}
-                    className={`w-[260px] ${groupIdx < 2 ? "border-r-2 border-slate-400" : ""}`}
-                  >
-                    <TableHeader />
-                    {group.map((month, idx) => (
-                      <TableRow key={idx} month={month} />
-                    ))}
-                  </View>
-                ))}
-              </View>
+          {loading ? (
+            <View className="border border-slate-100 rounded-lg overflow-hidden bg-white shadow-sm p-4 h-[500px]">
+              <Skeleton width="100%" height="20%" borderRadius={8} style={{ marginBottom: 12 }} />
+              <Skeleton width="100%" height="20%" borderRadius={8} style={{ marginBottom: 12 }} />
+              <Skeleton width="100%" height="20%" borderRadius={8} style={{ marginBottom: 12 }} />
+              <Skeleton width="100%" height="20%" borderRadius={8} style={{ marginBottom: 12 }} />
             </View>
-          </ScrollView>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View className="border border-slate-300 rounded-lg overflow-hidden bg-white shadow-sm">
+                <View className="flex-row">
+                  {monthsGroup.map((group, groupIdx) => (
+                    <View
+                      key={groupIdx}
+                      className={`w-[260px] ${groupIdx < 2 ? "border-r-2 border-slate-400" : ""}`}
+                    >
+                      <TableHeader />
+                      {group.map((month, idx) => (
+                        <TableRow key={idx} month={month} />
+                      ))}
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
+          )}
 
           <View className="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <Text className="text-slate-500 text-[11px] font-medium leading-relaxed">

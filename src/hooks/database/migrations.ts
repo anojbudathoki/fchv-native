@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-export const SCHEMA_VERSION = 37;
+export const SCHEMA_VERSION = 38;
 
 type Migration = {
   version: number;
@@ -892,6 +892,16 @@ export const MIGRATIONS: Migration[] = [
         await db.execAsync(`ALTER TABLE child_monitoring ADD COLUMN is_all_given INTEGER DEFAULT 0;`);
       } catch (e) {
         console.log("Migration 37 (is_all_given) failed or already applied:", e);
+      }
+    }
+  },
+  {
+    version: 38,
+    up: async (db) => {
+      try {
+        await db.execAsync(`ALTER TABLE child_monitoring ADD COLUMN is_all_given INTEGER DEFAULT 0;`);
+      } catch (e) {
+        console.log("Migration 38 (is_all_given) failed or already applied:", e);
       }
     }
   },

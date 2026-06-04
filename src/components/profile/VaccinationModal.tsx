@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import { VACCINE_SCHEDULE } from "@/constants/VaccineConstants";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/context/ToastContext";
@@ -9,6 +8,7 @@ import { Calendar, Check, Syringe, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface VaccinationModalProps {
     visible: boolean;
@@ -91,8 +91,21 @@ export default function VaccinationModal({
 
     const handleDateChange = async (vaccineId: string, bsDate: string) => {
         try {
-            const adDate = BsToAd(bsDate);
-            const adIso = new Date(adDate).toISOString();
+            const adDateStr = BsToAd(bsDate); // Likely "YYYY-MM-DD"
+
+            // Fix RangeError on Hermes/JSC: replace dashes with slashes for guaranteed parsing
+            let dateObj = new Date(adDateStr.replace(/-/g, "/"));
+
+            // Fallback for strict parsers
+            if (isNaN(dateObj.getTime())) {
+                dateObj = new Date(`${adDateStr}T00:00:00.000Z`);
+            }
+
+            if (isNaN(dateObj.getTime())) {
+                throw new Error(`Failed to parse AD date: ${adDateStr}`);
+            }
+
+            const adIso = dateObj.toISOString();
 
             const updatedVaccinations = {
                 ...vaccinations,

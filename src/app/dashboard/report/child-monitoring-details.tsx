@@ -1,3 +1,4 @@
+import { ReportDetailsSkeleton } from "@/components/common/ReportDetailsSkeleton";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Calendar,
@@ -9,17 +10,15 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
   Image,
   ScrollView,
   StatusBar,
   Text,
-  View,
+  View
 } from "react-native";
 import { AdToBs } from "react-native-nepali-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "../../../components/CustomHeader";
-import Colors from "../../../constants/Colors";
 import { getAllInfantMonitorings } from "../../../hooks/database/models/InfantMonitoringModel";
 import { getAllMothersList } from "../../../hooks/database/models/MotherModel";
 import { InfantMonitoringStoreType } from "../../../hooks/database/types/infantMonitoringModal";
@@ -76,11 +75,17 @@ export default function ChildMonitoringDetailsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-50 justify-center items-center">
-        <ActivityIndicator size="large" color={Colors.primary} />
+      <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+        <StatusBar barStyle="dark-content" />
+        <CustomHeader
+          title="Monitoring Details"
+          onBackPress={() => router.back()}
+        />
+        <ReportDetailsSkeleton />
       </SafeAreaView>
     );
   }
+
 
   if (!data) {
     return (

@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/button";
 import CustomHeader from "@/components/CustomHeader";
 import { InputText } from "@/components/InputText";
@@ -12,12 +11,13 @@ import * as Crypto from "expo-crypto";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AdolescentRegistrationForm() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { showToast } = useToast();
   const router = useRouter();
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
 
   const [name, setName] = useState("");
   const [ageGroup, setAgeGroup] = useState<"10-14" | "15-19">("10-14");
@@ -66,7 +66,7 @@ export default function AdolescentRegistrationForm() {
   const validate = () => {
     const e: Record<string, string> = {};
     if (!name.trim())
-      e.name = language === "np" ? "किशोरीको नाम आवश्यक छ" : "Name is required";
+      e.name = t("adolescent_page.errors.name_required");
     return e;
   };
 
@@ -101,17 +101,13 @@ export default function AdolescentRegistrationForm() {
       });
 
       await createAdolescentIfa(payload);
-      showToast(
-        language === "np"
-          ? "रेकर्ड सफलतापूर्वक सुरक्षित गरियो"
-          : "Record saved successfully",
-      );
+      showToast(t("adolescent_page.form.messages.save_success"));
       router.back();
     } catch (error) {
       console.error(error);
       Alert.alert(
-        language === "np" ? "त्रुटि" : "Error",
-        language === "np" ? "रेकर्ड सेभ गर्न असफल भयो।" : "Failed to save record.",
+        t("adolescent_page.form.validation.error"),
+        t("adolescent_page.form.messages.save_error"),
       );
     } finally {
       setIsLoading(false);
@@ -154,25 +150,21 @@ export default function AdolescentRegistrationForm() {
       <CustomHeader
         title={
           id
-            ? language === "np"
-              ? "किशोरी आइरन फोलिक एसिड विवरण सम्पादन"
-              : "Edit Adolescent"
-            : language === "np"
-              ? "किशोरी लक्षित आइरन फोलिक एसिड वितरण"
-              : "Adolescent IFA Form"
+            ? t("adolescent_page.edit_title")
+            : t("adolescent_page.new_title")
         }
         onBackPress={() => router.back()}
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 60 }}
+        contentContainerStyle={{ paddingBottom: 60, paddingTop: 10 }}
       >
-        <View style={{ paddingHorizontal: 20}}>
+        <View style={{ paddingHorizontal: 20 }}>
           {/* Adolescent Name */}
           <InputText
-            label={language === "np" ? "किशोरीको नाम" : "Adolescent's Name"}
-            placeholder={language === "np" ? "पूरा नाम लेख्नुहोस्" : "Enter Full Name"}
+            label={t("adolescent_page.form.name")}
+            placeholder={t("adolescent_page.form.name_placeholder")}
             value={name}
             onChangeText={setName}
             errors={errors}
@@ -190,7 +182,7 @@ export default function AdolescentRegistrationForm() {
                 marginBottom: 8,
               }}
             >
-              {language === "np" ? "उमेर समूह" : "Age Group"}
+              {t("adolescent_page.age_group")}
             </Text>
             <View style={{ flexDirection: "row", gap: 12 }}>
               <TouchableOpacity
@@ -205,7 +197,7 @@ export default function AdolescentRegistrationForm() {
                   backgroundColor: "#FFFFFF",
                   borderRadius: 10,
                   borderWidth: 1,
-                  borderColor: ageGroup === "10-14" ? "#6073e1ff" : "#E2E8F0",
+                  borderColor: ageGroup === "10-14" ? "#475569" : "#E2E8F0",
                 }}
               >
                 <View
@@ -214,7 +206,7 @@ export default function AdolescentRegistrationForm() {
                     height: 20,
                     borderRadius: 10,
                     borderWidth: 2,
-                    borderColor: ageGroup === "10-14" ? "#6073e1ff" : "#94A3B8",
+                    borderColor: ageGroup === "10-14" ? "#475569" : "#94A3B8",
                     marginRight: 10,
                     alignItems: "center",
                     justifyContent: "center",
@@ -226,7 +218,7 @@ export default function AdolescentRegistrationForm() {
                         width: 10,
                         height: 10,
                         borderRadius: 5,
-                        backgroundColor: "#6073e1ff",
+                        backgroundColor: "#475569",
                       }}
                     />
                   )}
@@ -238,7 +230,7 @@ export default function AdolescentRegistrationForm() {
                     color: "#334155",
                   }}
                 >
-                  10 - 14 {language === "np" ? "वर्ष" : "Years"}
+                  10 - 14 {t("adolescent_page.years")}
                 </Text>
               </TouchableOpacity>
 
@@ -254,7 +246,7 @@ export default function AdolescentRegistrationForm() {
                   backgroundColor: "#FFFFFF",
                   borderRadius: 10,
                   borderWidth: 1,
-                  borderColor: ageGroup === "15-19" ? "#7C3AED" : "#E2E8F0",
+                  borderColor: ageGroup === "15-19" ? "#475569" : "#E2E8F0",
                 }}
               >
                 <View
@@ -287,7 +279,7 @@ export default function AdolescentRegistrationForm() {
                     color: "#334155",
                   }}
                 >
-                  15 - 19 {language === "np" ? "वर्ष" : "Years"}
+                  15 - 19 {t("adolescent_page.years")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -302,7 +294,7 @@ export default function AdolescentRegistrationForm() {
                 fontWeight: "600",
               }}
             >
-              {language === "np" ? "पहिलो चरण (साउन - असोज)" : "Phase 1 (Shrawan - Ashwin)"}
+              {t("adolescent_page.form.phase1")}
             </Text>
 
             <View style={{ height: 1, backgroundColor: "#F1F5F9", marginBottom: 15 }} />
@@ -323,7 +315,7 @@ export default function AdolescentRegistrationForm() {
               <Text
                 style={{ color: "#475569", fontSize: 15, fontWeight: "500" }}
               >
-                {language === "np" ? "१३ हप्ता खाएको छ?" : "13 Weeks Intake Completed?"}
+                {t("adolescent_page.form.phase1_total")}
               </Text>
               <View
                 style={{
@@ -353,7 +345,7 @@ export default function AdolescentRegistrationForm() {
                       color: !p1Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {language === "np" ? "छैन" : "No"}
+                    {t("adolescent_page.form.no")}
                   </Text>
                 </TouchableOpacity>
 
@@ -375,7 +367,7 @@ export default function AdolescentRegistrationForm() {
                       color: p1Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {language === "np" ? "छ" : "Yes"}
+                    {t("adolescent_page.form.yes")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -432,7 +424,7 @@ export default function AdolescentRegistrationForm() {
                 fontWeight: "600",
               }}
             >
-              {language === "np" ? "दोस्रो चरण (माघ - चैत)" : "Phase 2 (Magh - Chaitra)"}
+              {t("adolescent_page.form.phase2")}
             </Text>
 
             <View style={{ height: 1, backgroundColor: "#F1F5F9", marginBottom: 15 }} />
@@ -453,7 +445,7 @@ export default function AdolescentRegistrationForm() {
               <Text
                 style={{ color: "#475569", fontSize: 15, fontWeight: "500" }}
               >
-                {language === "np" ? "२६ हप्ता पूरा खाएको छ?" : "26 Weeks Total Completed?"}
+                {t("adolescent_page.form.phase2_total")}
               </Text>
               <View
                 style={{
@@ -483,7 +475,7 @@ export default function AdolescentRegistrationForm() {
                       color: !p2Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {language === "np" ? "छैन" : "No"}
+                    {t("adolescent_page.form.no")}
                   </Text>
                 </TouchableOpacity>
 
@@ -505,7 +497,7 @@ export default function AdolescentRegistrationForm() {
                       color: p2Completed ? "#1E293B" : "#64748B",
                     }}
                   >
-                    {language === "np" ? "छ" : "Yes"}
+                    {t("adolescent_page.form.yes")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -555,8 +547,8 @@ export default function AdolescentRegistrationForm() {
 
           {/* Remarks */}
           <InputText
-            label={language === "np" ? "कैफियत" : "Remarks"}
-            placeholder={language === "np" ? "यहाँ कैफियत लेख्नुहोस्..." : "Enter remarks here..."}
+            label={t("adolescent_page.form.remarks")}
+            placeholder={t("adolescent_page.form.remarks_placeholder")}
             value={remarks}
             onChangeText={setRemarks}
             errors={errors}
@@ -570,7 +562,7 @@ export default function AdolescentRegistrationForm() {
           <Button
             onPress={handleSave}
             isLoading={isLoading}
-            title={language === "np" ? "सेभ गर्नुहोस्" : "Save Record"}
+            title={t("adolescent_page.form.buttons.save")}
           />
         </View>
       </ScrollView>
