@@ -223,13 +223,17 @@ export default function CompleteForm({ id, from }: { id?: string; from?: string 
         let calculatedEdd: string | undefined = undefined;
         if (lmpDate) {
           try {
-            const lmpD = new Date(lmpDate);
+            const adLmp = BsToAd(lmpDate);
+            const lmpD = new Date(adLmp);
             if (!isNaN(lmpD.getTime())) {
               const edd = new Date(lmpD);
               edd.setDate(edd.getDate() + 280);
-              calculatedEdd = edd.toISOString().split("T")[0];
+              const eddAd = edd.toISOString().split("T")[0];
+              calculatedEdd = AdToBs(eddAd);
             }
-          } catch (e) { }
+          } catch (e) {
+            console.error("Error calculating EDD from LMP in CompleteForm:", e);
+          }
         }
         await updatePregnancy(pregnancyId, {
           lmp_date: lmpDate,

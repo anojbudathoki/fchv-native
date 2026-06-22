@@ -229,15 +229,21 @@ export default function VaccinationModal({
                                                         </View>
                                                     )}
 
-                                                    {showDatePicker === v.id && (
-                                                        <CalendarPicker
-                                                            visible={true}
-                                                            onClose={() => setShowDatePicker(null)}
-                                                            onDateSelect={(date) => handleDateChange(v.id, date)}
-                                                            date={status.date ? AdToBs(status.date.split("T")[0]) : AdToBs(new Date().toISOString().split("T")[0])}
-                                                            language={language === "np" ? "np" : "en"}
-                                                        />
-                                                    )}
+                                                    {showDatePicker === v.id && (() => {
+                                                        const today = new Date();
+                                                        const todayAd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+                                                        const maxDateBs = AdToBs(todayAd);
+                                                        return (
+                                                            <CalendarPicker
+                                                                visible={true}
+                                                                onClose={() => setShowDatePicker(null)}
+                                                                onDateSelect={(date) => handleDateChange(v.id, date)}
+                                                                date={status.date ? AdToBs(status.date.split("T")[0]) : AdToBs(todayAd)}
+                                                                language={language === "np" ? "np" : "en"}
+                                                                maxDate={maxDateBs}
+                                                            />
+                                                        );
+                                                    })()}
                                                 </View>
                                             );
                                         })}

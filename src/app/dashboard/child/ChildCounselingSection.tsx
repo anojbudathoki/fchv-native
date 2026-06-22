@@ -1,7 +1,7 @@
 import { useLanguage } from "@/context/LanguageContext";
-import { BarChart3, Check, MessageSquare, Minus, Plus, Trash2 } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { BarChart3, Check, ChevronDown, MessageSquare, Minus, Plus, Trash2 } from "lucide-react-native";
+import { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Animated, LayoutAnimation, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { AdToBs } from "react-native-nepali-picker";
 import {
   CHILD_COUNSELING_QUESTIONS,
@@ -49,6 +49,24 @@ export default function ChildCounselingSection({
   const [orsModalVisible, setOrsModalVisible] = useState(false);
   const [zincCount, setZincCount] = useState(1);
   const [zincModalVisible, setZincModalVisible] = useState(false);
+  const [malnutritionExpanded, setMalnutritionExpanded] = useState(true);
+  const chevronRotateAnim = useRef(new Animated.Value(0)).current;
+
+  const toggleMalnutrition = () => {
+    const toValue = malnutritionExpanded ? 1 : 0;
+    Animated.timing(chevronRotateAnim, {
+      toValue,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+    LayoutAnimation.configureNext({
+      duration: 300,
+      create: { type: LayoutAnimation.Types.easeInEaseOut, property: LayoutAnimation.Properties.opacity },
+      update: { type: LayoutAnimation.Types.easeInEaseOut },
+      delete: { type: LayoutAnimation.Types.easeInEaseOut, property: LayoutAnimation.Properties.opacity },
+    });
+    setMalnutritionExpanded(prev => !prev);
+  };
 
   const parseMeasurement = (value: string) => {
     const parsed = parseFloat(value.replace(",", "."));
@@ -849,125 +867,180 @@ export default function ChildCounselingSection({
       malnutritionLogs = [{ date: record?.updated_at || new Date().toISOString(), value: true }];
     }
 
+    const latestLog = malnutritionLogs.length > 0 ? malnutritionLogs[malnutritionLogs.length - 1] : null;
+    const chevronRotation = chevronRotateAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["0deg", "-90deg"],
+    });
+
+    const renderCollapsedSummary = () => {
+      if (latestLog) {
+        const muacColor = latestLog.muac === 'red' ? '#F43F5E' : latestLog.muac === 'yellow' ? '#FAB005' : '#10B981';
+        let dateStr = "";
+        try {
+          dateStr = language === "np" ? toNepaliNumbers(AdToBs(latestLog.date.split("T")[0])) : latestLog.date.split("T")[0];
+        } catch (e) {
+          dateStr = latestLog.date?.split("T")[0] || "";
+        }
+        const recordCount = language === "np" ? toNepaliNumbers(malnutritionLogs.length) : malnutritionLogs.length;
+        return (
+          <View className="flex-row items-center justify-between px-4 py-3">
+            <View className="flex-row items-center">
+              <View className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: muacColor }} />
+              <Text className="text-slate-700 font-semibold text-[15px]">
+                {getMuacLabel(latestLog.muac)}
+              </Text>
+            </View>
+            <View className="flex-row items-center">
+              <Text className="text-slate-400 text-[12px] font-medium mr-3">{dateStr}</Text>
+              <View className="bg-slate-100 rounded-full px-2.5 py-0.5">
+                <Text className="text-slate-500 text-[11px] font-bold">
+                  {recordCount} {t("counseling_section.records")}
+                </Text>
+              </View>
+            </View>
+          </View>
+        );
+      }
+      return (
+        <View className="px-4 py-3">
+          <Text className="text-slate-400 text-[14px] font-medium italic">
+            {t("counseling_section.no_records")}
+          </Text>
+        </View>
+      );
+    };
+
     return (
       <View className="mb-8 bg-white rounded-2xl border border-slate-100 overflow-hidden">
-        <View className="flex-row items-center p-4 bg-red-50/10 border-b border-slate-50">
+        <TouchableOpacity
+          onPress={toggleMalnutrition}
+          activeOpacity={0.7}
+          className="flex-row items-center p-4 bg-red-50/10 border-b border-slate-50"
+        >
           <View className="w-8 h-8 rounded-lg bg-red-100 items-center justify-center mr-3">
             <BarChart3 size={18} color="#DC2626" />
           </View>
-          <Text className="text-xl font-bold text-slate-800">
+          <Text className="text-xl font-bold text-slate-800 flex-1">
             {t("counseling_section.malnutrition_screening")}
           </Text>
-        </View>
+          <Animated.View style={{ transform: [{ rotate: chevronRotation }] }}>
+            <ChevronDown size={22} color="#DC2626" />
+          </Animated.View>
+        </TouchableOpacity>
 
-        <View className="p-4">
-          <Text className="text-slate-600 font-semibold mb-3 text-[15px]">
-            {t("counseling_section.muac_condition")}
-          </Text>
-          <View className="flex-row gap-x-2 mb-6">
-            <TouchableOpacity
-              onPress={() => setMuac('green')}
-              disabled={disabled}
-              className={`flex-1 py-3 px-1 rounded-xl border items-center justify-center ${muac === 'green' ? "bg-emerald-500 border-emerald-500" : (disabled ? "bg-slate-50 border-slate-100" : "bg-white border-slate-201")}`}
-            >
-              <Text className={`font-bold text-[15px] ${muac === 'green' ? "text-white" : (disabled ? "text-slate-300" : "text-emerald-700")}`}>
-                {t("counseling_section.muac_normal")}
-              </Text>
-            </TouchableOpacity>
+        {!malnutritionExpanded && renderCollapsedSummary()}
 
-            <TouchableOpacity
-              onPress={() => setMuac('yellow')}
-              disabled={disabled}
-              className={`flex-1 py-3 px-1 rounded-xl border items-center justify-center ${muac === 'yellow' ? "bg-yellow-400 border-yellow-400" : (disabled ? "bg-slate-50 border-slate-100" : "bg-white border-slate-201")}`}
-            >
-              <Text className={`font-bold text-[15px] ${muac === 'yellow' ? "text-white" : (disabled ? "text-slate-300" : "text-yellow-700")}`}>
-                {t("counseling_section.muac_risk")}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setMuac('red')}
-              disabled={disabled}
-              className={`flex-1 py-3 px-1 rounded-xl border items-center justify-center ${muac === 'red' ? "bg-rose-500 border-rose-500" : (disabled ? "bg-slate-50 border-slate-100" : "bg-white border-slate-201")}`}
-            >
-              <Text className={`font-bold text-[15px] ${muac === 'red' ? "text-white" : (disabled ? "text-slate-300" : "text-rose-700")}`}>
-                {t("counseling_section.muac_severe")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View className="flex-row gap-x-4 mb-6">
-            <View className="flex-1">
-              <Text className="text-slate-600 font-semibold mb-2 text-[15px]">
-                {t("counseling_section.weight_kg")}
-              </Text>
-              <View className={`bg-slate-50 border border-slate-200 rounded-xl px-4 ${disabled ? 'opacity-50' : ''}`}>
-                <TextInput
-                  placeholder="0.00"
-                  value={weight}
-                  onChangeText={setWeight}
-                  keyboardType="numeric"
-                  editable={!disabled}
-                  className="text-slate-800 font-semibold text-lg"
-                />
-              </View>
-            </View>
-
-            <View className="flex-1">
-              <Text className="text-slate-600 font-semibold mb-2 text-[15px]">
-                {t("counseling_section.height_cm")}
-              </Text>
-              <View className={`bg-slate-50 border border-slate-200 rounded-xl px-4 ${disabled ? 'opacity-50' : ''}`}>
-                <TextInput
-                  placeholder="0.0"
-                  value={height}
-                  onChangeText={setHeight}
-                  keyboardType="numeric"
-                  editable={!disabled}
-                  className="text-slate-800 font-semibold text-lg"
-                />
-              </View>
-            </View>
-          </View>
-
-          <View className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 mb-4 flex-row items-center justify-between">
-            <View>
-              <Text className="text-slate-500 font-medium text-[15px]">
-                {t("counseling_section.bmi")}
-              </Text>
-              <Text className="text-slate-800 font-semibold text-[20px] mt-0.5">
-                {bmi ? (language === "np" ? toNepaliNumbers(bmi) : bmi) : "---"}
-              </Text>
-            </View>
-            <Text className="text-slate-500 text-[13px] font-medium max-w-[160px] text-right">
-              {t("counseling_section.bmi_auto")}
+        {malnutritionExpanded && (
+          <View className="p-4">
+            <Text className="text-slate-600 font-semibold mb-3 text-[15px]">
+              {t("counseling_section.muac_condition")}
             </Text>
-          </View>
+            <View className="flex-row gap-x-2 mb-6">
+              <TouchableOpacity
+                onPress={() => setMuac('green')}
+                disabled={disabled}
+                className={`flex-1 py-3 px-1 rounded-xl border items-center justify-center ${muac === 'green' ? "bg-emerald-500 border-emerald-500" : (disabled ? "bg-slate-50 border-slate-100" : "bg-white border-slate-201")}`}
+              >
+                <Text className={`font-bold text-[15px] ${muac === 'green' ? "text-white" : (disabled ? "text-slate-300" : "text-emerald-700")}`}>
+                  {t("counseling_section.muac_normal")}
+                </Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={handleAddMalnutrition}
-            disabled={!muac || disabled || loadingButtons[mainQuestionId]}
-            className={`w-full py-2.5 rounded-xl items-center justify-center mb-4 ${(!muac || disabled || loadingButtons[mainQuestionId]) ? "bg-slate-300" : "bg-primary"}`}
-          >
-            {loadingButtons[mainQuestionId] ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <Text className="text-white font-bold text-lg">
-                {t("counseling_section.add")}
-              </Text>
-            )}
-          </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setMuac('yellow')}
+                disabled={disabled}
+                className={`flex-1 py-3 px-1 rounded-xl border items-center justify-center ${muac === 'yellow' ? "bg-yellow-400 border-yellow-400" : (disabled ? "bg-slate-50 border-slate-100" : "bg-white border-slate-201")}`}
+              >
+                <Text className={`font-bold text-[15px] ${muac === 'yellow' ? "text-white" : (disabled ? "text-slate-300" : "text-yellow-700")}`}>
+                  {t("counseling_section.muac_risk")}
+                </Text>
+              </TouchableOpacity>
 
-          {muac === 'green' && (
-            <View className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl mb-4 items-center">
-              <Text className="text-emerald-700 font-semibold italic text-sm">
-                {t("counseling_section.malnutrition_good")}
+              <TouchableOpacity
+                onPress={() => setMuac('red')}
+                disabled={disabled}
+                className={`flex-1 py-3 px-1 rounded-xl border items-center justify-center ${muac === 'red' ? "bg-rose-500 border-rose-500" : (disabled ? "bg-slate-50 border-slate-100" : "bg-white border-slate-201")}`}
+              >
+                <Text className={`font-bold text-[15px] ${muac === 'red' ? "text-white" : (disabled ? "text-slate-300" : "text-rose-700")}`}>
+                  {t("counseling_section.muac_severe")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View className="flex-row gap-x-4 mb-6">
+              <View className="flex-1">
+                <Text className="text-slate-600 font-semibold mb-2 text-[15px]">
+                  {t("counseling_section.weight_kg")}
+                </Text>
+                <View className={`bg-slate-50 border border-slate-200 rounded-xl px-4 ${disabled ? 'opacity-50' : ''}`}>
+                  <TextInput
+                    placeholder="0.00"
+                    value={weight}
+                    onChangeText={setWeight}
+                    keyboardType="numeric"
+                    editable={!disabled}
+                    className="text-slate-800 font-semibold text-lg"
+                  />
+                </View>
+              </View>
+
+              <View className="flex-1">
+                <Text className="text-slate-600 font-semibold mb-2 text-[15px]">
+                  {t("counseling_section.height_cm")}
+                </Text>
+                <View className={`bg-slate-50 border border-slate-200 rounded-xl px-4 ${disabled ? 'opacity-50' : ''}`}>
+                  <TextInput
+                    placeholder="0.0"
+                    value={height}
+                    onChangeText={setHeight}
+                    keyboardType="numeric"
+                    editable={!disabled}
+                    className="text-slate-800 font-semibold text-lg"
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 mb-4 flex-row items-center justify-between">
+              <View>
+                <Text className="text-slate-500 font-medium text-[15px]">
+                  {t("counseling_section.bmi")}
+                </Text>
+                <Text className="text-slate-800 font-semibold text-[20px] mt-0.5">
+                  {bmi ? (language === "np" ? toNepaliNumbers(bmi) : bmi) : "---"}
+                </Text>
+              </View>
+              <Text className="text-slate-500 text-[13px] font-medium max-w-[160px] text-right">
+                {t("counseling_section.bmi_auto")}
               </Text>
             </View>
-          )}
 
-          {renderMalnutritionHistory(malnutritionLogs, mainQuestionId)}
-        </View>
+            <TouchableOpacity
+              onPress={handleAddMalnutrition}
+              disabled={!muac || disabled || loadingButtons[mainQuestionId]}
+              className={`w-full py-2.5 rounded-xl items-center justify-center mb-4 ${(!muac || disabled || loadingButtons[mainQuestionId]) ? "bg-slate-300" : "bg-primary"}`}
+            >
+              {loadingButtons[mainQuestionId] ? (
+                <ActivityIndicator color="white" size="small" />
+              ) : (
+                <Text className="text-white font-bold text-lg">
+                  {t("counseling_section.add")}
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            {muac === 'green' && (
+              <View className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl mb-4 items-center">
+                <Text className="text-emerald-700 font-semibold italic text-sm">
+                  {t("counseling_section.malnutrition_good")}
+                </Text>
+              </View>
+            )}
+
+            {renderMalnutritionHistory(malnutritionLogs, mainQuestionId)}
+          </View>
+        )}
       </View>
     );
   };

@@ -1,6 +1,8 @@
 import {
   getCurrentNepaliDate,
   resolveNepaliYearMonth,
+  bsToAd,
+  adToBs,
 } from "../../../utils/dateHelper";
 import { getDb } from "../db";
 import { CreateMotherPayload, MotherStoreType } from "../types/motherModal";
@@ -308,11 +310,14 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
     let eddCalculated = row.edd || "";
     if (lmpRaw && !eddCalculated) {
       try {
-        const lmpDate = new Date(lmpRaw);
+        const adLmp = bsToAd(lmpRaw);
+        const lmpDate = new Date(adLmp);
         if (!isNaN(lmpDate.getTime())) {
           const eddDate = new Date(lmpDate);
           eddDate.setDate(eddDate.getDate() + 280);
-          eddCalculated = eddDate.toISOString().split("T")[0];
+          const eddAd = eddDate.toISOString().split("T")[0];
+          const bsEdd = adToBs(eddAd);
+          eddCalculated = `${bsEdd.year}-${String(bsEdd.month).padStart(2, "0")}-${String(bsEdd.day).padStart(2, "0")}`;
         }
       } catch (e) { }
     }
@@ -456,11 +461,14 @@ export async function getMotherProfile(
   let eddCalculated = row.edd || "";
   if (lmpRaw && !eddCalculated) {
     try {
-      const lmpDate = new Date(lmpRaw);
+      const adLmp = bsToAd(lmpRaw);
+      const lmpDate = new Date(adLmp);
       if (!isNaN(lmpDate.getTime())) {
         const eddDate = new Date(lmpDate);
         eddDate.setDate(eddDate.getDate() + 280);
-        eddCalculated = eddDate.toISOString().split("T")[0];
+        const eddAd = eddDate.toISOString().split("T")[0];
+        const bsEdd = adToBs(eddAd);
+        eddCalculated = `${bsEdd.year}-${String(bsEdd.month).padStart(2, "0")}-${String(bsEdd.day).padStart(2, "0")}`;
       }
     } catch (e) { }
   }

@@ -24,11 +24,6 @@ export const COUNCELING_QUESTION_AFTER_PREGNANT_ONE_TIME: CounselingQuestion[] =
   //   ne: 'सुत्केरी हुन स्वास्थ्य संस्था जानका लागि गाडी वा यातायातको व्यवस्था मिलाइएको छ?'
   // },
   {
-    id: "bathed_after_24_hours",
-    en: "Did you bathe the baby only after 24 hours of birth?",
-    ne: "बच्चा जन्मिएको २४ घण्टा पूरा भएपछि मात्र नुहाउनुभएको थियो?",
-  },
-  {
     id: "antenatal_checkups",
     en: "Did the pregnant woman attend antenatal checkups at a health facility?",
     ne: "गर्भवती महिलाले स्वास्थ्य संस्थामा गर्भ जाँच गराउनुभएको थियो?",
@@ -80,21 +75,6 @@ export const COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN: CounselingQuestion[
 
 export const COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN_ONE_TIME: CounselingQuestion[] = [
   {
-    id: 'early_breastfeeding_advice',
-    en: 'Was the client advised to start breastfeeding within the first hour of birth?',
-    ne: 'बच्चा जन्मेको एक घण्टाभित्रै आमाको दूध खुवाउनु भनेर सल्लाह दिनुभयो?'
-  },
-  {
-    id: 'skin_to_skin_advice',
-    en: 'Was the client advised to keep the baby skin-to-skin immediately after birth?',
-    ne: 'बच्चा जन्मने बित्तिकै आमाको नाङ्गो छातीमा टाँसेर (न्यानो पारेर) राख्न सल्लाह दिनुभयो?'
-  },
-  {
-    id: "vitamin_a_given",
-    en: "Did you give Vitamin A to the mother?",
-    ne: "आमालाई भिटामिन ए दिनुभयो?",
-  },
-  {
     id: "home_delivery",
     en: "Did the delivery take place at home?",
     ne: "घरमा प्रसूति भएको हो?",
@@ -108,6 +88,26 @@ export const COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN_ONE_TIME: Counseling
     id: "home_delivery_misoprostol",
     en: "In case of a home delivery, was misoprostol taken?",
     ne: "घरमै सुत्केरी भईं मिसोप्रोस्टोल सेवन गरेको छ?",
+  },
+  {
+    id: 'early_breastfeeding_advice',
+    en: 'Was the client advised to start breastfeeding within the first hour of birth?',
+    ne: 'बच्चा जन्मेको एक घण्टाभित्रै आमाको दूध खुवाउनु भनेर सल्लाह दिनुभयो?'
+  },
+  {
+    id: 'skin_to_skin_advice',
+    en: 'Was the client advised to keep the baby skin-to-skin immediately after birth?',
+    ne: 'बच्चा जन्मने बित्तिकै आमाको नाङ्गो छातीमा टाँसेर (न्यानो पारेर) राख्न सल्लाह दिनुभयो?'
+  },
+  {
+    id: "bathed_after_24_hours",
+    en: "Did you bathe the baby only after 24 hours of birth?",
+    ne: "बच्चा जन्मिएको २४ घण्टा पूरा भएपछि मात्र नुहाउनुभएको थियो?",
+  },
+  {
+    id: "vitamin_a_given",
+    en: "Did you give Vitamin A to the mother?",
+    ne: "आमालाई भिटामिन ए दिनुभयो?",
   },
   {
     id: 'exclusive_breastfeeding_advice',
@@ -135,7 +135,7 @@ export const COUNSELING_REFERRAL_QUESTIONS_ONE_TIME_MOTHER: CounselingQuestion[]
   {
     id: 'family_planning_services_referral',
     en: 'Did you refer the couple to a health facility for family planning services?',
-    ne: 'परिवार नियोजन सेवाका लागि दम्पतीलाई स्वास्थ्य संस्थामा प्रेषण गर्नुभयो?'
+    ne: 'परिवार नियोजन सेवाका लागि दम्पतीलाई स्वास्थ्य संस्थामा जान रेफर गर्नुभयो?'
   },
   {
     id: 'fm_health_education',

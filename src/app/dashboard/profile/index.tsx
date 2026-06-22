@@ -5,7 +5,6 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   AlertTriangle,
   Baby,
-  Calendar,
   FileText,
   Heart,
   Hourglass,
@@ -131,20 +130,6 @@ const VisitBadge = ({ label, val }: any) => (
   </View>
 );
 
-const ProfileDateStat = ({ icon: Icon, label, value, withDivider = false }: any) => (
-  <View
-    className={`flex-1 items-center justify-center px-2 ${withDivider ? "border-l border-slate-100" : ""}`}
-  >
-    {/* <Icon size={15} color="#64748B" /> */}
-    <Text className="text-[11px] text-slate-500 font-medium mt-2 text-center">
-      {label}
-    </Text>
-    <Text className="text-[13px] text-slate-900 font-bold mt-1 text-center">
-      {value}
-    </Text>
-  </View>
-);
-
 type DateFormat = "BS" | "AD";
 
 const normalizeDateString = (dateStr: string | null | undefined) => {
@@ -235,7 +220,8 @@ const calculateEddFromLmp = (lmpDateStr: string | null | undefined) => {
     if (!isNaN(lmpDate.getTime())) {
       const eddDate = new Date(lmpDate);
       eddDate.setDate(eddDate.getDate() + 280);
-      return toAdDateString(eddDate);
+      const eddAd = toAdDateString(eddDate);
+      return AdToBs(eddAd);
     }
   } catch (e) {
     console.warn("EDD Calculation error:", e);
@@ -451,12 +437,12 @@ export default function HmisRecordProfileScreen() {
     ? "bg-rose-50"
     : isDueToday
       ? "bg-emerald-50"
-      : "bg-amber-50";
+      : "bg-slate-50";
   const remainingTextClass = isOverdue
     ? "text-rose-700"
     : isDueToday
       ? "text-emerald-700"
-      : "text-amber-800";
+      : "text-slate-700";
   const remainingDaysText =
     profileDaysRemaining === null
       ? null
@@ -494,56 +480,63 @@ export default function HmisRecordProfileScreen() {
       >
         <View className="px-4 gap-y-4">
           {/* Main Identity Card */}
-          <View className="bg-white px-5 pt-5 pb-4 rounded-3xl border border-slate-100">
-            <View className="flex-row w-full mb-5 pr-20">
-              <View className="w-24 h-24 rounded-full bg-pink-50 border-2 border-pink-100 items-center justify-center mr-5 overflow-hidden shadow-sm">
-                {mother?.image ? (
-                  <Image
-                    source={{ uri: mother.image }}
-                    className="w-full h-full"
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View className="items-center justify-center w-full h-full">
-                    <User size={40} color="#EC4899" strokeWidth={1.5} />
-                    <View className="absolute bottom-1 right-1 bg-pink-500 rounded-full p-1 border-2 border-white">
-                      <Heart size={10} color="white" fill="white" />
+          <View className="bg-white rounded-3xl border border-slate-100 overflow-hidden">
+            {activePregnancy && (
+              <View className="h-1 bg-slate-300" />
+            )}
+
+            <View className="px-5 pt-5 pb-4">
+              <View className="flex-row">
+                <View className="w-20 h-20 rounded-full bg-slate-50 border-2 border-slate-100 items-center justify-center overflow-hidden shadow-sm">
+                  {mother?.image ? (
+                    <Image
+                       source={{ uri: mother.image }}
+                       className="w-full h-full"
+                       resizeMode="cover"
+                    />
+                  ) : (
+                    <View className="items-center justify-center w-full h-full">
+                      <User size={36} color="#64748B" strokeWidth={1.5} />
                     </View>
-                  </View>
-                )}
-              </View>
-              <View className="flex-1 justify-center">
-                <View className="flex-row items-center">
-                  <Text className="text-[#111827] text-[22px] font-bold leading-tight flex-shrink">
-                    {record.mother_name}
-                  </Text>
-                  {
-                    !!existingDeathRecord && (
-                      <Text className="text-rose-600 text-[15px] font-semibold"> ({t("reports.status.deceased")})</Text>
-                    )
-                  }
+                  )}
                 </View>
-                <Text className="text-[#64748B] font-medium text-[15px] mt-1">
-                  {toDisplayNumber(record.mother_age ?? 0, language)} {t("profile.identity.years")} •{" "}
-                  {t("profile.identity.maternal_health")}
-                </Text>
-                {remainingText && (
-                  <View className={`self-start flex-row items-center px-4 py-2 rounded-full mt-4 ${remainingBadgeClass}`}>
-                    <Hourglass size={15} color={isOverdue ? "#BE123C" : isDueToday ? "#047857" : "#92400E"} />
-                    <Text className={`text-[13px] font-bold ml-2 ${remainingTextClass}`}>
-                      {remainingText}
+
+                <View className="flex-1 ml-4 justify-center">
+                  <View className="flex-row items-center flex-wrap">
+                    <Text className="text-slate-900 text-xl font-bold leading-tight">
+                      {record.mother_name}
                     </Text>
+                    {!!existingDeathRecord && (
+                      <View className="ml-2 px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200">
+                        <Text className="text-rose-600 text-xs font-semibold">{t("reports.status.deceased")}</Text>
+                      </View>
+                    )}
                   </View>
-                )}
-              </View>
-              <View className="absolute right-0 top-0 items-end">
-                {/* <View className="bg-[#F1F5F9] px-3 py-2 rounded-full mb-2">
-                  <Text className="text-[#475569] font-bold text-[11px]">
-                    {t("profile.identity.serial_no")}: {record.serial_no ?? "N/A"}
-                  </Text>
-                </View> */}
+
+                  <View className="flex-row items-center mt-2 gap-2">
+                    <View className="flex-row items-center px-2.5 py-1 rounded-full bg-slate-50 border border-slate-100">
+                      <User size={11} color="#64748B" />
+                      <Text className="text-slate-700 text-xs font-semibold ml-1">
+                        {toDisplayNumber(record.mother_age ?? 0, language)} {t("profile.identity.years")}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center px-2.5 py-1 rounded-full bg-slate-50 border border-slate-100">
+                      <Heart size={11} color="#64748B" />
+                      <Text className="text-slate-700 text-xs font-semibold ml-1">
+                        {t("profile.identity.maternal_health")}
+                      </Text>
+                    </View>
+                    {totalChildCount > 0 && (
+                      <View className="flex-row items-center px-2.5 py-1 rounded-full bg-slate-50 border border-slate-100">
+                        <Baby size={11} color="#64748B" />
+                        <Text className="text-slate-700 text-xs font-semibold ml-1">{totalChildCount}</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+
                 <TouchableOpacity
-                  className={`p-3 rounded-full ${!!existingDeathRecord ? 'bg-slate-50 opacity-50' : 'bg-gray-50'}`}
+                  className={`w-9 h-9 rounded-full items-center justify-center ${!!existingDeathRecord ? 'bg-slate-50' : 'bg-gray-50'}`}
                   disabled={!!existingDeathRecord}
                   onPress={() =>
                     router.push({
@@ -552,200 +545,206 @@ export default function HmisRecordProfileScreen() {
                     } as any)
                   }
                 >
-                  <Pencil size={16} color={!!existingDeathRecord ? "#CBD5E1" : "#64748B"} strokeWidth={2} />
+                  <Pencil size={14} color={!!existingDeathRecord ? "#CBD5E1" : "#64748B"} strokeWidth={2} />
                 </TouchableOpacity>
               </View>
-            </View>
 
-            {pregnancy && (
-              <View className="flex-row border-y border-slate-100 py-4 mb-1">
-                <ProfileDateStat
-                  icon={Calendar}
-                  label={t("profile.identity.lmp_date")}
-                  value={formatBsDateDisplay(pregnancy.lmp_date, "BS", language)}
-                />
-                <ProfileDateStat
-                  icon={Calendar}
-                  label={t("profile.quick_stats.reg_date")}
-                  value={formatBsDateDisplay(profileCreatedDate, "AD", language)}
-                  withDivider
-                />
-                <ProfileDateStat
-                  icon={Calendar}
-                  label={t("profile.identity.edd_date")}
-                  value={formatBsDateDisplay(profileEddDate, "AD", language)}
-                  withDivider
-                />
-              </View>
-            )}
-
-            {/* Children Section - All children on one line */}
-            {(currentPregnancyChildren.length > 0 || otherChildren.length > 0) && (
-              <View className="pb-2 border-t border-gray-50">
-                <View className="flex-row items-center mb-2">
+              {remainingText && (
+                <View className={`mt-4 flex-row items-center px-4 py-3 rounded-2xl ${remainingBadgeClass}`}>
+                  <View className={`w-8 h-8 rounded-full items-center justify-center ${isOverdue ? 'bg-rose-100' : isDueToday ? 'bg-emerald-100' : 'bg-slate-200'}`}>
+                    <Hourglass size={15} color={isOverdue ? "#BE123C" : isDueToday ? "#047857" : "#64748B"} />
+                  </View>
+                  <Text className={`text-sm font-bold ml-3 ${remainingTextClass}`}>{remainingText}</Text>
                 </View>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{ gap: 8 }}
-                >
-                  {/* Current Pregnancy Children */}
-                  {currentPregnancyChildren.map((child, idx) => (
-                    <TouchableOpacity
-                      key={child.id || `current-${idx}`}
-                      onPress={() =>
-                        router.push({
-                          pathname: "/dashboard/child/child-profile",
-                          params: { id: child.id, from: "profile" }
-                        } as any)
-                      }
-                      className="flex-row items-center px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100"
-                    >
-                      <Baby size={14} color="#4F46E5" />
-                      {child.baby_name ? (
-                        <Text className="text-indigo-700 font-semibold text-[14px] pl-1.5">
+              )}
+
+              {pregnancy && (
+                <View className="mt-4 flex-row bg-slate-50 rounded-2xl p-3 gap-1">
+                  <View className="flex-1 items-center">
+                    <Text className="text-[11px] text-slate-500 font-medium">{t("profile.identity.lmp_date")}</Text>
+                    <Text className="text-[13px] text-slate-900 font-bold mt-1">
+                      {formatBsDateDisplay(pregnancy.lmp_date, "BS", language)}
+                    </Text>
+                  </View>
+                  <View className="w-px bg-slate-200 self-stretch mx-1" />
+                  <View className="flex-1 items-center">
+                    <Text className="text-[11px] text-slate-500 font-medium">{t("profile.quick_stats.reg_date")}</Text>
+                    <Text className="text-[13px] text-slate-900 font-bold mt-1">
+                      {formatBsDateDisplay(profileCreatedDate, "AD", language)}
+                    </Text>
+                  </View>
+                  <View className="w-px bg-slate-200 self-stretch mx-1" />
+                  <View className="flex-1 items-center">
+                    <Text className="text-[11px] text-slate-500 font-medium">{t("profile.identity.edd_date")}</Text>
+                    <Text className="text-[13px] text-slate-900 font-bold mt-1">
+                      {formatBsDateDisplay(profileEddDate, "AD", language)}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              {(currentPregnancyChildren.length > 0 || otherChildren.length > 0) && (
+                <View className="mt-4">
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 8 }}
+                  >
+                    {currentPregnancyChildren.map((child, idx) => (
+                      <TouchableOpacity
+                        key={child.id || `current-${idx}`}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/dashboard/child/child-profile",
+                            params: { id: child.id, from: "profile" }
+                          } as any)
+                        }
+                        className="flex-row items-center px-3 py-2 rounded-xl bg-slate-50 border border-slate-100"
+                      >
+                        <Baby size={14} color="#64748B" />
+                        {child.baby_name ? (
+                          <Text className="text-slate-700 font-semibold text-sm ml-1.5">
+                            {child.baby_name}
+                          </Text>
+                        ) : null}
+                        {child.status === 'dead' && (
+                          <Text className="text-rose-500 text-xs ml-1"> ({t("reports.status.deceased")})</Text>
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                    {otherChildren.map((child, idx) => (
+                      <TouchableOpacity
+                        key={child.id || `other-${idx}`}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/dashboard/child/child-profile",
+                            params: { id: child.id, from: "profile" }
+                          } as any)
+                        }
+                        className="flex-row items-center px-3 py-2 rounded-xl border border-slate-200 bg-white"
+                      >
+                        <Baby size={14} color="#64748B" />
+                        <Text className="text-slate-600 text-sm ml-1.5">
                           {child.baby_name}
                         </Text>
-                      ) : null}
-                      {child.status === 'dead' && (
-                        <Text className="text-rose-500 text-[11px] ml-1"> ({t("reports.status.deceased")})</Text>
-                      )}
-                    </TouchableOpacity>
-                  ))}
+                        {child.status === 'dead' && (
+                          <Text className="text-rose-500 text-xs ml-1">✕</Text>
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
 
-                  {/* Other Children */}
-                  {otherChildren.map((child, idx) => (
-                    <TouchableOpacity
-                      key={child.id || `other-${idx}`}
-                      onPress={() =>
-                        router.push({
-                          pathname: "/dashboard/child/child-profile",
-                          params: { id: child.id, from: "profile" }
-                        } as any)
-                      }
-                      className="flex-row items-center px-2 py-1 rounded-lg border border-slate-200 bg-white"
-                    >
-                      <Baby size={14} color="#64748B" />
-                      <Text className="text-slate-600 text-[13px] pl-1">
-                        {child.baby_name}
-                      </Text>
-                      {child.status === 'dead' && (
-                        <Text className="text-rose-500 text-[11px] ml-1"> ✕</Text>
-                      )}
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+              <View className="mt-4 flex-row gap-3">
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push({
+                      pathname: "/dashboard/record/add-mother",
+                      params: { id: record.id, step: "1", from: "profile", mode: "new" },
+                    } as any)
+                  }
+                  disabled={addPregnancyDisabled}
+                  className={`flex-1 flex-row items-center justify-center py-3 rounded-md border-2 border-dashed ${addPregnancyDisabled ? 'border-slate-200 opacity-50' : 'border-slate-200 bg-slate-50/50'}`}
+                >
+                  <Plus size={16} color={addPregnancyDisabled ? "#CBD5E1" : "#475569"} strokeWidth={3} />
+                  <Text className={`font-semibold text-sm ml-2 ${addPregnancyDisabled ? 'text-slate-300' : 'text-slate-700'}`}>
+                    {t("profile.add_pregnancy")}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push({
+                      pathname: "/dashboard/profile/add-child",
+                      params: {
+                        motherId: record.id,
+                        pregnancyId: (pregnancy && !pregnancy.delivered && !pregnancy.ended)
+                          ? pregnancy.id
+                          : undefined,
+                        from: "profile"
+                      },
+                    } as any)
+                  }
+                  disabled={!!existingDeathRecord}
+                  className={`flex-1 flex-row items-center justify-center py-3 rounded-md border-2 border-dashed ${!!existingDeathRecord ? 'border-slate-200 opacity-50' : 'border-slate-200 bg-slate-50/50'}`}
+                >
+                  <Plus size={16} color={!!existingDeathRecord ? "#CBD5E1" : "#475569"} strokeWidth={3} />
+                  <Text className={`font-semibold text-sm ml-2 ${!!existingDeathRecord ? 'text-slate-300' : 'text-slate-700'}`}>
+                    {t("profile.add_child")}
+                  </Text>
+                </TouchableOpacity>
               </View>
-            )}
-
-            <View className="flex-row items-center justify-between border-t border-slate-100 pt-2 pt-5 pr-2" >
-              <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: "/dashboard/record/add-mother",
-                    params: { id: record.id, step: "1", from: "profile", mode: "new" },
-                  } as any)
-                }
-                disabled={addPregnancyDisabled}
-                className={`flex-row items-center justify-end px-2 ${addPregnancyDisabled ? 'opacity-50' : ''}`}
-              >
-                <Plus size={17} color={addPregnancyDisabled ? "#CBD5E1" : "#64748B"} strokeWidth={3} />
-                <Text className={`font-semibold ml-2 text-[15px] ${addPregnancyDisabled ? 'text-slate-300' : 'text-gray-600'}`}>
-                  {t("profile.add_pregnancy")}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: "/dashboard/profile/add-child",
-                    params: {
-                      motherId: record.id,
-                      pregnancyId: (pregnancy && !pregnancy.delivered && !pregnancy.ended)
-                        ? pregnancy.id
-                        : undefined,
-                      from: "profile"
-                    },
-                  } as any)
-                }
-                disabled={!!existingDeathRecord}
-                className={`flex-row items-center justify-end px-2 ${!!existingDeathRecord ? 'opacity-50' : ''}`}
-              >
-                <Plus size={17} color={!!existingDeathRecord ? "#CBD5E1" : "#64748B"} strokeWidth={3} />
-                <Text className={`font-semibold ml-2 text-[15px] ${!!existingDeathRecord ? 'text-slate-300' : 'text-gray-600'}`}>
-                  {t("profile.add_child")}
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
 
           {/* Quick Actions Card */}
-          <View className="bg-white p-5 rounded-3xl border border-slate-100">
+          <View className="bg-white rounded-3xl border border-slate-100 p-5">
+            {/* Header */}
             <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-lg bg-pink-50 items-center justify-center mr-3">
-                <Zap size={18} color="#EC4899" />
+              <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center mr-3">
+                <Zap size={16} color="#64748B" />
               </View>
-              <Text className="text-slate-800 font-bold text-lg">
+              <Text className="text-slate-800 font-semibold text-lg">
                 {t("profile.quick_actions")}
               </Text>
             </View>
-            <View className="flex-row flex-wrap gap-3">
+
+            {/* 2-column grid */}
+            <View className="flex-row gap-3 mb-3">
+              {/* Health Issues Toggle */}
               <TouchableOpacity
                 onPress={() => setShowHealthIssues(!showHealthIssues)}
-                activeOpacity={0.7}
-                className="flex-row items-center px-5 py-3.5 rounded-2xl border flex-1 justify-between"
+                activeOpacity={0.75}
+                className="flex-1 rounded-2xl border p-4 items-center justify-center"
                 style={{
                   backgroundColor: showHealthIssues ? "#FFF1F2" : "#F8FAFC",
                   borderColor: showHealthIssues ? "#FECDD3" : "#F1F5F9",
+                  minHeight: 100,
                 }}
               >
-                <View className="flex-row items-center">
-                  <View
-                    className="w-8 h-8 rounded-full items-center justify-center mr-3"
-                    style={{
-                      backgroundColor: showHealthIssues ? "#FFE4E6" : "#E2E8F0",
-                    }}
-                  >
-                    <AlertTriangle
-                      size={16}
-                      color={showHealthIssues ? "#E11D48" : "#475569"}
-                    />
-                  </View>
-                  <Text
-                    className="font-bold text-[15px]"
-                    style={{
-                      color: showHealthIssues ? "#9F1239" : "#1E293B",
-                    }}
-                  >
-                    {t("profile.health_issues")}
+                <View
+                  className="w-11 h-11 rounded-full items-center justify-center mb-2.5"
+                  style={{ backgroundColor: showHealthIssues ? "#FFE4E6" : "#E2E8F0" }}
+                >
+                  <AlertTriangle size={20} color={showHealthIssues ? "#E11D48" : "#64748B"} />
+                </View>
+                <Text
+                  className="text-[13px] font-semibold text-center leading-snug"
+                  style={{ color: showHealthIssues ? "#9F1239" : "#334155" }}
+                >
+                  {t("profile.health_issues")}
+                </Text>
+                <View
+                  className="mt-2 px-3 py-0.5 rounded-full"
+                  style={{ backgroundColor: showHealthIssues ? "#E11D48" : "#059669" }}
+                >
+                  <Text className="text-white text-[12px] font-semibold">
+                    {showHealthIssues ? t("profile.yes") : t("profile.no")}
                   </Text>
                 </View>
-                <View
-                  className="px-3 py-1 rounded-full"
-                  style={{
-                    backgroundColor: showHealthIssues ? "#E11D48" : "#059669",
-                  }}
-                >
-                  <Text className="text-white text-[12px] font-bold">
-                    {showHealthIssues ? t("family_planning.yes") : t("family_planning.no")}
+              </TouchableOpacity>
+
+              {/* ANC Visits */}
+              <TouchableOpacity
+                onPress={() => setAncModalVisible(true)}
+                activeOpacity={0.75}
+                className="flex-1 rounded-2xl border border-slate-200 bg-slate-50/50 p-4 items-center justify-center"
+                style={{ minHeight: 100 }}
+              >
+                <View className="w-11 h-11 rounded-full bg-slate-100 items-center justify-center mb-2.5">
+                  <Stethoscope size={20} color="#64748B" />
+                </View>
+                <Text className="text-slate-800 text-[13px] font-semibold text-center leading-snug">
+                  {t("profile.anc.title")}
+                </Text>
+                <View className="mt-2 px-3 py-0.5 rounded-full bg-slate-700">
+                  <Text className="text-white text-[12px] font-semibold">
+                    {t("profile.view")}
                   </Text>
                 </View>
               </TouchableOpacity>
             </View>
-          </View>
-
-          <View className="bg-white rounded-2xl border border-slate-100 flex flex-row justify-between items-center p-4 overflow-hidden">
-            <SectionTitle
-              title={t("profile.anc.title")}
-              icon={Stethoscope}
-              colorClass="bg-blue-500"
-            />
-            <TouchableOpacity
-              className="bg-primary py-2 px-3 rounded-md"
-              onPress={() => setAncModalVisible(true)}
-            >
-              <Text className="text-white font-semibold text-[13px]">{t("anc_modal.view_anc")}</Text>
-            </TouchableOpacity>
           </View>
 
           <CounselingReferralSection motherId={record.id} disabled={!!existingDeathRecord} />
@@ -755,7 +754,6 @@ export default function HmisRecordProfileScreen() {
             <SectionTitle
               title={t("profile.family_planning_method")}
               icon={User}
-              colorClass="bg-indigo-600"
             />
             <View className="p-4">
               <FamilyPlanningSection motherId={record.id} disabled={!!existingDeathRecord} />
@@ -767,7 +765,6 @@ export default function HmisRecordProfileScreen() {
               <SectionTitle
                 title={t("profile.birth_pnc.title")}
                 icon={Baby}
-                colorClass="bg-indigo-500"
               />
               <View className="p-4">
                 <View className="flex-row flex-wrap justify-between">
@@ -816,8 +813,6 @@ export default function HmisRecordProfileScreen() {
             <SectionTitle
               title={t("profile.mortality.title")}
               icon={AlertTriangle}
-              colorClass="bg-red-500"
-              bgColor="bg-red-50/30"
             />
             <View className="gap-y-3 p-4">
               {[
@@ -888,7 +883,6 @@ export default function HmisRecordProfileScreen() {
               <SectionTitle
                 title={t("profile.remarks")}
                 icon={FileText}
-                colorClass="bg-slate-500"
               />
               <View className="p-4 bg-slate-50 rounded-2xl border border-slate-100/50">
                 <Text className="text-slate-600 font-medium leading-relaxed text-[13px]">

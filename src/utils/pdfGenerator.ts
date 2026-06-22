@@ -32,7 +32,8 @@ export const convertToNepaliNumber = (
 const parseDateToNepali = (dateStr: string | null | undefined) => {
   if (!dateStr) return { year: "", month: "", day: "" };
   try {
-    const bsDate = AdToBs(dateStr);
+    const yearPart = parseInt(dateStr.split("-")[0], 10);
+    const bsDate = yearPart >= 2070 ? dateStr : AdToBs(dateStr);
     const [year, month, day] = bsDate.split("-");
     return {
       year: convertToNepaliNumber(year),

@@ -104,7 +104,12 @@ export default function ChildRegistrationForm() {
       const match = motherPregnancies.find((p) => {
         if (!p.expected_delivery_date) return false;
         try {
-          const edd = new Date(p.expected_delivery_date);
+          let eddAd = p.expected_delivery_date;
+          const year = parseInt(eddAd.split("-")[0], 10);
+          if (year >= 2070) {
+            eddAd = BsToAd(eddAd);
+          }
+          const edd = new Date(eddAd);
           if (isNaN(edd.getTime())) return false;
           const diffTime = Math.abs(childDob.getTime() - edd.getTime());
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));

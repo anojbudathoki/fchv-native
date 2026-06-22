@@ -355,6 +355,9 @@
     "title": "बिरामीको विवरण",
     "quick_actions": "द्रुत कार्यहरू",
     "health_issues": "स्वास्थ्य समस्याहरू",
+    "yes": "छ",
+    "no": "छैन",
+    "view": "हेर्नुहोस्",
     "alerts": {
       "delete_title": "रेकर्ड मेटाउनुहोस्",
       "delete_msg": "के तपाइँ यो दर्ता प्रविष्टि मेटाउन निश्चित हुनुहुन्छ?",
@@ -1214,6 +1217,10 @@
     "general_details": "परामर्श र सेवा विवरण",
     "after_pregnancy": "गर्भवती भए पछिको परामर्श",
     "after_child_birth": "सुत्केरी र बच्चाको हेरचाह परामर्श",
+    "mother_health": "आमाको स्वास्थ्य",
+    "pregnancy_care": "गर्भावस्था हेरचाह",
+    "post_delivery_care": "सुत्केरी हेरचाह",
+    "family_planning_section": "परिवार नियोजन",
     "failed_to_save": "बचत गर्न असफल भयो",
     "failed_to_delete": "हटाउन असफल भयो",
     "log_prefix": "#{{index}}: {{date}}",
@@ -1224,7 +1231,15 @@
     "ors_packet_one": "प्याकेट",
     "ors_packet_other": "प्याकेट",
     "zinc_tablet_one": "चक्की",
-    "zinc_tablet_other": "चक्की"
+    "zinc_tablet_other": "चक्की",
+    "records": "रेकर्डहरू",
+    "no_records": "कुनै रेकर्ड छैन",
+    "status_completed": "सम्पन्न",
+    "status_pending": "बाँकी",
+    "status_not_started": "सुरु नभएको",
+    "edit_record": "विवरण सम्पादन",
+    "add_record": "विवरण थप्नुहोस्",
+    "add_another_record": "अर्को रेकर्ड थप्नुहोस्"
   },
   "mothers_group_meeting": {
     "title": "आमा समूहको बैठक",

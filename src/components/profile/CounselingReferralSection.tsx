@@ -1,7 +1,7 @@
 import { useLanguage } from "@/context/LanguageContext";
-import { ClipboardList, Plus, Trash2, Heart, Activity, Baby } from "lucide-react-native";
+import { Activity, Baby, Heart, Plus, Trash2, ChevronDown, ChevronUp, Check, AlertTriangle, Users } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Modal, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Modal, Text, TouchableOpacity, View, LayoutAnimation, Platform, UIManager } from "react-native";
 import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import {
   COUNCELING_QUESTION_AFTER_PREGNANT,
@@ -14,9 +14,189 @@ import { useToast } from "../../context/ToastContext";
 
 import { CounselingReferralStoreType, getCounselingReferralByMother, getCounselingReferralHistory, saveCounselingReferral } from "@/hooks/database/models/CounselingReferralModel";
 import { getInfantMonitoringsByMother } from "@/hooks/database/models/InfantMonitoringModel";
+import { isHealthProblemQuestion, useHealthIssues } from "@/store/healthIssuesStore";
 import { getPregnancyByMotherId } from "../../hooks/database/models/PregnantWomenModal";
 import { toNepaliNumbers } from "../../utils/dateHelper";
-import { useHealthIssues, isHealthProblemQuestion } from "@/store/healthIssuesStore";
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
+
+interface QuestionCardProps {
+  question: any;
+  logs: any[];
+  isOneTime: boolean;
+  isAdding: boolean;
+  onAddPress: () => void;
+  onDeletePress: () => void;
+  disabled: boolean;
+  language: string;
+  t: (key: string, options?: any) => string;
+}
+
+const QuestionCard = ({
+  question,
+  logs,
+  isOneTime,
+  isAdding,
+  onAddPress,
+  onDeletePress,
+  disabled,
+  language,
+  t
+}: QuestionCardProps) => {
+  const [isLogsExpanded, setIsLogsExpanded] = useState(false);
+
+  const isRecorded = logs.length > 0;
+  const isHealth = isHealthProblemQuestion(question.id);
+  
+  let status: 'completed' | 'pending' | 'not_started' = 'not_started';
+  if (isRecorded) {
+    status = 'completed';
+  } else if (isHealth) {
+    status = 'pending';
+  }
+
+  const getStatusLabel = () => {
+    if (status === 'completed') return t("counseling_section.status_completed");
+    if (status === 'pending') return t("counseling_section.status_pending");
+    return t("counseling_section.status_not_started");
+  };
+
+  return (
+    <View className="bg-white border border-slate-100/80 rounded-2xl p-4 mb-3">
+      <View className="flex-row items-start">
+        {/* Status Icon */}
+        <View className="mr-3 mt-0.5">
+          {status === 'completed' ? (
+            <View className="w-5 h-5 rounded-full bg-emerald-500 items-center justify-center">
+              <Check size={12} color="white" strokeWidth={4} />
+            </View>
+          ) : status === 'pending' ? (
+            <View className="w-5 h-5 rounded-full bg-amber-500 items-center justify-center">
+              <AlertTriangle size={12} color="white" strokeWidth={3} />
+            </View>
+          ) : (
+            <View className="w-5 h-5 rounded-full border-2 border-slate-300 bg-white" />
+          )}
+        </View>
+
+        {/* Question Text */}
+        <View className="flex-1">
+          <Text className="text-slate-800 text-[16px] font-semibold leading-relaxed">
+            {language === "np" ? question.ne : question.en}
+          </Text>
+        </View>
+      </View>
+
+      {/* Badges and Action buttons row */}
+      <View className="flex-row items-center justify-between mt-4">
+        {/* Status Badge */}
+        <View className={`px-2.5 py-1 rounded-full border ${
+          status === 'completed' 
+            ? 'bg-emerald-50 border-emerald-100' 
+            : status === 'pending' 
+              ? 'bg-amber-50 border-amber-100' 
+              : 'bg-slate-50 border-slate-100'
+        }`}>
+          <Text className={`text-[12px] font-bold uppercase ${
+            status === 'completed' 
+              ? 'text-emerald-700' 
+              : status === 'pending' 
+                ? 'text-amber-700' 
+                : 'text-slate-500'
+          }`}>
+            {getStatusLabel()}
+          </Text>
+        </View>
+
+        {/* Action Button */}
+        {status === 'completed' ? (
+          <TouchableOpacity
+            onPress={() => {
+              LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+              setIsLogsExpanded(!isLogsExpanded);
+            }}
+            className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-full"
+          >
+            <Text className="text-slate-600 font-semibold text-sm">
+              {t("counseling_section.edit_record")}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            disabled={disabled || isAdding}
+            onPress={onAddPress}
+            className={`w-28 py-1.5 rounded-full items-center justify-center ${
+              disabled ? 'bg-slate-200' : 'bg-slate-700'
+            }`}
+          >
+            {isAdding ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="text-white font-semibold text-sm">
+                {t("counseling_section.add_record")}
+              </Text>
+            )}
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* Logs sub-section */}
+      {status === 'completed' && isLogsExpanded && (
+        <View className="mt-3 pt-3 border-t border-slate-100">
+          <View className="gap-y-2">
+            {logs.map((log: any, index: number) => {
+              const isLatest = index === logs.length - 1;
+              const canDelete = isLatest; // Allow deletion of the latest entry
+
+              let dateStr = "";
+              try {
+                const pureDate = log.date.split("T")[0];
+                dateStr = language === "np" ? toNepaliNumbers(AdToBs(pureDate)) : pureDate;
+              } catch (e) {
+                dateStr = log.date.split("T")[0];
+              }
+
+              return (
+                <View key={index} className={`flex-row items-center justify-between ${canDelete ? "bg-red-50/50 border border-red-100" : "bg-slate-50 border border-slate-100"} px-3 py-2 rounded-xl`}>
+                  <Text className={`text-xs font-semibold ${canDelete ? "text-red-700" : "text-slate-600"}`}>
+                    {t("counseling_section.log_prefix", { index: language === "np" ? toNepaliNumbers(index + 1) : index + 1, date: dateStr })}
+                  </Text>
+                  {canDelete && (
+                    <TouchableOpacity
+                      onPress={onDeletePress}
+                      disabled={disabled}
+                      className="p-1"
+                    >
+                      <Trash2 size={14} color={disabled ? "#94A3B8" : "#DC2626"} />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              );
+            })}
+          </View>
+
+          {/* Add another record button inside expanded logs */}
+          {(!isOneTime || logs.length === 0) && (
+            <TouchableOpacity
+              disabled={disabled || isAdding}
+              onPress={onAddPress}
+              className="mt-3 flex-row items-center justify-center p-2.5 border border-dashed border-slate-300 rounded-xl bg-slate-50/50"
+            >
+              <Plus size={14} color="#64748B" strokeWidth={3} className="mr-1" />
+              <Text className="text-slate-600 font-semibold text-xs">
+                {t("counseling_section.add_another_record")}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+    </View>
+  );
+};
 
 interface CounselingReferralSectionProps {
   motherId: string;
@@ -42,6 +222,21 @@ export default function CounselingReferralSection({
   const [currentPregnancyId, setCurrentPregnancyId] = useState<string | null>(null);
   const [addingQuestionId, setAddingQuestionId] = useState<string | null>(null);
 
+  // Expanded accordion sections state
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    mother: true,
+    pregnancy: false,
+    post_birth: false,
+  });
+
+  const toggleSection = (section: string) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   // Delete confirmation modal state
   const [deleteModal, setDeleteModal] = useState(false);
   const [pendingDeleteQuestionId, setPendingDeleteQuestionId] = useState<string | null>(null);
@@ -60,16 +255,33 @@ export default function CounselingReferralSection({
       const children = await getInfantMonitoringsByMother(motherId);
       setHasChild(children && children.length > 0);
 
-      const data = await getCounselingReferralByMother(motherId, pregId);
+      // Try loading current record: with pregnancy context, then any pregnancy, then any month
+      let data = await getCounselingReferralByMother(motherId, pregId);
+      if (!data) {
+        data = await getCounselingReferralByMother(motherId);
+      }
+      if (!data) {
+        // Final fallback: fetch most recent record regardless of year/month
+        const allRecords = await getCounselingReferralHistory(motherId, pregId);
+        data = allRecords.length > 0 ? allRecords[0] : null;
+      }
       setRecord(data);
       if (data?.answers) {
         setAnswers(JSON.parse(data.answers));
       }
 
-      // Load full history for disabling already added ones
-      const history = await getCounselingReferralHistory(motherId, pregId);
+      // Load ALL history for this mother — fetch with AND without pregnancy context
+      // to handle cases where the stored pregnancy ID differs from the current one
+      const [allHistory, pregnancyHistory] = await Promise.all([
+        getCounselingReferralHistory(motherId),
+        pregId ? getCounselingReferralHistory(motherId, pregId) : Promise.resolve([]),
+      ]);
+      const mergedHistory = [
+        ...allHistory,
+        ...pregnancyHistory.filter(ph => !allHistory.some(ah => ah.id === ph.id)),
+      ];
       const aggregated: Record<string, any> = {};
-      history.forEach(h => {
+      mergedHistory.forEach(h => {
         if (h.answers) {
           const parsed = JSON.parse(h.answers);
           Object.keys(parsed).forEach(key => {
@@ -219,102 +431,89 @@ export default function CounselingReferralSection({
     </Modal>
   );
 
-  const renderLogs = (questionId: string) => {
-    const logs = Array.isArray(historyAnswers[questionId]) ? historyAnswers[questionId] : [];
-    if (logs.length === 0) return null;
+  const renderAccordionSection = (
+    key: string,
+    title: string,
+    icon: any,
+    colorClass: string,
+    questions: { question: any; isOneTime: boolean }[]
+  ) => {
+    const isExpanded = expandedSections[key];
+    const visibleQuestions = questions.filter((q) => {
+      return showHealthIssues || !isHealthProblemQuestion(q.question.id);
+    });
+
+    if (visibleQuestions.length === 0) return null;
 
     return (
-      <View className="flex-1 flex-row flex-wrap mt-2 gap-2 items-center">
-        {logs.map((log: any, index: number) => {
-          const isLatest = index === logs.length - 1;
-          const canDelete = isLatest; // Allow deletion of the latest entry to correct mistakes
-
-          let dateStr = "";
-          try {
-            const pureDate = log.date.split("T")[0];
-            dateStr = language === "np" ? toNepaliNumbers(AdToBs(pureDate)) : pureDate;
-          } catch (e) {
-            dateStr = log.date.split("T")[0];
-          }
-
-          return (
-            <View key={index} className={`flex-row items-center ${canDelete ? "bg-red-50 border border-red-100" : "bg-slate-50 border border-slate-100"} px-2 py-1 rounded-md`}>
-              <Text className={`text-[13px] font-medium ${canDelete ? "text-red-700" : "text-slate-500"}`}>
-                {t("counseling_section.log_prefix", { index: language === "np" ? toNepaliNumbers(index + 1) : index + 1, date: dateStr })}
-              </Text>
-              {canDelete && (
-                <TouchableOpacity
-                  onPress={() => requestDeleteLatest(questionId)}
-                  disabled={disabled}
-                  className="ml-1.5"
-                >
-                  <Trash2 size={10} color={disabled ? "#94A3B8" : "#DC2626"} />
-                </TouchableOpacity>
-              )}
+      <View className="mb-4 border border-slate-100 rounded-xl overflow-hidden bg-gray-50">
+        {/* Accordion Header */}
+        <TouchableOpacity
+          onPress={() => toggleSection(key)}
+          activeOpacity={0.7}
+          className="flex-row items-center justify-between px-5 py-4 bg-white"
+        >
+          <View className="flex-row items-center">
+            <View className={`w-9 h-9 rounded-full ${colorClass} items-center justify-center mr-3`}>
+              {icon}
             </View>
-          );
-        })}
+            <Text className="text-slate-800 text-xl font-semibold">
+              {title}
+            </Text>
+          </View>
+          {isExpanded ? (
+            <ChevronUp size={20} color="#64748B" />
+          ) : (
+            <ChevronDown size={20} color="#64748B" />
+          )}
+        </TouchableOpacity>
+
+        {/* Accordion Content */}
+        {isExpanded && (
+          <View className="px-4 pt-3 pb-2">
+            {visibleQuestions.map(({ question, isOneTime }) => {
+              const logs = Array.isArray(historyAnswers[question.id]) ? historyAnswers[question.id] : [];
+              const isAdding = addingQuestionId === question.id;
+
+              return (
+                <QuestionCard
+                  key={question.id}
+                  question={question}
+                  logs={logs}
+                  isOneTime={isOneTime}
+                  isAdding={isAdding}
+                  onAddPress={() => {
+                    setDatePickerQuestionId(question.id);
+                    setShowDatePicker(true);
+                  }}
+                  onDeletePress={() => requestDeleteLatest(question.id)}
+                  disabled={disabled || false}
+                  language={language}
+                  t={t}
+                />
+              );
+            })}
+          </View>
+        )}
       </View>
     );
   };
 
-  const renderQuestionList = (
-    questions: any[],
-    isOneTime: boolean = false,
-    theme: { activeBtnBg: string } = { activeBtnBg: "bg-[#475569]" }
-  ) => {
-    const visibleQuestions = showHealthIssues
-      ? questions
-      : questions.filter((q) => !isHealthProblemQuestion(q.id));
-
-    return visibleQuestions.map((question) => {
-      const logs = Array.isArray(historyAnswers[question.id]) ? historyAnswers[question.id] : [];
-      const isRecordedEver = logs.length > 0;
-      const disableAdd = isOneTime && isRecordedEver;
-      const isAdding = addingQuestionId === question.id;
-      const isAddDisabled = disableAdd || disabled || isAdding;
-      const isUnavailable = disableAdd || disabled;
-
-      return (
-        <View
-          key={question.id}
-          className="p-4 border-b border-slate-100/50"
-        >
-          <View className="flex-row items-start justify-between">
-            <View className="flex-1 mr-4">
-              <Text
-                className={"text-slate-800 font-semibold text-[16px] leading-relaxed"}
-              >
-                {language === "np" ? question.ne : question.en}
-              </Text>
-            </View>
-            <TouchableOpacity
-              disabled={isAddDisabled}
-              onPress={() => {
-                setDatePickerQuestionId(question.id);
-                setShowDatePicker(true);
-              }}
-              activeOpacity={0.75}
-              style={{ opacity: 1, width: 32, height: 32, minWidth: 32, flexShrink: 0 }}
-              className={`items-center justify-center rounded-lg ${isUnavailable && !isAdding ? "bg-slate-100" : theme.activeBtnBg}`}
-            >
-              {isAdding ? (
-                <ActivityIndicator size={15} color="white" />
-              ) : (
-                <Plus size={19} color={isUnavailable ? "#94a3b8" : "white"} strokeWidth={3} />
-              )}
-            </TouchableOpacity>
-          </View>
-          {isRecordedEver && renderLogs(question.id)}
-        </View>
-      );
-    });
-  };
-
   if (loading) return null;
 
-  const isHomeDeliveryAdded = Array.isArray(historyAnswers['home_delivery']) && historyAnswers['home_delivery'].length > 0;
+  // 1. Mother Health (General mother questions)
+  const motherQuestions = COUNSELING_REFERRAL_QUESTIONS_ONE_TIME_MOTHER.map(
+    q => ({ question: q, isOneTime: true })
+  );
 
+  // 2. Pregnancy Care questions
+  const pregQuestions = [
+    ...COUNCELING_QUESTION_AFTER_PREGNANT.map(q => ({ question: q, isOneTime: false })),
+    ...COUNCELING_QUESTION_AFTER_PREGNANT_ONE_TIME.map(q => ({ question: q, isOneTime: true }))
+  ];
+
+  // 4. Post Delivery Care questions
+  const isHomeDeliveryAdded = Array.isArray(historyAnswers['home_delivery']) && historyAnswers['home_delivery'].length > 0;
   const filteredPostBirthOneTimeQuestions = COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN_ONE_TIME.filter(
     (question) => {
       if (question.id === "postnatal_iron_tablets_given" || question.id === "home_delivery_misoprostol") {
@@ -323,62 +522,42 @@ export default function CounselingReferralSection({
       return true;
     }
   );
+  const postBirthQuestions = [
+    ...COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN.map(q => ({ question: q, isOneTime: false })),
+    ...filteredPostBirthOneTimeQuestions.map(q => ({ question: q, isOneTime: true }))
+  ];
 
   return (
-    <View className="gap-y-4">
+    <View className="gap-y-1">
       {renderDeleteConfirmModal()}
 
-      {/* General Counseling Section */}
-      <View className="bg-white rounded-2xl border border-indigo-100/70 overflow-hidden">
-        <View className="flex-row items-center px-4 py-3.5 bg-indigo-50/30 border-b border-indigo-100/40">
-          <View className="w-8 h-8 rounded-lg bg-indigo-100/70 items-center justify-center mr-3">
-            <Heart size={18} color="#4F46E5" />
-          </View>
-          <Text className="text-xl font-semibold text-indigo-900">
-            {t("counseling_section.general_details")}
-          </Text>
-        </View>
-        <View>
-          {/* {renderQuestionList(COUNSELING_REFERRAL_QUESTIONS, false, { activeBtnBg: "bg-indigo-600" })} */}
-          {renderQuestionList(COUNSELING_REFERRAL_QUESTIONS_ONE_TIME_MOTHER, true, { activeBtnBg: "bg-indigo-600" })}
-        </View>
-      </View>
-
-      {/* Pregnancy Specific Counseling Section */}
-      {isPregnant && (
-        <View className="bg-white rounded-2xl border border-amber-100/70 overflow-hidden">
-          <View className="flex-row items-center px-4 py-3.5 bg-amber-50/30 border-b border-amber-100/40">
-            <View className="w-8 h-8 rounded-lg bg-amber-100/70 items-center justify-center mr-3">
-              <Activity size={18} color="#D97706" />
-            </View>
-            <Text className="text-xl font-semibold text-amber-900">
-              {t("counseling_section.after_pregnancy")}
-            </Text>
-          </View>
-          <View>
-            {renderQuestionList(COUNCELING_QUESTION_AFTER_PREGNANT, false, { activeBtnBg: "bg-amber-600" })}
-            {renderQuestionList(COUNCELING_QUESTION_AFTER_PREGNANT_ONE_TIME, true, { activeBtnBg: "bg-amber-600" })}
-          </View>
-        </View>
+      {/* 1. Mother Health */}
+      {renderAccordionSection(
+        "mother",
+        t("counseling_section.mother_health") || (language === "np" ? "आमाको स्वास्थ्य" : "Mother Health"),
+        <Heart size={18} color="#64748B" />,
+        "bg-slate-100",
+        motherQuestions
       )}
 
-      {/* Post-Birth Specific Counseling Section */}
-      {hasChild && (
-        <View className="bg-white rounded-2xl border border-emerald-100/70 overflow-hidden">
-          <View className="flex-row items-center px-4 py-3.5 bg-emerald-50/30 border-b border-emerald-100/40">
-            <View className="w-8 h-8 rounded-lg bg-emerald-100/70 items-center justify-center mr-3">
-              <Baby size={18} color="#059669" />
-            </View>
-            <Text className="text-xl font-semibold text-emerald-900">
-              {t("counseling_section.after_child_birth")}
-            </Text>
-          </View>
-          <View>
-            {renderQuestionList(COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN, false, { activeBtnBg: "bg-emerald-600" })}
-            {renderQuestionList(filteredPostBirthOneTimeQuestions, true, { activeBtnBg: "bg-emerald-600" })}
-          </View>
-        </View>
+      {/* 2. Pregnancy Care */}
+      {isPregnant && renderAccordionSection(
+        "pregnancy",
+        t("counseling_section.pregnancy_care") || (language === "np" ? "गर्भावस्था हेरचाह" : "Pregnancy Care"),
+        <Activity size={18} color="#64748B" />,
+        "bg-slate-100",
+        pregQuestions
       )}
+
+      {/* 3. Post Delivery Care */}
+      {hasChild && renderAccordionSection(
+        "post_birth",
+        t("counseling_section.post_delivery_care") || (language === "np" ? "सुत्केरी हेरचाह" : "Post Delivery Care"),
+        <Baby size={18} color="#64748B" />,
+        "bg-slate-100",
+        postBirthQuestions
+      )}
+
       {/* Calendar Date Picker for manual date selection */}
       <CalendarPicker
         visible={showDatePicker}
@@ -400,7 +579,7 @@ export default function CounselingReferralSection({
         }}
         language={language === "np" ? "np" : "en"}
         theme="light"
-        brandColor="#4F46E5"
+        brandColor="#475569"
         dayTextStyle={{ fontWeight: "normal" }}
         weekTextStyle={{ fontWeight: "normal" }}
         titleTextStyle={{ fontWeight: "normal" }}

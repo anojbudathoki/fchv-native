@@ -179,12 +179,16 @@ export default function PregnancyForm({
     return "";
   };
 
-  const toNepaliDate = (adDate: string) => {
-    if (!adDate || adDate === "N/A") return "";
+  const toNepaliDate = (dateStr: string) => {
+    if (!dateStr || dateStr === "N/A") return "";
     try {
-      return AdToBs(adDate);
+      const year = parseInt(dateStr.split("-")[0], 10);
+      if (year >= 2070) {
+        return dateStr;
+      }
+      return AdToBs(dateStr);
     } catch {
-      return adDate;
+      return dateStr;
     }
   };
 
@@ -399,7 +403,9 @@ export default function PregnancyForm({
           setErrors({ ...errors, lmp: "" });
           try {
             const adDate = BsToAd(bsDate);
-            setEdd(calcEddFromLmp(adDate));
+            const eddAd = calcEddFromLmp(adDate);
+            const eddBs = AdToBs(eddAd);
+            setEdd(eddBs);
           } catch (e) {
             console.error("BS to AD conversion error:", e);
           }

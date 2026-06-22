@@ -30,8 +30,11 @@ export const useHealthIssues = (motherId: string) => {
 };
 
 // List of health problem-related question IDs that are hidden by default.
-// Currently empty — all counseling questions are always shown regardless of toggle.
-export const HEALTH_PROBLEM_QUESTIONS: string[] = [];
+// When toggled ON (mother has health problem), these questions become visible.
+export const HEALTH_PROBLEM_QUESTIONS: string[] = [
+  'uterine_prolapse_referral',
+  'cervical_cancer_screening_referral',
+];
 
 export const isHealthProblemQuestion = (questionId: string): boolean => {
   return HEALTH_PROBLEM_QUESTIONS.includes(questionId);

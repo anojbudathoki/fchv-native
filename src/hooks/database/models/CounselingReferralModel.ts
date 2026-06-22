@@ -27,11 +27,13 @@ export async function getCounselingReferralByMother(
     let query = `SELECT * FROM counseling_referral WHERE mother = ? AND reg_year = ? AND reg_month = ? AND is_deleted = 0`;
     const params: any[] = [mother, reg_year, reg_month];
 
-    if (pregnancy) {
-        query += ` AND pregnancy = ?`;
-        params.push(pregnancy);
-    } else {
-        query += ` AND pregnancy IS NULL`;
+    if (pregnancy !== undefined) {
+        if (pregnancy) {
+            query += ` AND pregnancy = ?`;
+            params.push(pregnancy);
+        } else {
+            query += ` AND pregnancy IS NULL`;
+        }
     }
 
     const result = await db.getFirstAsync<CounselingReferralStoreType>(query, params);
@@ -119,11 +121,13 @@ export async function getCounselingReferralHistory(
     let query = `SELECT * FROM counseling_referral WHERE mother = ? AND is_deleted = 0`;
     const params: any[] = [mother];
 
-    if (pregnancy) {
-        query += ` AND pregnancy = ?`;
-        params.push(pregnancy);
-    } else {
-        query += ` AND pregnancy IS NULL`;
+    if (pregnancy !== undefined) {
+        if (pregnancy) {
+            query += ` AND pregnancy = ?`;
+            params.push(pregnancy);
+        } else {
+            query += ` AND pregnancy IS NULL`;
+        }
     }
 
     query += ` ORDER BY reg_year DESC, reg_month DESC`;
