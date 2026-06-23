@@ -255,33 +255,24 @@ export default function CounselingReferralSection({
       const children = await getInfantMonitoringsByMother(motherId);
       setHasChild(children && children.length > 0);
 
-      // Try loading current record: with pregnancy context, then any pregnancy, then any month
-      let data = await getCounselingReferralByMother(motherId, pregId);
-      if (!data) {
-        data = await getCounselingReferralByMother(motherId);
-      }
-      if (!data) {
-        // Final fallback: fetch most recent record regardless of year/month
-        const allRecords = await getCounselingReferralHistory(motherId, pregId);
-        data = allRecords.length > 0 ? allRecords[0] : null;
+      // Load record scoped to the current pregnancy context only
+      let data;
+      if (pregId) {
+        data = await getCounselingReferralByMother(motherId, pregId);
+      } else {
+        data = await getCounselingReferralByMother(motherId, null);
       }
       setRecord(data);
       if (data?.answers) {
         setAnswers(JSON.parse(data.answers));
       }
 
-      // Load ALL history for this mother — fetch with AND without pregnancy context
-      // to handle cases where the stored pregnancy ID differs from the current one
-      const [allHistory, pregnancyHistory] = await Promise.all([
-        getCounselingReferralHistory(motherId),
-        pregId ? getCounselingReferralHistory(motherId, pregId) : Promise.resolve([]),
-      ]);
-      const mergedHistory = [
-        ...allHistory,
-        ...pregnancyHistory.filter(ph => !allHistory.some(ah => ah.id === ph.id)),
-      ];
+      // Load history scoped to the current pregnancy context only
+      const history = pregId
+        ? await getCounselingReferralHistory(motherId, pregId)
+        : await getCounselingReferralHistory(motherId);
       const aggregated: Record<string, any> = {};
-      mergedHistory.forEach(h => {
+      history.forEach(h => {
         if (h.answers) {
           const parsed = JSON.parse(h.answers);
           Object.keys(parsed).forEach(key => {
@@ -534,7 +525,7 @@ export default function CounselingReferralSection({
       {/* 1. Mother Health */}
       {renderAccordionSection(
         "mother",
-        t("counseling_section.mother_health") || (language === "np" ? "आमाको स्वास्थ्य" : "Mother Health"),
+        t("counseling_section.mother_health"),
         <Heart size={18} color="#64748B" />,
         "bg-slate-100",
         motherQuestions
@@ -543,7 +534,7 @@ export default function CounselingReferralSection({
       {/* 2. Pregnancy Care */}
       {isPregnant && renderAccordionSection(
         "pregnancy",
-        t("counseling_section.pregnancy_care") || (language === "np" ? "गर्भावस्था हेरचाह" : "Pregnancy Care"),
+        t("counseling_section.pregnancy_care"),
         <Activity size={18} color="#64748B" />,
         "bg-slate-100",
         pregQuestions
@@ -552,7 +543,7 @@ export default function CounselingReferralSection({
       {/* 3. Post Delivery Care */}
       {hasChild && renderAccordionSection(
         "post_birth",
-        t("counseling_section.post_delivery_care") || (language === "np" ? "सुत्केरी हेरचाह" : "Post Delivery Care"),
+        t("counseling_section.post_delivery_care"),
         <Baby size={18} color="#64748B" />,
         "bg-slate-100",
         postBirthQuestions

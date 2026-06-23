@@ -9,12 +9,14 @@ import { useToast } from "../context/ToastContext";
 import {
   getAllMothersList,
   getMotherProfile,
+  updateMotherPregnancyData,
   MotherListDbItem,
 } from "../hooks/database/models/MotherModel";
 import {
   createPregnancy,
   getPregnancyByMotherId,
 } from "../hooks/database/models/PregnantWomenModal";
+import PrenatalRegisterCounselingModal from "./forms/PrenatalRegisterCounselingModal";
 import { BoxInput, FieldLabel } from "./FormElements";
 import { ProfilePicker } from "./ProfilePicker";
 import { Button } from "./button";
@@ -60,6 +62,9 @@ export default function PregnancyForm({
   const [showLmpPicker, setShowLmpPicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const [showCounselingModal, setShowCounselingModal] = useState(false);
+  const [savedPregnancyId, setSavedPregnancyId] = useState<string | null>(null);
 
   const initialMotherId = id && id !== "undefined" ? id : "";
 
@@ -222,8 +227,9 @@ export default function PregnancyForm({
 
     setIsLoading(true);
     try {
+      const newPregId = pregnancyId || Crypto.randomUUID();
       await createPregnancy({
-        id: pregnancyId || Crypto.randomUUID(),
+        id: newPregId,
         mother: selectedMotherId,
         gravida: parseInt(gravida) || 0,
         parity: parseInt(parity) || 0,
@@ -235,21 +241,34 @@ export default function PregnancyForm({
         selected: true,
         risk_level: riskLevel,
       });
+
+      await updateMotherPregnancyData(selectedMotherId, {
+        lmp_date: lmp,
+        gravida: parseInt(gravida) || 0,
+        parity: parseInt(parity) || 0,
+      });
+
       showToast(t("pregnancy_form.messages.save_success"));
 
-      if (from === "profile") {
-        router.replace({
-          pathname: "/dashboard/profile",
-          params: { id: selectedMotherId },
-        } as any);
-      } else {
-        router.replace("/dashboard/record");
-      }
+      setSavedPregnancyId(newPregId);
+      setShowCounselingModal(true);
     } catch (err) {
       console.error("Error saving form:", err);
       showToast(t("pregnancy_form.messages.save_error"));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCounselingModalClose = () => {
+    setShowCounselingModal(false);
+    if (from === "profile") {
+      router.replace({
+        pathname: "/dashboard/profile",
+        params: { id: selectedMotherId },
+      } as any);
+    } else {
+      router.replace("/dashboard/record");
     }
   };
 
@@ -418,6 +437,15 @@ export default function PregnancyForm({
         weekTextStyle={{ fontWeight: "normal" }}
         titleTextStyle={{ fontWeight: "normal" }}
       />
+
+      {savedPregnancyId && (
+        <PrenatalRegisterCounselingModal
+          visible={showCounselingModal}
+          onClose={handleCounselingModalClose}
+          motherId={selectedMotherId}
+          pregnancyId={savedPregnancyId}
+        />
+      )}
     </View>
   );
 }

@@ -17,7 +17,6 @@ import municipalitiesData from "../../assets/json/municipalities.json";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../../context/ToastContext";
 import { getMotherProfile, updateMother } from "../../hooks/database/models/MotherModel";
-import { updatePregnancy } from "../../hooks/database/models/PregnantWomenModal";
 import { Province } from "../../types/profile";
 import CameraCapture from "../CameraCapture";
 import CustomHeader from "../CustomHeader";
@@ -61,16 +60,13 @@ export default function CompleteForm({ id, from }: { id?: string; from?: string 
   const [partnerMobile, setPartnerMobile] = useState("");
   const [partnerAge, setPartnerAge] = useState("");
   const [emergencyContact, setEmergencyContact] = useState("");
-  const [lmpDate, setLmpDate] = useState("");
   const [parity, setParity] = useState("");
   const [gravida, setGravida] = useState("");
 
   const [codeState, setCodeState] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [showDobPicker, setShowDobPicker] = useState(false);
-  const [showLmpPicker, setShowLmpPicker] = useState(false);
   const [pregnancyId, setPregnancyId] = useState<string | null>(null);
-  const [edd, setEdd] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -124,8 +120,6 @@ export default function CompleteForm({ id, from }: { id?: string; from?: string 
 
             if (data.gravida !== undefined && data.gravida !== null) setGravida(String(data.gravida));
             if (data.parity !== undefined && data.parity !== null) setParity(String(data.parity));
-
-            setLmpDate(data.lmp || "");
 
             if (data.image && !data.image.includes("vectorified")) {
               setPhotoUrl(data.image);
@@ -213,35 +207,10 @@ export default function CompleteForm({ id, from }: { id?: string; from?: string 
         partner_mobile: partnerMobile,
         partner_age: partnerAge,
         emergency_contact_number: emergencyContact,
-        lmp_date: lmpDate,
         parity: parseInt(parity) || 0,
         gravida: parseInt(gravida) || 0,
         is_synced: false,
       });
-
-      if (pregnancyId) {
-        let calculatedEdd: string | undefined = undefined;
-        if (lmpDate) {
-          try {
-            const adLmp = BsToAd(lmpDate);
-            const lmpD = new Date(adLmp);
-            if (!isNaN(lmpD.getTime())) {
-              const edd = new Date(lmpD);
-              edd.setDate(edd.getDate() + 280);
-              const eddAd = edd.toISOString().split("T")[0];
-              calculatedEdd = AdToBs(eddAd);
-            }
-          } catch (e) {
-            console.error("Error calculating EDD from LMP in CompleteForm:", e);
-          }
-        }
-        await updatePregnancy(pregnancyId, {
-          lmp_date: lmpDate,
-          expected_delivery_date: calculatedEdd,
-          gravida: parseInt(gravida) || 0,
-          parity: parseInt(parity) || 0
-        });
-      }
 
       showToast("Mother details updated successfully");
       router.back();
@@ -532,16 +501,6 @@ export default function CompleteForm({ id, from }: { id?: string; from?: string 
               </View>
             </View>
 
-            <FieldLabel label={t("complete_form.fields.lmp")} />
-            <Pressable onPress={() => setShowLmpPicker(true)} className="mb-6">
-              <View className="rounded-md px-4 h-14 border border-gray-300 flex-row items-center justify-between bg-white">
-                <Text className={`text-base ${lmpDate ? "text-[#1E293B]" : "text-[#9CA3AF]"}`}>
-                  {lmpDate || t("complete_form.fields.lmp_placeholder")}
-                </Text>
-                <Calendar size={18} color="#0056D2" />
-              </View>
-            </Pressable>
-
             <View className="flex-row gap-4">
               <View className="flex-1">
                 <FieldLabel label={t("complete_form.fields.gravida")} />
@@ -646,18 +605,6 @@ export default function CompleteForm({ id, from }: { id?: string; from?: string 
         date={dobBs || undefined}
       />
 
-      <CalendarPicker
-        visible={showLmpPicker}
-        onClose={() => setShowLmpPicker(false)}
-        onDateSelect={(bsDate) => {
-          setShowLmpPicker(false);
-          setLmpDate(bsDate);
-        }}
-        language={language === "np" ? "np" : "en"}
-        theme="light"
-        brandColor="#0056D2"
-        date={lmpDate || undefined}
-      />
     </SafeAreaView >
   );
 }

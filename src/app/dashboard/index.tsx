@@ -327,158 +327,102 @@ export default function DashboardScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <View>
-            {/* Quick Actions */}
-            <View
-              style={{
-                paddingHorizontal: 20,
-                flexDirection: "column",
-                gap: 12,
-                marginTop: 20,
-                marginBottom: 24,
-              }}
-            >
-              <View className="flex-1 gap-4 flex-row">
+            {/* Quick Access — 6-button 3×2 grid */}
+            <View style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 24 }}>
 
+              {/* Section label */}
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "700",
+                  color: "#1E293B",
+                  marginBottom: 14,
+                  letterSpacing: 0.3,
+                }}
+              >
+                {t("dashboard.quick_actions.title")}
+              </Text>
+
+              {/* Row 1 — purple/lavender */}
+              <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
+                {/* Pregnant Woman */}
                 <TouchableOpacity
                   onPress={() => router.push("/dashboard/record")}
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#E0F2FE",
-                    padding: 18,
-                    paddingHorizontal: 10,
-                    borderRadius: 20,
-                    alignItems: "center",
-                  }}
+                  style={{ flex: 1, backgroundColor: "#EDE9FE", borderRadius: 18, paddingVertical: 16, paddingHorizontal: 6, alignItems: "center", minHeight: 110, justifyContent: "center" }}
                 >
-                  <View
-                    style={{
-                      backgroundColor: "rgba(186, 230, 253, 0.5)",
-                      padding: 6,
-                      borderRadius: 26,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 14,
-                    }}
-                  >
-                    <UserPlus size={25} color="#0284C7" />
+                  <View style={{ backgroundColor: "#DDD6FE", borderRadius: 20, padding: 10, marginBottom: 8 }}>
+                    <Activity size={22} color="#6D28D9" />
                   </View>
-                  <Text
-                    style={{
-                      color: "#0F172A",
-                      fontWeight: "600",
-                      fontSize: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {t("dashboard.quick_actions.register_mother")}
+                  <Text style={{ color: "#4C1D95", fontWeight: "600", fontSize: 12, textAlign: "center", lineHeight: 16 }}>
+                    {t("dashboard.quick_actions.pregnant_woman")}
                   </Text>
                 </TouchableOpacity>
 
+                {/* Newborn Child */}
                 <TouchableOpacity
-                  onPress={() => router.push("/dashboard/child")}
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#D1FAE5",
-                    padding: 18,
-                    paddingHorizontal: 10,
-                    borderRadius: 20,
-                    alignItems: "center",
-                  }}
+                  onPress={() => router.push("/dashboard/child/add-child" as any)}
+                  style={{ flex: 1, backgroundColor: "#EDE9FE", borderRadius: 18, paddingVertical: 16, paddingHorizontal: 6, alignItems: "center", minHeight: 110, justifyContent: "center" }}
                 >
-                  <View
-                    style={{
-                      backgroundColor: "rgba(167, 243, 208, 0.5)",
-                      padding: 6,
-                      borderRadius: 26,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 14,
-                    }}
-                  >
-                    <Smile size={25} color="#059669" />
+                  <View style={{ backgroundColor: "#DDD6FE", borderRadius: 20, padding: 10, marginBottom: 8 }}>
+                    <Baby size={22} color="#6D28D9" />
                   </View>
-                  <Text
-                    style={{
-                      color: "#0F172A",
-                      fontWeight: "600",
-                      fontSize: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {t("dashboard.quick_actions.register_child")}
+                  <Text style={{ color: "#4C1D95", fontWeight: "600", fontSize: 12, textAlign: "center", lineHeight: 16 }}>
+                    {t("dashboard.quick_actions.newborn")}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* PNC Visit */}
+                <TouchableOpacity
+                  onPress={() => router.push("/dashboard/mother-list" as any)}
+                  style={{ flex: 1, backgroundColor: "#EDE9FE", borderRadius: 18, paddingVertical: 16, paddingHorizontal: 6, alignItems: "center", minHeight: 110, justifyContent: "center" }}
+                >
+                  <View style={{ backgroundColor: "#DDD6FE", borderRadius: 20, padding: 10, marginBottom: 8 }}>
+                    <Heart size={22} color="#6D28D9" />
+                  </View>
+                  <Text style={{ color: "#4C1D95", fontWeight: "600", fontSize: 12, textAlign: "center", lineHeight: 16 }}>
+                    {t("dashboard.quick_actions.pnc_visit")}
                   </Text>
                 </TouchableOpacity>
               </View>
 
-              <View className="flex-1 gap-4 flex-row">
-
+              {/* Row 2 — warm amber/peach */}
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                {/* Group Meeting */}
                 <TouchableOpacity
-                  onPress={() => router.push("/dashboard/adolescent")}
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#F3E8FF",
-                    padding: 16,
-                    paddingHorizontal: 10,
-                    borderRadius: 20,
-                    alignItems: "center",
-                  }}
+                  onPress={() => router.push("/dashboard/mothers-group" as any)}
+                  style={{ flex: 1, backgroundColor: "#FEF3C7", borderRadius: 18, paddingVertical: 16, paddingHorizontal: 6, alignItems: "center", minHeight: 110, justifyContent: "center" }}
                 >
-                  <View
-                    style={{
-                      backgroundColor: "rgba(216, 180, 254, 0.4)",
-                      padding: 2,
-                      borderRadius: 26,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 14,
-                    }}
-                  >
-                    <Heart size={25} color="#7C3AED" />
+                  <View style={{ backgroundColor: "#FDE68A", borderRadius: 20, padding: 10, marginBottom: 8 }}>
+                    <Users size={22} color="#92400E" />
                   </View>
-                  <Text
-                    style={{
-                      color: "#0F172A",
-                      fontWeight: "600",
-                      fontSize: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {t("dashboard.quick_actions.add_adolescent")}
+                  <Text style={{ color: "#78350F", fontWeight: "600", fontSize: 12, textAlign: "center", lineHeight: 16 }}>
+                    {t("dashboard.quick_actions.group_meeting")}
                   </Text>
                 </TouchableOpacity>
 
+                {/* Death Report */}
                 <TouchableOpacity
-                  onPress={() => router.push("/dashboard/mothers-group" as any)}
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#FEF3C7",
-                    padding: 18,
-                    paddingHorizontal: 10,
-                    borderRadius: 20,
-                    alignItems: "center",
-                  }}
+                  onPress={() => router.push("/dashboard/report?tab=dead_mother" as any)}
+                  style={{ flex: 1, backgroundColor: "#FEF3C7", borderRadius: 18, paddingVertical: 16, paddingHorizontal: 6, alignItems: "center", minHeight: 110, justifyContent: "center" }}
                 >
-                  <View
-                    style={{
-                      backgroundColor: "rgba(253, 224, 71, 0.4)",
-                      padding: 6,
-                      borderRadius: 26,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 14,
-                    }}
-                  >
-                    <Users size={25} color="#D97706" />
+                  <View style={{ backgroundColor: "#FDE68A", borderRadius: 20, padding: 10, marginBottom: 8 }}>
+                    <AlertCircle size={22} color="#92400E" />
                   </View>
-                  <Text
-                    style={{
-                      color: "#0F172A",
-                      fontWeight: "600",
-                      fontSize: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {language === "np" ? "आमा समूहको बैठक" : "Mother's Group Meeting"}
+                  <Text style={{ color: "#78350F", fontWeight: "600", fontSize: 12, textAlign: "center", lineHeight: 16 }}>
+                    {t("dashboard.quick_actions.death_report")}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Children */}
+                <TouchableOpacity
+                  onPress={() => router.push("/dashboard/child")}
+                  style={{ flex: 1, backgroundColor: "#FEF3C7", borderRadius: 18, paddingVertical: 16, paddingHorizontal: 6, alignItems: "center", minHeight: 110, justifyContent: "center" }}
+                >
+                  <View style={{ backgroundColor: "#FDE68A", borderRadius: 20, padding: 10, marginBottom: 8 }}>
+                    <Smile size={22} color="#92400E" />
+                  </View>
+                  <Text style={{ color: "#78350F", fontWeight: "600", fontSize: 12, textAlign: "center", lineHeight: 16 }}>
+                    {t("dashboard.quick_actions.children")}
                   </Text>
                 </TouchableOpacity>
               </View>

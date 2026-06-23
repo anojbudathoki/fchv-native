@@ -49,9 +49,16 @@
     "greeting_title": "Namaste, Laxmi",
     "greeting_sub": "Here is your health tracking trend",
     "quick_actions": {
+      "title": "Quick Access",
       "register_mother": "Register Mother",
       "register_child": "Register Child",
-      "add_adolescent": "Adolescent Girls IFA"
+      "add_adolescent": "Adolescent Girls IFA",
+      "pregnant_woman": "Pregnant Woman",
+      "newborn": "Newborn Child",
+      "pnc_visit": "Postnatal Visit",
+      "group_meeting": "Group Meeting",
+      "death_report": "Death Report",
+      "children": "Children"
     },
     "sections": {
       "community_pulse": "Community Health Statistics",
@@ -354,9 +361,11 @@
     }
   },
   "profile": {
-    "title": "Patient Details",
+    "title": "Mothers Details",
     "quick_actions": "Quick Actions",
     "health_issues": "Health Issues",
+    "no_health_issues": "No health problems yet",
+    "add_health_issues": "Health problems reported",
     "yes": "Yes",
     "no": "No",
     "view": "View",
@@ -408,7 +417,8 @@
       "wk34": "34 Weeks",
       "wk36": "36 Weeks",
       "wk38": "38 Weeks",
-      "wk40": "40 Weeks"
+      "wk40": "40 Weeks",
+      "recorded": "Recorded"
     },
     "supplements": {
       "title": "Supplements",
@@ -917,7 +927,8 @@
     "ecp_label": "ECP (Emergency Pills)",
     "condoms_label": "Condoms",
     "condom_label": "Condom",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "not_addet_yet": "No family planning methods recorded yet"
   },
   "todo_tasks": {
     "title": "Tasks",
@@ -1241,7 +1252,11 @@
     "status_not_started": "Not Started",
     "edit_record": "Edit Record",
     "add_record": "Add Record",
-    "add_another_record": "Add Another Record"
+    "add_another_record": "Add Another Record",
+    "prenatal_register_title": "Pregnancy Registration Counseling",
+    "prenatal_register_subtitle": "Record counseling provided during registration",
+    "skip": "Skip",
+    "save_continue": "Save & Continue"
   },
   "mothers_group_meeting": {
     "title": "Mothers' Group Meeting",

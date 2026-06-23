@@ -75,6 +75,7 @@ export type MotherSyncPayload = {
   date_of_birth: string;
   gravida?: number | null;
   parity?: number | null;
+  photo?: string | null;
   address: {
     locality?: string | null;
     house_number?: string | null;

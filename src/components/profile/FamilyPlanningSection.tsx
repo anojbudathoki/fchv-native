@@ -1,4 +1,4 @@
-import { Plus, X } from 'lucide-react-native';
+import { ClipboardList, Heart, Plus, Shield, X } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -12,6 +12,33 @@ interface FamilyPlanningSectionProps {
   motherId: string;
   disabled?: boolean;
 }
+
+const METHODS_CONFIG: Record<string, { label: string; icon: any; bg: string; border: string; text: string; dot: string }> = {
+  OCP: {
+    label: 'OCP',
+    icon: Heart,
+    bg: 'bg-indigo-50',
+    border: 'border-indigo-100',
+    text: 'text-indigo-700',
+    dot: 'bg-indigo-400',
+  },
+  ECP: {
+    label: 'ECP',
+    icon: Shield,
+    bg: 'bg-amber-50',
+    border: 'border-amber-100',
+    text: 'text-amber-700',
+    dot: 'bg-amber-400',
+  },
+  Condoms: {
+    label: 'Condoms',
+    icon: ClipboardList,
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-100',
+    text: 'text-emerald-700',
+    dot: 'bg-emerald-400',
+  },
+};
 
 export default function FamilyPlanningSection({ motherId, disabled }: FamilyPlanningSectionProps) {
   const { t } = useTranslation();
@@ -50,7 +77,6 @@ export default function FamilyPlanningSection({ motherId, disabled }: FamilyPlan
 
     try {
       setIsDeleting(true);
-      // Create a payload object starting with current values
       const payload: any = {
         mother: motherId,
         pregnancy_id: currentPregnancyId,
@@ -60,7 +86,6 @@ export default function FamilyPlanningSection({ motherId, disabled }: FamilyPlan
         condom_qty: record.condom_qty,
       };
 
-      // Reset the specific quantity and remove from methods string
       const methods = record.family_planning.split(', ');
       const updatedMethods = methods.filter(m => m !== methodToRemove);
       payload.family_planning = updatedMethods.length > 0 ? updatedMethods.join(', ') : 'None';
@@ -87,86 +112,84 @@ export default function FamilyPlanningSection({ motherId, disabled }: FamilyPlan
     loadData();
   }, [motherId]);
 
-  const hasItems = record && (record.ocp_qty > 0 || record.ecp_qty > 0 || record.condom_qty > 0);
+  const methodEntries = [
+    { key: 'OCP', qty: record?.ocp_qty || 0 },
+    { key: 'ECP', qty: record?.ecp_qty || 0 },
+    { key: 'Condoms', qty: record?.condom_qty || 0 },
+  ];
+  const hasItems = methodEntries.some(m => m.qty > 0);
+
+  const renderMethodCard = (methodKey: string, qty: number) => {
+    if (qty <= 0) return null;
+    const config = METHODS_CONFIG[methodKey];
+    const Icon = config.icon;
+
+    return (
+      <View key={methodKey} className={`${config.bg} ${config.border} border rounded-xl p-3.5 flex-row items-center`}>
+        <View className={`w-9 h-9 rounded-lg ${config.bg} border ${config.border} items-center justify-center mr-3`}>
+          <Icon size={16} color={config.text.includes('indigo') ? '#6366F1' : config.text.includes('amber') ? '#D97706' : '#059669'} />
+        </View>
+        <View className="flex-1">
+          <Text className={`${config.text} font-bold text-[13px]`}>
+            {methodKey === 'Condoms' ? 'Condoms' : methodKey}
+          </Text>
+          <View className="flex-row items-center mt-0.5">
+            <View className={`w-1.5 h-1.5 rounded-full ${config.dot} mr-1.5`} />
+            <Text className="text-slate-500 text-[12px] font-medium">
+              Quantity: {qty}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          onPress={() => handleDeleteMethod(methodKey)}
+          disabled={disabled}
+          className={`w-7 h-7 rounded-full items-center justify-center ${disabled ? '' : config.bg}`}
+        >
+          <X size={13} color={disabled ? "#CBD5E1" : "#64748B"} strokeWidth={2.5} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
-    <View className="flex-row items-center justify-between">
+    <View>
       {hasItems ? (
-        <>
-          <View className="flex-1 flex-col gap-3">
-            <View className="flex-row flex-wrap gap-2">
-              {record.ocp_qty > 0 && (
-                <View className="bg-indigo-50 border border-indigo-100 pl-3 pr-2 py-1.5 rounded-full flex-row items-center">
-                  <Text className="text-indigo-700 font-semibold text-[12px] mr-1">
-                    OCP: {record.ocp_qty}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteMethod("OCP")}
-                    disabled={disabled}
-                    className="p-0.5 hover:bg-indigo-100 rounded-full ml-1"
-                  >
-                    <X size={12} color={disabled ? "#94A3B8" : "#4338ca"} strokeWidth={3} />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {record.ecp_qty > 0 && (
-                <View className="bg-indigo-50 border border-indigo-100 pl-3 pr-2 py-1.5 rounded-full flex-row items-center">
-                  <Text className="text-indigo-700 font-semibold text-[12px] mr-1">
-                    ECP: {record.ecp_qty}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteMethod("ECP")}
-                    disabled={disabled}
-                    className="p-0.5 hover:bg-indigo-100 rounded-full ml-1"
-                  >
-                    <X size={12} color={disabled ? "#94A3B8" : "#4338ca"} strokeWidth={3} />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {record.condom_qty > 0 && (
-                <View className="bg-indigo-50 border border-indigo-100 pl-3 pr-2 py-1.5 rounded-full flex-row items-center">
-                  <Text className="text-indigo-700 font-semibold text-[12px] mr-1">
-                    Condom: {record.condom_qty}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteMethod("Condoms")}
-                    disabled={disabled}
-                    className="p-0.5 hover:bg-indigo-100 rounded-full ml-1"
-                  >
-                    <X size={12} color={disabled ? "#94A3B8" : "#4338ca"} strokeWidth={3} />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-          </View>
+        <View className="gap-y-3">
+          {methodEntries.map(m => renderMethodCard(m.key, m.qty))}
+
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
             disabled={disabled}
-            className={`px-4 py-1.5 rounded-lg ${disabled ? "bg-slate-100" : "bg-[#475569]"}`}
+            className={`flex-row items-center justify-center py-3 rounded-xl border-2 border-dashed ${disabled ? 'border-slate-200' : 'border-slate-300 bg-slate-50/50'}`}
           >
-            <Text className={`font-bold text-[12px] uppercase ${disabled ? "text-slate-300" : "text-white"}`}>
+            <Plus size={16} color={disabled ? "#CBD5E1" : "#475569"} strokeWidth={3} />
+            <Text className={`font-semibold text-sm ml-2 ${disabled ? 'text-slate-300' : 'text-slate-700'}`}>
               {t("common.update")}
             </Text>
           </TouchableOpacity>
-        </>
+        </View>
       ) : (
-        <>
-          <View className="flex-1 mr-4">
-            <Text className="text-slate-600 font-medium text-[15px]">
-              {t("profile.birth_pnc.fp_used")}
-            </Text>
+        <View className="items-center py-3">
+          <View className="w-14 h-14 rounded-full bg-slate-50 border border-slate-100 items-center justify-center mb-3">
+            <ClipboardList size={24} color="#94A3B8" strokeWidth={1.5} />
           </View>
+          <Text className="text-slate-500 text-[15px] font-medium text-center">
+            {t("profile.birth_pnc.fp_used")}
+          </Text>
+          <Text className="text-slate-400 text-[13px] mt-1 text-center">
+            {t("family_planning.not_addet_yet")}
+          </Text>
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
             disabled={disabled}
-            className={`px-2 py-1.5 rounded-lg ${disabled ? "bg-slate-100" : "bg-[#475569]"}`}
+            className={`mt-4 flex-row items-center px-5 py-2.5 rounded-full ${disabled ? 'bg-slate-100' : 'bg-slate-700'}`}
           >
-            {/* <Text className="text-white font-bold text-[12px]">
+            <Plus size={16} color={disabled ? "#CBD5E1" : "white"} strokeWidth={3} />
+            <Text className={`font-semibold text-sm ml-2 ${disabled ? 'text-slate-300' : 'text-white'}`}>
               {t("common.add")}
-            </Text> */}
-            <Plus size={19} color={disabled ? "#CBD5E1" : "white"} strokeWidth={3} />
+            </Text>
           </TouchableOpacity>
-        </>
+        </View>
       )}
 
       <FamilyPlanningModal

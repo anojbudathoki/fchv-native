@@ -284,7 +284,7 @@ export async function getAllMothersList(): Promise<MotherListDbItem[]> {
       ORDER BY created_at DESC LIMIT 1
     )
     WHERE m.is_deleted = 0 
-    ORDER BY m.created_at ASC
+    ORDER BY m.created_at DESC
   `;
 
   const rows = await db.getAllAsync<any>(query);
@@ -755,4 +755,23 @@ export async function moveTempToRealMotherTable() {
 
   const now = new Date().toISOString();
   await setSyncTimestamp("mother", now);
+}
+
+export async function updateMotherPregnancyData(
+  motherId: string,
+  data: { lmp_date: string; gravida: number; parity: number }
+): Promise<void> {
+  const db = await getDb();
+  const now = new Date().toISOString();
+
+  await db.runAsync(
+    `UPDATE mother SET
+      lmp_date = ?,
+      gravida = ?,
+      parity = ?,
+      is_synced = 0,
+      updated_at = ?
+    WHERE id = ?`,
+    [data.lmp_date, data.gravida, data.parity, now, motherId],
+  );
 }

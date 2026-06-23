@@ -158,3 +158,21 @@ export const COUNSELING_REFERRAL_QUESTIONS_ONE_TIME_MOTHER: CounselingQuestion[]
     ne: 'पाठेघरको मुखको क्यान्सर जाँचका लागि स्वास्थ्य संस्थामा जान रेफर गर्नुभयो?'
   },
 ]
+
+export const COUNSELING_QUESTIONS_ONE_TIME_PREGNANT_REGISTER_TIME: CounselingQuestion[] = [
+  {
+    id: 'pregnancy_test_referral',
+    en: 'Was the client referred to a health facility for a pregnancy test?',
+    ne: 'गर्भ जाँचको लागि स्वास्थ्य संस्थामा पठाउनुभयो (रेफर गर्नुभयो)?'
+  },
+  {
+    id: 'hiv_transmission_counseling',
+    en: 'Provided HIV transmission counseling and referred for HIV testing?',
+    ne: 'आमाबाट बच्चामा सर्ने एचआईभीबारे परामर्श दिई रक्त परीक्षणका लागि रेफर गर्नुभयो?'
+  },
+  {
+    id: "health_education_safe_motherhood",
+    en: "Did you provide health education on safe motherhood and newborn care using flipcharts/posters?",
+    ne: "फ्लिपचार्ट/पोस्टर सामग्री प्रयोग गरी सुरक्षित मातृत्व तथा नवशिशु सम्बन्धि स्वास्थ्य शिक्षा दिनुभयो?",
+  },
+]

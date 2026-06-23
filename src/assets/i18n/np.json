@@ -49,9 +49,16 @@
     "greeting_title": "नमस्ते, लक्ष्मी",
     "greeting_sub": "यहाँ तपाईंको स्वास्थ्य ट्र्याकिङ प्रवृत्ति छ",
     "quick_actions": {
+      "title": "छिटो पहुँच",
       "register_mother": "गर्भवती महिला दर्ता",
       "register_child": "बालबालिका दर्ता",
-      "add_adolescent": "किशोरी आइरन वितरण"
+      "add_adolescent": "किशोरी आइरन वितरण",
+      "pregnant_woman": "गर्भवती महिला",
+      "newborn": "नवजात शिशु",
+      "pnc_visit": "सुत्केरी भेट",
+      "group_meeting": "समूह बैठक",
+      "death_report": "मृत्यु विवरण",
+      "children": "बालबालिका"
     },
     "sections": {
       "community_pulse": "समुदाय स्वास्थ्य तथ्याङ्क",
@@ -352,9 +359,11 @@
     }
   },
   "profile": {
-    "title": "बिरामीको विवरण",
+    "title": "आमाको विवरण",
     "quick_actions": "द्रुत कार्यहरू",
     "health_issues": "स्वास्थ्य समस्याहरू",
+    "no_health_issues": "अहिलेसम्म कुनै स्वास्थ्य समस्या छैनन्",
+    "add_health_issues": "स्वास्थ्य समस्या रिपोर्ट गरियो",
     "yes": "छ",
     "no": "छैन",
     "view": "हेर्नुहोस्",
@@ -406,7 +415,8 @@
       "wk34": "३४ हप्ता",
       "wk36": "३६ हप्ता",
       "wk38": "३८ हप्ता",
-      "wk40": "४० हप्ता"
+      "wk40": "४० हप्ता",
+      "recorded": "रेकर्ड गरियो"
     },
     "supplements": {
       "title": "पूरक पोषण",
@@ -915,7 +925,8 @@
     "ecp_label": "ECP (आकस्मिक पिल्स)",
     "condoms_label": "कण्डोम (Condoms)",
     "condom_label": "कण्डोम",
-    "cancel": "रद्द गर्नुहोस्"
+    "cancel": "रद्द गर्नुहोस्",
+    "not_addet_yet": "अहिलेसम्म कुनै पनि परिवार नियोजनको विवरण अभिलेख गरिएको छैन।"
   },
   "todo_tasks": {
     "title": "कार्यहरू",
@@ -1239,7 +1250,11 @@
     "status_not_started": "सुरु नभएको",
     "edit_record": "विवरण सम्पादन",
     "add_record": "विवरण थप्नुहोस्",
-    "add_another_record": "अर्को रेकर्ड थप्नुहोस्"
+    "add_another_record": "अर्को रेकर्ड थप्नुहोस्",
+    "prenatal_register_title": "गर्भ दर्ता परामर्श",
+    "prenatal_register_subtitle": "दर्ताको समयमा दिइएको परामर्श रेकर्ड गर्नुहोस्",
+    "skip": "छोड्नुहोस्",
+    "save_continue": "सुरक्षित गर्नुहोस् "
   },
   "mothers_group_meeting": {
     "title": "आमा समूहको बैठक",

@@ -24,6 +24,7 @@ const postBulkMother = async (data: CreateMotherPayload[]) => {
     occupation: item.occupation || null,
     jati_code: item.jati_code || null,
     blood_group: item.blood_group || null,
+    photo: item.photo || null,
     emergency_contact_number: item.emergency_contact_number || null,
     partner_name: item.partner_name || null,
     partner_mobile: item.partner_mobile || null,
@@ -32,7 +33,7 @@ const postBulkMother = async (data: CreateMotherPayload[]) => {
     deleted: false,
   }));
 
-  // console.log({data})
+  console.log(syncPayload[0].address,"hellooooooo")
 
   // The fchv-sync endpoint expects an array of records
   const response = await httpClient.post<MotherSyncPayload[]>(
