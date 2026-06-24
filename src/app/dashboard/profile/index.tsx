@@ -37,10 +37,12 @@ import {
   SupplementStoreType,
 } from "../../../hooks/database/models/SupplementModel";
 import { createVisit, getVisitsByMotherId, updateVisit } from "../../../hooks/database/models/VisitModel";
+import { getAncVisitsByMotherId } from "../../../hooks/database/models/AncVisitModel";
 import { HmisRecordStoreType } from "../../../hooks/database/types/hmisRecordModal";
 import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDeathModal";
 import { NewbornDeathStoreType } from "../../../hooks/database/types/newbornDeathModal";
 import { VisitStoreType } from "../../../hooks/database/types/visitModal";
+import { AncVisitStoreType } from "../../../hooks/database/types/ancVisitModal";
 import { toNepaliNumbers } from "../../../utils/dateHelper";
 
 const ProfileSkeleton = () => {
@@ -247,7 +249,7 @@ export default function HmisRecordProfileScreen() {
   const [allChildren, setAllChildren] = useState<any[]>([]);
   const [mother, setMother] = useState<any>(null);
   const [pregnancy, setPregnancy] = useState<any>(null);
-  const [ancVisits, setAncVisits] = useState<VisitStoreType[]>([]);
+  const [ancVisits, setAncVisits] = useState<AncVisitStoreType[]>([]);
   const [pncVisits, setPncVisits] = useState<VisitStoreType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -292,11 +294,12 @@ export default function HmisRecordProfileScreen() {
           return;
         }
         try {
-          const [mother, pregnancy, visits, allChildrenList] =
+          const [mother, pregnancy, visits, ancVisitsData, allChildrenList] =
             await Promise.all([
               getMotherProfile(id),
               getPregnancyByMotherId(id),
               getVisitsByMotherId(id),
+              getAncVisitsByMotherId(id),
               getInfantMonitoringsByMother(id),
             ]);
           // The first (most recent) child, for HMIS data display
@@ -313,7 +316,7 @@ export default function HmisRecordProfileScreen() {
             const regParts = parseDateParts(mother.regDate, "AD");
 
             // Map visits to ANC/PNC slots
-            const ancVisitsList = visits.filter((v) => v.visit_type === "ANC");
+            const ancVisitsList = ancVisitsData;
             const pncVisitsLocal = visits.filter((v) => v.visit_type === "PNC");
 
             const data: HmisRecordStoreType = {
@@ -361,10 +364,9 @@ export default function HmisRecordProfileScreen() {
               setRecord(data);
               setMother(mother);
               setPregnancy(pregnancy);
-              // children linked to current pregnancy shown prominently
               setChildren(allChildrenList);
               setAllChildren(allChildrenList);
-              setAncVisits(ancVisitsList);
+              setAncVisits(ancVisitsData);
               setPncVisits(pncVisitsLocal);
               const deathData = await getMaternalDeathByMother(mother.id);
               setExistingDeathRecord(deathData);
@@ -420,7 +422,7 @@ export default function HmisRecordProfileScreen() {
     );
   }
 
-  const activePregnancy = pregnancy && !pregnancy.delivered && !pregnancy.ended;
+  const activePregnancy = pregnancy && pregnancy.is_current === 1 && !pregnancy.delivered && !pregnancy.ended;
   const profileEddDate = pregnancy
     ? normalizeDateString(pregnancy.expected_delivery_date) ||
     calculateEddFromLmp(pregnancy.lmp_date)
@@ -672,7 +674,7 @@ export default function HmisRecordProfileScreen() {
                       pathname: "/dashboard/profile/add-child",
                       params: {
                         motherId: record.id,
-                        pregnancyId: (pregnancy && !pregnancy.delivered && !pregnancy.ended)
+                        pregnancyId: (pregnancy && pregnancy.is_current === 1 && !pregnancy.delivered && !pregnancy.ended)
                           ? pregnancy.id
                           : undefined,
                         from: "profile"

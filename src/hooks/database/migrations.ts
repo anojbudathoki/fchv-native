@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-export const SCHEMA_VERSION = 69;
+export const SCHEMA_VERSION = 70;
 
 type Migration = {
   version: number;
@@ -1926,6 +1926,160 @@ export const MIGRATIONS: Migration[] = [
         `INSERT OR IGNORE INTO sync (table_name, last_synced_at) VALUES (?, NULL);`,
         ["child_vaccination"],
       );
+    }
+  },
+  {
+    version: 70,
+    up: async (db) => {
+      // 1. Create the new anc_visit table
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS anc_visit (
+            id TEXT PRIMARY KEY,
+            mother TEXT NOT NULL,
+            name TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            visit_date TEXT NOT NULL,
+            visit_place TEXT,
+            reg_year INTEGER,
+            reg_month INTEGER,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY(mother) REFERENCES mother(id)
+          );
+        `);
+      } catch (e) {
+        console.log("Migration 70: anc_visit table creation failed or already exists:", e);
+      }
+
+      // 2. Create the anc_visit_staging table
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS anc_visit_staging (
+            id TEXT PRIMARY KEY,
+            mother TEXT NOT NULL,
+            name TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            visit_date TEXT NOT NULL,
+            visit_place TEXT,
+            reg_year INTEGER,
+            reg_month INTEGER,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+          );
+        `);
+      } catch (e) {
+        console.log("Migration 70: anc_visit_staging table creation failed or already exists:", e);
+      }
+
+      // 3. Copy ANC visits from visit to anc_visit
+      try {
+        await db.execAsync(`
+          INSERT OR IGNORE INTO anc_visit (id, mother, name, is_synced, is_deleted, visit_date, visit_place, reg_year, reg_month, created_at, updated_at)
+          SELECT id, mother, name, is_synced, is_deleted, visit_date, visit_place, reg_year, reg_month, created_at, updated_at
+          FROM visit
+          WHERE visit_type = 'ANC';
+        `);
+      } catch (e) {
+        console.log("Migration 70: copying ANC visits failed:", e);
+      }
+
+      // 4. Copy ANC visits from visit_staging to anc_visit_staging
+      try {
+        await db.execAsync(`
+          INSERT OR IGNORE INTO anc_visit_staging (id, mother, name, is_synced, is_deleted, visit_date, visit_place, reg_year, reg_month, created_at, updated_at)
+          SELECT id, mother, name, is_synced, is_deleted, visit_date, visit_place, reg_year, reg_month, created_at, updated_at
+          FROM visit_staging
+          WHERE visit_type = 'ANC';
+        `);
+      } catch (e) {
+        console.log("Migration 70: copying ANC staging visits failed:", e);
+      }
+
+      // 5. Delete ANC visits from visit table
+      try {
+        await db.execAsync(`DELETE FROM visit WHERE visit_type = 'ANC';`);
+      } catch (e) {
+        console.log("Migration 70: deleting ANC visits from visit table failed:", e);
+      }
+
+      // 6. Delete ANC visits from visit_staging table
+      try {
+        await db.execAsync(`DELETE FROM visit_staging WHERE visit_type = 'ANC';`);
+      } catch (e) {
+        console.log("Migration 70: deleting ANC visits from visit_staging table failed:", e);
+      }
+
+      // 7. Recreate visit table without ANC in CHECK constraint
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS visit_new (
+            id TEXT PRIMARY KEY,
+            mother TEXT NOT NULL,
+            name TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            visit_date TEXT NOT NULL,
+            visit_type TEXT NOT NULL CHECK(visit_type IN ('PNC')),
+            visit_place TEXT,
+            reg_year INTEGER,
+            reg_month INTEGER,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY(mother) REFERENCES mother(id)
+          );
+
+          INSERT OR IGNORE INTO visit_new (id, mother, name, is_synced, is_deleted, visit_date, visit_type, visit_place, reg_year, reg_month, created_at, updated_at)
+          SELECT id, mother, name, is_synced, is_deleted, visit_date, visit_type, visit_place, reg_year, reg_month, created_at, updated_at
+          FROM visit;
+
+          DROP TABLE visit;
+          ALTER TABLE visit_new RENAME TO visit;
+        `);
+      } catch (e) {
+        console.log("Migration 70: recreating visit table failed:", e);
+      }
+
+      // 8. Recreate visit_staging table without ANC in CHECK constraint
+      try {
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS visit_staging_new (
+            id TEXT PRIMARY KEY,
+            mother TEXT NOT NULL,
+            name TEXT,
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            visit_date TEXT NOT NULL,
+            visit_type TEXT NOT NULL CHECK(visit_type IN ('PNC')),
+            visit_place TEXT,
+            reg_year INTEGER,
+            reg_month INTEGER,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+          );
+
+          INSERT OR IGNORE INTO visit_staging_new (id, mother, name, is_synced, is_deleted, visit_date, visit_type, visit_place, reg_year, reg_month, created_at, updated_at)
+          SELECT id, mother, name, is_synced, is_deleted, visit_date, visit_type, visit_place, reg_year, reg_month, created_at, updated_at
+          FROM visit_staging;
+
+          DROP TABLE visit_staging;
+          ALTER TABLE visit_staging_new RENAME TO visit_staging;
+        `);
+      } catch (e) {
+        console.log("Migration 70: recreating visit_staging table failed:", e);
+      }
+
+      // 9. Seed sync tracker for anc_visit
+      try {
+        await db.runAsync(
+          `INSERT OR IGNORE INTO sync (table_name, last_synced_at) VALUES (?, NULL);`,
+          ["anc_visit"],
+        );
+      } catch (e) {
+        console.log("Migration 70: seeding sync for anc_visit failed:", e);
+      }
     }
   },
 ];

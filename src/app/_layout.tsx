@@ -4,7 +4,7 @@ import { configureNotificationsAsync } from "@/utils/notificationHelper";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { InteractionManager, View } from "react-native";
+import { InteractionManager, View, LogBox } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -12,6 +12,11 @@ import { LanguageProvider } from "../context/LanguageContext";
 import { ToastProvider } from "../context/ToastContext";
 import "../global.css";
 import "../i18n/config"; // Import i18n config
+
+LogBox.ignoreLogs([
+  "Unable to activate keep awake",
+  "Notifications are disabled in Expo Go",
+]);
 
 export default function RootLayout() {
   // Mounts the network listener for data synchronization

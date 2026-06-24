@@ -23,10 +23,11 @@ async function initSyncDefaultColumns(): Promise<void> {
 
   await db.runAsync(
     `INSERT OR IGNORE INTO sync (table_name, last_synced_at)
-     VALUES (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL);`,
+     VALUES (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL), (?, NULL);`,
     [
       "mother",
       "visit",
+      "anc_visit",
       "todo",
       "pregnancy",
       "adolescent_ifa",

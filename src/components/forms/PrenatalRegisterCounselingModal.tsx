@@ -74,13 +74,13 @@ export default function PrenatalRegisterCounselingModal({
     <ModalWithSafeArea
       visible={visible}
       onRequestClose={handleSkip}
-      animationType="slide"
+      animationType="fade"
       transparent
     >
-      <Pressable onPress={handleSkip} className="flex-1 bg-black/50 justify-end">
+      <Pressable onPress={handleSkip} className="flex-1 bg-black/50 justify-center items-center px-6">
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          className="bg-white w-full rounded-t-3xl p-6 pb-10"
+          className="bg-white w-full max-w-md rounded-3xl p-6"
         >
           {/* Header */}
           <View className="flex-row justify-between items-center mb-4">
@@ -101,7 +101,7 @@ export default function PrenatalRegisterCounselingModal({
           </View>
 
           {/* Questions */}
-          <View className="my-4">
+          <View className="my-4 max-h-96">
             {COUNSELING_QUESTIONS_ONE_TIME_PREGNANT_REGISTER_TIME.map(
               (question) => {
                 const isCompleted = !!answers[question.id];
@@ -141,7 +141,7 @@ export default function PrenatalRegisterCounselingModal({
           </View>
 
           {/* Action buttons */}
-          <View className="flex-row gap-3 mt-2 pb-10">
+          <View className="flex-row gap-3 mt-2">
             <TouchableOpacity
               onPress={handleSkip}
               className="flex-1 h-14 border border-slate-200 rounded-xl items-center justify-center"

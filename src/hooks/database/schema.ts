@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS mother(
     is_synced INTEGER NOT NULL DEFAULT 0,
     is_deleted INTEGER NOT NULL DEFAULT 0,
     visit_date TEXT NOT NULL,
-    visit_type TEXT NOT NULL CHECK(visit_type IN ('ANC', 'PNC')),
+    visit_type TEXT NOT NULL CHECK(visit_type IN ('PNC')),
     visit_place TEXT,
     reg_year INTEGER,
     reg_month INTEGER,
@@ -142,7 +142,36 @@ CREATE TABLE IF NOT EXISTS mother(
     is_synced INTEGER NOT NULL DEFAULT 0,
     is_deleted INTEGER NOT NULL DEFAULT 0,
     visit_date TEXT NOT NULL,
-    visit_type TEXT NOT NULL CHECK(visit_type IN ('ANC', 'PNC')),
+    visit_type TEXT NOT NULL CHECK(visit_type IN ('PNC')),
+    visit_place TEXT,
+    reg_year INTEGER,
+    reg_month INTEGER,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS anc_visit (
+    id TEXT PRIMARY KEY,
+    mother TEXT NOT NULL,
+    name TEXT,
+    is_synced INTEGER NOT NULL DEFAULT 0,
+    is_deleted INTEGER NOT NULL DEFAULT 0,
+    visit_date TEXT NOT NULL,
+    visit_place TEXT,
+    reg_year INTEGER,
+    reg_month INTEGER,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY(mother) REFERENCES mother(id)
+  );
+
+  CREATE TABLE IF NOT EXISTS anc_visit_staging (
+    id TEXT PRIMARY KEY,
+    mother TEXT NOT NULL,
+    name TEXT,
+    is_synced INTEGER NOT NULL DEFAULT 0,
+    is_deleted INTEGER NOT NULL DEFAULT 0,
+    visit_date TEXT NOT NULL,
     visit_place TEXT,
     reg_year INTEGER,
     reg_month INTEGER,

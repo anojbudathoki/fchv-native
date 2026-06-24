@@ -19,6 +19,10 @@ import {
   sendUnsyncedVisitsToServer,
 } from "./syncVisit";
 import {
+  getUnsyncedAncVisitsFromServer,
+  sendUnsyncedAncVisitsToServer,
+} from "./syncAncVisit";
+import {
   getUnsyncedTodosFromServer,
   sendUnsyncedTodosToServer,
 } from "./syncTodo";
@@ -74,6 +78,8 @@ const SYNCERS: Partial<
     getUnsyncedMothersFromServer(last_synced_at),
   visit: (last_synced_at: string | null) =>
     getUnsyncedVisitsFromServer(last_synced_at),
+  anc_visit: (last_synced_at: string | null) =>
+    getUnsyncedAncVisitsFromServer(last_synced_at),
   todo: (last_synced_at: string | null) =>
     getUnsyncedTodosFromServer(last_synced_at),
   pregnancy: (last_synced_at: string | null) =>
@@ -146,6 +152,7 @@ const runSync = async ({ sendOnly, throwOnError }: SyncOptions) => {
     // Push local unsynced data to server
     await sendUnsyncedMothersToServer();
     await sendUnsyncedVisitsToServer();
+    await sendUnsyncedAncVisitsToServer();
     await sendUnsyncedTodosToServer();
     await sendUnsyncedPregnancyToServer();
     await sendUnsyncedAdolescentIfaToServer();
@@ -180,8 +187,10 @@ const runSync = async ({ sendOnly, throwOnError }: SyncOptions) => {
                 ? "supplements"
                 : table === "visits"
                   ? "visit"
-                  : table === "todos"
-                    ? "todo"
+                  : table === "anc_visits" || table === "anc-visits"
+                    ? "anc_visit"
+                    : table === "todos"
+                      ? "todo"
                     : table === "family-planning"
                       ? "family_planning"
                       : table === "counseling-referral" || table === "counseling_referrals"

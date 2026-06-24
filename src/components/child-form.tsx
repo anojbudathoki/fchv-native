@@ -12,7 +12,7 @@ import {
   getAllMothersList,
   MotherListDbItem,
 } from "@/hooks/database/models/MotherModel";
-import { getPregnanciesByMotherId } from "@/hooks/database/models/PregnantWomenModal";
+import { getPregnanciesByMotherId, updatePregnancy } from "@/hooks/database/models/PregnantWomenModal";
 import { PregnancyStoreType } from "@/hooks/database/types/pregnancyModal";
 import {
   BIRTH_PLACE_OPTIONS,
@@ -74,12 +74,13 @@ export default function ChildRegistrationForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Pregnancy linking: default YES when pregnancyId is passed in or when redirected from profile
+  // Pregnancy linking: default YES when pregnancyId is passed in or from profile
   const [linkToPregnancy, setLinkToPregnancy] = useState(!!pregnancyId || from === "profile");
 
   // Suggestion states
   const [motherPregnancies, setMotherPregnancies] = useState<PregnancyStoreType[]>([]);
   const [suggestedPregnancy, setSuggestedPregnancy] = useState<PregnancyStoreType | null>(null);
+  const [hasCurrentPregnancy, setHasCurrentPregnancy] = useState(false);
 
   // Fetch mother's pregnancies when selectedMotherId changes
   useEffect(() => {
@@ -93,6 +94,15 @@ export default function ChildRegistrationForm() {
       setMotherPregnancies([]);
     }
   }, [selectedMotherId]);
+
+  // Check if selected mother has a current (active) pregnancy
+  useEffect(() => {
+    const hasCurrent = motherPregnancies.some((p) => p.is_current === 1);
+    setHasCurrentPregnancy(hasCurrent);
+    if (!pregnancyId && from !== "profile") {
+      setLinkToPregnancy(hasCurrent);
+    }
+  }, [motherPregnancies, pregnancyId, from]);
 
   // Pregnancy matching logic based on child DOB (birthDateAd)
   useEffect(() => {
@@ -195,6 +205,9 @@ export default function ChildRegistrationForm() {
 
     setIsLoading(true);
     try {
+      const activePregnancyObj = motherPregnancies.find((p) => p.is_current === 1) || null;
+      const targetPregnancyId = pregnancyId || activePregnancyObj?.id || suggestedPregnancy?.id;
+
       const payload = {
         id: id || Crypto.randomUUID(),
         mother: selectedMotherId,
@@ -215,12 +228,23 @@ export default function ChildRegistrationForm() {
         gender: gender || undefined,
         remarks: remarks,
         // Pregnancy linkage
-        pregnancy_id: linkToPregnancy && (pregnancyId || suggestedPregnancy?.id) ? (pregnancyId || suggestedPregnancy?.id) : null,
-        registration_source: (linkToPregnancy && (pregnancyId || suggestedPregnancy?.id)
+        pregnancy_id: linkToPregnancy && targetPregnancyId ? targetPregnancyId : null,
+        registration_source: (linkToPregnancy && targetPregnancyId
           ? 'PREGNANCY'
           : 'DIRECT_CHILD_REGISTRATION') as 'PREGNANCY' | 'DIRECT_CHILD_REGISTRATION',
       };
       await createInfantMonitoring(payload);
+
+      // Deactivate current pregnancy and mark as delivered if child was linked to one
+      const linkedPregId = linkToPregnancy && targetPregnancyId ? targetPregnancyId : null;
+      if (linkedPregId) {
+        try {
+          await updatePregnancy(linkedPregId, { is_current: false, delivered: true });
+        } catch (e) {
+          console.error("Failed to deactivate pregnancy:", e);
+        }
+      }
+
       showToast(t("child_form.messages.save_success", "Record saved successfully"));
       if (!id && from === "profile" && selectedMotherId) {
         router.replace({
@@ -297,8 +321,8 @@ export default function ChildRegistrationForm() {
         showsVerticalScrollIndicator={false}
       >
         <View className="bg-white px-4 mb-16 py-5">
-          {/* Pregnancy Link Card — only shown when redirected from mother profile */}
-          {!id && from === "profile" && (
+          {/* Pregnancy Link Card — shown when redirected from profile or mother has current pregnancy */}
+          {!id && (from === "profile" || hasCurrentPregnancy) && (
             <View className="mb-5 rounded-3xl bg-white border border-slate-200 shadow-sm overflow-hidden">
               <View className="flex-row items-center gap-3 px-5 py-3 bg-slate-50">
                 <View className="w-11 h-11 rounded-2xl bg-slate-100 items-center justify-center">
@@ -329,7 +353,7 @@ export default function ChildRegistrationForm() {
                     </Text>
                   </TouchableOpacity>
                 </View>
-                 <View className="flex-row items-start gap-3 mt-4">
+                <View className="flex-row items-start gap-3 mt-4">
                   <View className="w-5 h-5 rounded-full bg-slate-200 items-center justify-center mt-1">
                     <Check size={12} color="#0F172A" strokeWidth={3} />
                   </View>
@@ -343,7 +367,6 @@ export default function ChildRegistrationForm() {
             </View>
           )}
 
-          {/* Mother Selection */}
           <ProfilePicker
             label={t("child_form.select_mother")}
             placeholder={t("child_form.select_mother_placeholder")}
@@ -440,25 +463,21 @@ export default function ChildRegistrationForm() {
                 <View className="flex-row">
                   <TouchableOpacity
                     onPress={() => setLinkToPregnancy(true)}
-                    className={`flex-1 py-3 items-center border-r border-amber-100 ${
-                      linkToPregnancy ? 'bg-amber-600' : 'bg-white'
-                    }`}
+                    className={`flex-1 py-3 items-center border-r border-amber-100 ${linkToPregnancy ? 'bg-amber-600' : 'bg-white'
+                      }`}
                   >
-                    <Text className={`font-semibold text-[14px] ${
-                      linkToPregnancy ? 'text-white' : 'text-slate-500'
-                    }`}>
+                    <Text className={`font-semibold text-[14px] ${linkToPregnancy ? 'text-white' : 'text-slate-500'
+                      }`}>
                       {t("child_form.matching_pregnancy.yes")}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => setLinkToPregnancy(false)}
-                    className={`flex-1 py-3 items-center ${
-                      !linkToPregnancy ? 'bg-slate-600' : 'bg-white'
-                    }`}
+                    className={`flex-1 py-3 items-center ${!linkToPregnancy ? 'bg-slate-600' : 'bg-white'
+                      }`}
                   >
-                    <Text className={`font-semibold text-[14px] ${
-                      !linkToPregnancy ? 'text-white' : 'text-slate-500'
-                    }`}>
+                    <Text className={`font-semibold text-[14px] ${!linkToPregnancy ? 'text-white' : 'text-slate-500'
+                      }`}>
                       {t("child_form.matching_pregnancy.no")}
                     </Text>
                   </TouchableOpacity>

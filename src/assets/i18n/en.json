@@ -26,7 +26,9 @@
     "update": "Update",
     "add": "Add",
     "delete": "Delete",
-    "save": "Save"
+    "save": "Save",
+    "unnamed_mother": "Unnamed Mother",
+    "loading": "Loading..."
   },
   "dashboard": {
     "title": "FCHV Dashboard",
@@ -58,7 +60,8 @@
       "pnc_visit": "Postnatal Visit",
       "group_meeting": "Group Meeting",
       "death_report": "Death Report",
-      "children": "Children"
+      "children": "Children",
+      "delivery": "Delivery"
     },
     "sections": {
       "community_pulse": "Community Health Statistics",
@@ -686,6 +689,13 @@
   "maternal_death_modal": {
     "title": "Maternal Death Record",
     "subtitle": "Maternal Death Record",
+    "mother_info_section": "Mother Information",
+    "death_details_section": "Death Details",
+    "additional_section": "Additional Information",
+    "choose_mother": "Choose Mother",
+    "choose_mother_placeholder": "Select mother",
+    "mother_error": "Please select a mother",
+    "condition_error": "Please select condition of death",
     "date_of_death": "Date of Death",
     "condition_of_death": "Condition of Death",
     "pregnant": "Pregnant",
@@ -709,6 +719,11 @@
   },
   "newborn_death_modal": {
     "title": "Newborn / Child Death Record",
+    "section_selection": "Mother & Child",
+    "section_details": "Child Details",
+    "section_additional": "Additional Information",
+    "manual_override": "Manual override unit",
+    "death_date": "Death Date",
     "after_added": "Submitted",
     "subtitle": "Newborn & Child Death (0–59 months)",
     "baby_name": "Child's Name",
@@ -1329,6 +1344,49 @@
     "genders": {
       "male": "Male",
       "female": "Female"
+    }
+  },
+  "visit": {
+    "title": "Visit Registration",
+    "address_ward_short": "Ward",
+    "address_locality_short": "Locality",
+    "date": "Visit Date (B.S.)",
+    "type": "Visit Type",
+    "types": {
+      "anc": "Pregnant Woman - Regular Visit (ANC)",
+      "pnc": "Postnatal Mother - Regular Visit (PNC)",
+      "other": "Other Visit"
+    },
+    "recipient": "Service Recipient",
+    "recipient_placeholder": "Choose Service Recipient",
+    "address": "Address",
+    "observations": "Observation / Services",
+    "obs": {
+      "pregnancy_info": "Took information about pregnancy status",
+      "danger_signs": "Counseled on danger signs",
+      "iron_tablets": "Taking iron tablets",
+      "delivery_counseling": "Counseled for institutional delivery",
+      "referred": "Referred"
+    },
+    "health_facility": "Health Institution",
+    "health_facility_placeholder": "Select Health Institution",
+    "facilities": {
+      "chhatrabas": "Chhatrabas Health Post",
+      "phc": "Primary Health Center",
+      "district_hospital": "District Hospital",
+      "zonal_hospital": "Zonal Hospital"
+    },
+    "remarks": "Remarks",
+    "remarks_placeholder": "Write here...",
+    "save": "Save",
+    "validation": {
+      "date_required": "Visit date is required",
+      "mother_required": "Service recipient is required",
+      "facility_required": "Health institution is required when referred"
+    },
+    "messages": {
+      "save_success": "Visit saved successfully",
+      "save_failed": "Failed to save visit"
     }
   }
 }

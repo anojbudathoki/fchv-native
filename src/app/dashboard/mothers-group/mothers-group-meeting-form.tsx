@@ -67,7 +67,7 @@ export default function MothersGroupMeetingForm() {
                 decisions: decisions,
                 is_synced: false,
             });
-            router.back();
+            router.push("/dashboard");
         } catch (e) {
             console.error(e);
             alert(t("mothers_group_meeting.save_error"));
@@ -79,7 +79,7 @@ export default function MothersGroupMeetingForm() {
     return (
         <SafeAreaView className="flex-1 bg-white">
             <StatusBar barStyle="dark-content" backgroundColor="#f9fafb" />
-            <CustomHeader title={t("mothers_group_meeting.title")} />
+            <CustomHeader title={t("mothers_group_meeting.title")} onBackPress={() => router.push("/dashboard")} />
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}

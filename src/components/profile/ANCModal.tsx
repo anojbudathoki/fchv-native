@@ -15,13 +15,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { VisitStoreType } from "../../hooks/database/types/visitModal";
+import { AncVisitStoreType } from "../../hooks/database/types/ancVisitModal";
 import { toNepaliNumbers } from "../../utils/dateHelper";
 
 interface ANCModalProps {
   visible: boolean;
   onClose: () => void;
-  ancVisits: VisitStoreType[];
+  ancVisits: AncVisitStoreType[];
   record: {
     checkup_12: number | null;
     checkup_20: number | null;

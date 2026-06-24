@@ -40,6 +40,11 @@ export const API_LIST = {
     post: "/api/fchv/visits/sync/",
     patch: "/api/fchv/visits/{id}/"
   },
+  anc_visits: {
+    get: "/api/fchv/anc-visits/",
+    post: "/api/fchv/anc-visits/sync/",
+    patch: "/api/fchv/anc-visits/{id}/"
+  },
   todo: {
     get: "/api/fchv/todos/",
     post: "/api/fchv/todos/sync/",

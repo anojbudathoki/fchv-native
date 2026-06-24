@@ -3,6 +3,8 @@ type TableType =
   | "mother_staging"
   | "visit"
   | "visit_staging"
+  | "anc_visit"
+  | "anc_visit_staging"
   | "todo"
   | "todo_staging"
   | "pregnancy"
@@ -32,6 +34,7 @@ type SyncTableType = Extract<
   TableType,
   | "mother"
   | "visit"
+  | "anc_visit"
   | "todo"
   | "pregnancy"
   | "mothers_group_meetings"

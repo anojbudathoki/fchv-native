@@ -26,7 +26,9 @@
     "update": "अपडेट",
     "add": "थप्नुहोस्",
     "delete": "हटाउनुहोस्",
-    "save": "सुरक्षित गर्नुहोस्"
+    "save": "सुरक्षित गर्नुहोस्",
+    "unnamed_mother": "अनाम आमा",
+    "loading": "लोड हुँदैछ..."
   },
   "dashboard": {
     "title": "FCHV डैशबोर्ड",
@@ -58,7 +60,8 @@
       "pnc_visit": "सुत्केरी भेट",
       "group_meeting": "समूह बैठक",
       "death_report": "मृत्यु विवरण",
-      "children": "बालबालिका"
+      "children": "बालबालिका",
+      "delivery": "सुत्केरी दर्ता"
     },
     "sections": {
       "community_pulse": "समुदाय स्वास्थ्य तथ्याङ्क",
@@ -684,6 +687,13 @@
   "maternal_death_modal": {
     "title": "मातृ मृत्यु विवरण",
     "subtitle": "मातृ मृत्यु रेकर्ड",
+    "mother_info_section": "आमाको विवरण",
+    "death_details_section": "मृत्यु विवरण",
+    "additional_section": "थप विवरण",
+    "choose_mother": "आमा छान्नुहोस्",
+    "choose_mother_placeholder": "आमा छान्नुहोस्",
+    "mother_error": "कृपया आमा छान्नुहोस्",
+    "condition_error": "कृपया मृत्यु हुँदाको अवस्था छान्नुहोस्",
     "date_of_death": "मृत्यु भएको मिति",
     "condition_of_death": "मृत्यु हुँदाको अवस्था",
     "pregnant": "गर्भवती",
@@ -707,6 +717,11 @@
   },
   "newborn_death_modal": {
     "title": "नवजात / बाल मृत्यु विवरण",
+    "section_selection": "आमा र बच्चा",
+    "section_details": "बच्चाको विवरण",
+    "section_additional": "थप विवरण",
+    "manual_override": "उमेर एकाइ परिवर्तन",
+    "death_date": "मृत्यु मिति",
     "after_added": "दर्ता भइसक्यो",
     "subtitle": "नवजात तथा बाल मृत्यु (०–५९ महिना)",
     "baby_name": "बच्चाको नाम",
@@ -779,7 +794,7 @@
       "select_district": "जिल्ला छान्नुहोस्",
       "select_municipality": "पालिका छान्नुहोस्",
       "select_ward": "वडा छान्नुहोस्",
-      "select_province_first": "पहिले प्रदेश छान्नुहोस्", 
+      "select_province_first": "पहिले प्रदेश छान्नुहोस्",
       "select_district_first": "पहिले जिल्ला छान्नुहोस्",
       "select_municipality_first": "पहिले पालिका छान्नुहोस्"
     },
@@ -1327,6 +1342,49 @@
     "genders": {
       "male": "छोरा",
       "female": "छोरी"
+    }
+  },
+  "visit": {
+    "title": "भ्रमण दर्ता",
+    "address_ward_short": "वडा",
+    "address_locality_short": "टोल",
+    "date": "भ्रमण मिति (वि.सं.)",
+    "type": "भ्रमणको किसिम",
+    "types": {
+      "anc": "गर्भवती महिला - नियमित भेट",
+      "pnc": "सुत्केरी महिला - नियमित भेट",
+      "other": "अन्य भेट"
+    },
+    "recipient": "सेवाग्राही",
+    "recipient_placeholder": "सेवाग्राही छान्नुहोस्",
+    "address": "ठेगाना",
+    "observations": "अवलोकन / सेवा",
+    "obs": {
+      "pregnancy_info": "गर्भवती अवस्थाको जानकारी लियो",
+      "danger_signs": "खतराको लक्षणबारे परामर्श दियो",
+      "iron_tablets": "आइरन चक्की खाइरहेकी छिन्",
+      "delivery_counseling": "संस्थागत प्रसवका लागि परामर्श दियो",
+      "referred": "रिफर गरिएको"
+    },
+    "health_facility": "स्वास्थ्य संस्था",
+    "health_facility_placeholder": "स्वास्थ्य संस्था छान्नुहोस्",
+    "facilities": {
+      "chhatrabas": "छात्राबास",
+      "phc": "प्राथमिक स्वास्थ्य केन्द्र",
+      "district_hospital": "जिल्ला अस्पताल",
+      "zonal_hospital": "अञ्चल अस्पताल"
+    },
+    "remarks": "कैफियत",
+    "remarks_placeholder": "यहाँ लेख्नुहोस्...",
+    "save": "सेभ गर्नुहोस्",
+    "validation": {
+      "date_required": "भ्रमण मिति आवश्यक छ",
+      "mother_required": "सेवाग्राही आवश्यक छ",
+      "facility_required": "रिफर गर्दा स्वास्थ्य संस्था आवश्यक छ"
+    },
+    "messages": {
+      "save_success": "भ्रमण सफलतापूर्वक सुरक्षित गरियो",
+      "save_failed": "भ्रमण सुरक्षित गर्न असफल भयो"
     }
   }
 }
