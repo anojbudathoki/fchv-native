@@ -5,7 +5,6 @@ export default function MothersGroupLayout() {
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
             <Stack.Screen name="mothers-group-meeting-form" />
-            <Stack.Screen name="details" />
         </Stack>
     );
 }

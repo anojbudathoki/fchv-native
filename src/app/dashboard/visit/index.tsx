@@ -112,7 +112,7 @@ const ObservationItem = ({
   <TouchableOpacity
     activeOpacity={disabled ? 1 : 0.7}
     onPress={disabled ? undefined : onToggle}
-    className={`flex-row items-center py-3 px-4 rounded-xl mb-1.5 border ${
+    className={`flex-row items-center py-2 px-4 rounded-xl ${
       disabled
         ? "bg-slate-100 border-slate-200 opacity-70"
         : checked
@@ -134,7 +134,7 @@ const ObservationItem = ({
       )}
     </View>
     <Text
-      className={`text-[15px] flex-1 leading-5 ${
+      className={`text-[15px] flex-1 py-1 leading-5 ${
         disabled
           ? "text-slate-400 font-medium"
           : checked
@@ -908,12 +908,12 @@ export default function VisitScreen() {
             />
           </View>
 
-          {/* Referral Questions */}
+          {/* Counseling Questions */}
           <QuestionSection
-            title={t("visit.referral_questions", {
-              defaultValue: "Referral Questions",
+            title={t("visit.counseling_questions", {
+              defaultValue: "Counseling Questions",
             })}
-            questions={referralQuestions}
+            questions={counselingQuestions}
             checkedQuestions={checkedQuestions}
             onToggle={toggleQuestion}
             language={language}
@@ -921,12 +921,12 @@ export default function VisitScreen() {
             questionQuantities={questionQuantities}
           />
 
-          {/* Counseling Questions */}
+          {/* Referral Questions */}
           <QuestionSection
-            title={t("visit.counseling_questions", {
-              defaultValue: "Counseling Questions",
+            title={t("visit.referral_questions", {
+              defaultValue: "Referral Questions",
             })}
-            questions={counselingQuestions}
+            questions={referralQuestions}
             checkedQuestions={checkedQuestions}
             onToggle={toggleQuestion}
             language={language}

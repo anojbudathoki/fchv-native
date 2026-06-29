@@ -2,7 +2,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { BarChart3, Check, ChevronDown, MessageSquare, Minus, Plus, Trash2 } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, LayoutAnimation, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { AdToBs } from "react-native-nepali-picker";
+import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import {
   CHILD_COUNSELING_QUESTIONS,
   CHILD_HEALTH_COUNSELLING_QUESTIONS,
@@ -40,6 +40,12 @@ export default function ChildCounselingSection({
   // Delete confirmation modal state
   const [deleteModal, setDeleteModal] = useState(false);
   const [pendingDeleteQuestionId, setPendingDeleteQuestionId] = useState<string | null>(null);
+
+  // Date editing state
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
+  const [editingLogIndex, setEditingLogIndex] = useState<number | null>(null);
+  const [editingDateBs, setEditingDateBs] = useState("");
 
   // New inputs for malnutrition entry
   const [muac, setMuac] = useState<'green' | 'yellow' | 'red' | null>(null);
@@ -413,6 +419,58 @@ export default function ChildCounselingSection({
     setPendingDeleteQuestionId(null);
   };
 
+  const openDatePicker = (questionId: string, logIndex: number, dateStr: string) => {
+    try {
+      const bsDate = AdToBs(dateStr.split("T")[0]);
+      setEditingDateBs(bsDate);
+    } catch {
+      setEditingDateBs("");
+    }
+    setEditingQuestionId(questionId);
+    setEditingLogIndex(logIndex);
+    setDatePickerVisible(true);
+  };
+
+  const handleDateSelect = async (bsDate: string) => {
+    setDatePickerVisible(false);
+    if (editingQuestionId === null || editingLogIndex === null) return;
+
+    const adDate = BsToAd(bsDate);
+    const questionId = editingQuestionId;
+    const logIndex = editingLogIndex;
+
+    let logs: any[] = [];
+    if (Array.isArray(answers[questionId])) {
+      logs = JSON.parse(JSON.stringify(answers[questionId]));
+    } else if (answers[questionId]) {
+      logs = [{ date: record?.updated_at || new Date().toISOString(), value: true }];
+    }
+
+    if (logs[logIndex]) {
+      logs[logIndex].date = `${adDate}T00:00:00.000Z`;
+    }
+
+    const newAnswers = { ...answers, [questionId]: logs };
+    setAnswers(newAnswers);
+
+    try {
+      await saveChildCounseling({
+        id: record?.id,
+        child: childId,
+        answers: JSON.stringify(newAnswers),
+      });
+      showToast(t("counseling_section.updated_successfully") || "Updated successfully");
+    } catch (e) {
+      console.error("Failed to update date", e);
+      showToast(t("counseling_section.update_date_failed") || "Failed to update date");
+      setAnswers(answers);
+    }
+
+    setEditingQuestionId(null);
+    setEditingLogIndex(null);
+    setEditingDateBs("");
+  };
+
   const renderLogsInline = (questionId: string) => {
     let logs = [];
     if (Array.isArray(answers[questionId])) {
@@ -472,10 +530,17 @@ export default function ChildCounselingSection({
 
           return (
             <View key={index} className={`flex-row items-center ${canDelete ? "bg-blue-50 border border-blue-100" : "bg-slate-50 border border-slate-100"} px-2.5 py-1 rounded-md`}>
-              <Text className="text-[11px] text-slate-600 font-bold">
-                {dateStr}
-                {extraInfo}
-              </Text>
+              <TouchableOpacity
+                onPress={() => openDatePicker(questionId, index, log.date)}
+                disabled={disabled}
+                className="flex-row items-center"
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              >
+                <Text className="text-[11px] text-slate-600 font-bold">
+                  {dateStr}
+                  {extraInfo}
+                </Text>
+              </TouchableOpacity>
               {canDelete && (
                 <TouchableOpacity
                   onPress={() => requestDeleteLatest(questionId)}
@@ -718,6 +783,23 @@ export default function ChildCounselingSection({
         </View>
       </View>
     </Modal>
+  );
+
+  const renderDatePicker = () => (
+    <CalendarPicker
+      visible={datePickerVisible}
+      onClose={() => {
+        setDatePickerVisible(false);
+        setEditingQuestionId(null);
+        setEditingLogIndex(null);
+        setEditingDateBs("");
+      }}
+      onDateSelect={(bsDate) => handleDateSelect(bsDate)}
+      language={language === "en" ? "en" : "np"}
+      theme="light"
+      brandColor="#2563eb"
+      date={editingDateBs || undefined}
+    />
   );
 
   const renderMalnutritionHistory = (logs: any[], questionId: string) => {
@@ -1214,6 +1296,7 @@ export default function ChildCounselingSection({
       {renderDeleteConfirmModal()}
       {renderOrsModal()}
       {renderZincModal()}
+      {renderDatePicker()}
       {renderMalnutritionGroup()}
       {renderCounselingGroup()}
     </View>

@@ -67,6 +67,30 @@ export async function createMothersGroupMeeting(
     };
 }
 
+export async function updateMothersGroupMeeting(
+    id: string,
+    payload: Omit<CreateMothersGroupMeetingPayload, "id" | "is_synced">,
+): Promise<void> {
+    const db = await getDb();
+    const now = new Date().toISOString();
+
+    await db.runAsync(
+        `UPDATE mothers_group_meetings 
+         SET meeting_date = ?, meeting_location = ?, ward_no = ?, attendees_count = ?, discussed_topics = ?, decisions = ?, updated_at = ?
+         WHERE id = ?;`,
+        [
+            payload.meeting_date,
+            payload.meeting_location,
+            payload.ward_no ?? null,
+            payload.attendees_count,
+            JSON.stringify(payload.discussed_topics),
+            JSON.stringify(payload.decisions),
+            now,
+            id,
+        ],
+    );
+}
+
 export async function getAllMothersGroupMeetings(): Promise<
     (Omit<MothersGroupMeetingStoreType, "discussed_topics" | "decisions"> & {
         discussed_topics: string[];

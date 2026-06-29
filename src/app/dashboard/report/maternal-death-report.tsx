@@ -158,7 +158,7 @@ export default function MaternalDeathReportScreen() {
                 activeOpacity={0.7}
                 onPress={() =>
                   router.push({
-                    pathname: "/dashboard/profile",
+                    pathname: "/dashboard/report/maternal-death-details",
                     params: { id: item.id },
                   })
                 }

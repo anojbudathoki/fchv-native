@@ -41,10 +41,6 @@ import {
   getPregnantWomenList,
   PregnantWomenListItem,
 } from "../../../hooks/database/models/PregnantWomenModal";
-import {
-  getAllVisits,
-  VisitListItem,
-} from "../../../hooks/database/models/VisitModel";
 import { DeliveryStoreType } from "../../../hooks/database/types/deliveryModal";
 import { InfantMonitoringStoreType } from "../../../hooks/database/types/infantMonitoringModal";
 import { MaternalDeathStoreType } from "../../../hooks/database/types/maternalDeathModal";
@@ -91,6 +87,7 @@ const RecordCardSkeleton = () => (
 interface UnifiedRecord {
   id: string;
   motherId?: string;
+  childId?: string;
   name: string;
   ward: string;
   municipality?: string;
@@ -104,8 +101,7 @@ interface UnifiedRecord {
     | "dead_mother"
     | "dead_child"
     | "delivery"
-    | "mother_meeting"
-    | "visit";
+    | "mother_meeting";
   image?: string;
   subtitle?: string;
   reg_month?: string | number | null;
@@ -119,8 +115,7 @@ type TabKey =
   | "dead_child"
   | "pregnancy"
   | "delivery"
-  | "mother_meeting"
-  | "visit";
+  | "mother_meeting";
 
 interface TabItem {
   key: TabKey;
@@ -132,7 +127,6 @@ const TAB_KEYS: TabItem[] = [
   { key: "pregnancy" },
   { key: "child" },
   { key: "delivery" },
-  { key: "visit" },
   { key: "mother_meeting" },
   { key: "dead_mother" },
   { key: "dead_child" },
@@ -184,12 +178,6 @@ const TYPE_COLORS: Record<
     accent: "#0891B2",
     icon: "#0891B2",
   },
-  visit: {
-    bg: "bg-violet-50",
-    iconBg: "bg-violet-500",
-    accent: "#7C3AED",
-    icon: "#7C3AED",
-  },
 };
 
 const RecordCard = memo(function RecordCard({
@@ -234,8 +222,6 @@ const RecordCard = memo(function RecordCard({
         return <Baby {...iconProps} />;
       case "mother_meeting":
         return <Users {...iconProps} />;
-      case "visit":
-        return <Calendar {...iconProps} />;
       default:
         return <User {...iconProps} />;
     }
@@ -357,7 +343,6 @@ export default function ReportScreen() {
   const [childDeaths, setChildDeaths] = useState<NewbornDeathStoreType[]>([]);
   const [deliveries, setDeliveries] = useState<DeliveryStoreType[]>([]);
   const [meetings, setMeetings] = useState<any[]>([]);
-  const [visits, setVisits] = useState<VisitListItem[]>([]);
 
   const [motherNameMap, setMotherNameMap] = useState<Record<string, string>>(
     {},
@@ -380,7 +365,6 @@ export default function ReportScreen() {
         childDeathList,
         deliveryList,
         meetingList,
-        visitList,
       ] = await Promise.all([
         getAllMothersList(),
         getAllInfantMonitorings(),
@@ -389,7 +373,6 @@ export default function ReportScreen() {
         getAllNewbornDeaths(),
         getAllDeliveries(),
         getAllMothersGroupMeetings(),
-        getAllVisits(),
       ]);
 
       setMothers(motherList);
@@ -399,7 +382,6 @@ export default function ReportScreen() {
       setChildDeaths(childDeathList);
       setDeliveries(deliveryList);
       setMeetings(meetingList);
-      setVisits(visitList);
 
       const nameMap: Record<string, string> = {};
       const wardMap: Record<string, string> = {};
@@ -503,6 +485,7 @@ export default function ReportScreen() {
       maternalDeaths.forEach((md) => {
         records.push({
           id: md.id || "",
+          motherId: md.mother,
           name: md.mother_name || t("reports.unknown"),
           ward: "",
           registrationDate: md.created_at || "",
@@ -523,6 +506,8 @@ export default function ReportScreen() {
       childDeaths.forEach((cd) => {
         records.push({
           id: cd.id || "",
+          motherId: cd.mother,
+          childId: cd.child_id || undefined,
           name: cd.baby_name || t("reports.unnamed_baby"),
           ward: "",
           registrationDate: cd.created_at || "",
@@ -541,6 +526,7 @@ export default function ReportScreen() {
       deliveries.forEach((d) => {
         records.push({
           id: d.id,
+          motherId: d.mother,
           name: (d as any).mother_name || t("reports.unknown"),
           ward: "",
           registrationDate: d.created_at || "",
@@ -569,22 +555,6 @@ export default function ReportScreen() {
           subtitle: `${t("reports.visit.attendees")}: ${m.attendees_count}`,
           reg_month:
             m.reg_month || (m.created_at ? m.created_at.substring(0, 7) : null),
-        });
-      });
-    }
-
-    if (activeTab === "all" || activeTab === "visit") {
-      visits.forEach((v) => {
-        records.push({
-          id: v.id,
-          name: v.name || t("reports.unknown"),
-          ward: v.address || "",
-          registrationDate: v.visit_date || "",
-          status: "normal",
-          statusLabel: t("reports.status.normal"),
-          type: "visit",
-          subtitle: `${t("reports.visit.type")}: ${v.visit_type}`,
-          reg_month: v.visit_date ? v.visit_date.substring(0, 7) : null,
         });
       });
     }
@@ -636,20 +606,44 @@ export default function ReportScreen() {
           } as any);
           break;
         case "dead_mother":
-          router.push({
-            pathname: "/dashboard/profile",
-            params: { id: record.id },
-          } as any);
+          if (record.motherId) {
+            router.push({
+              pathname: "/dashboard/profile",
+              params: { id: record.motherId, from: "/dashboard/report" },
+            } as any);
+          } else {
+            router.push({
+              pathname: "/dashboard/report/maternal-death-details",
+              params: { id: record.id },
+            } as any);
+          }
           break;
         case "dead_child":
-          router.push({
-            pathname: "/dashboard/report/newborn-death-details",
-            params: { id: record.id },
-          } as any);
+          if (record.childId) {
+            router.push({
+              pathname: "/dashboard/child/child-profile",
+              params: { id: record.childId, from: "/dashboard/report" },
+            } as any);
+          } else if (record.motherId) {
+            router.push({
+              pathname: "/dashboard/profile",
+              params: { id: record.motherId, from: "/dashboard/report" },
+            } as any);
+          }
           break;
         case "delivery":
+          if (record.motherId) {
+            router.push({
+              pathname: "/dashboard/profile",
+              params: { id: record.motherId, from: "/dashboard/report" },
+            } as any);
+          }
+          break;
         case "mother_meeting":
-        case "visit":
+          router.push({
+            pathname: "/dashboard/report/mother-meeting-details",
+            params: { id: record.id },
+          } as any);
           break;
       }
     },
@@ -680,8 +674,6 @@ export default function ReportScreen() {
         return deliveries.length;
       case "mother_meeting":
         return meetings.length;
-      case "visit":
-        return visits.length;
       default:
         return 0;
     }
@@ -735,7 +727,6 @@ export default function ReportScreen() {
               pregnancy: isActive ? "bg-indigo-50" : "bg-transparent",
               child: isActive ? "bg-indigo-50" : "bg-transparent",
               delivery: isActive ? "bg-indigo-50" : "bg-transparent",
-              visit: isActive ? "bg-indigo-50" : "bg-transparent",
               mother_meeting: isActive ? "bg-indigo-50" : "bg-transparent",
               dead_mother: isActive ? "bg-indigo-50" : "bg-transparent",
               dead_child: isActive ? "bg-indigo-50" : "bg-transparent",
@@ -759,8 +750,6 @@ export default function ReportScreen() {
                   return <Baby size={s} color={c} />;
                 case "delivery":
                   return <Baby size={s} color={c} />;
-                case "visit":
-                  return <Calendar size={s} color={c} />;
                 case "mother_meeting":
                   return <Users size={s} color={c} />;
                 case "dead_mother":

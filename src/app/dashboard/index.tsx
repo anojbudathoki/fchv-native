@@ -340,8 +340,54 @@ export default function DashboardScreen() {
           <View>
             {/* Quick Access — 6 flat cards */}
             <View
-              style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 28 }}
+              style={{ paddingHorizontal: 20, marginTop: 15, marginBottom: 28 }}
             >
+              {/* quick add form section */}
+              <View style={{ marginBottom: 16 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                    marginBottom: 4,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 3,
+                      height: 20,
+                      backgroundColor: "#0891B2",
+                      borderRadius: 2,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 17,
+                      fontWeight: "700",
+                      color: "#0F172A",
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    {t(
+                      "dashboard.sections.quick_forms",
+                      "Quick Registration & Services",
+                    )}
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    color: "#94A3B8",
+                    fontWeight: "400",
+                    marginLeft: 13,
+                  }}
+                >
+                  {t(
+                    "dashboard.sections.quick_forms_subtitle",
+                    "Fast data entry for maternal and child healthcare",
+                  )}
+                </Text>
+              </View>
               <View style={{ gap: 12 }}>
                 {/* Row 1 */}
                 <View style={{ flexDirection: "row", gap: 12 }}>
@@ -469,7 +515,7 @@ export default function DashboardScreen() {
                         lineHeight: 18,
                       }}
                     >
-                      {t("dashboard.quick_actions.pnc_visit")}
+                      {t("dashboard.quick_actions.follow_up")}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -712,7 +758,7 @@ export default function DashboardScreen() {
                   delay={500}
                 />
                 <StatCard
-                  path="/dashboard/mothers-group/mothers-group-meeting-form"
+                  path="/dashboard/report?tab=mother_meeting"
                   icon={Calendar}
                   iconColor="#D97706"
                   iconBg="#FEF3C7"
@@ -1254,8 +1300,8 @@ export default function DashboardScreen() {
                   style={{
                     marginTop: 20,
                     paddingVertical: 14,
-                    borderRadius: 16,
-                    backgroundColor: "#356169",
+                    borderRadius: 8,
+                    backgroundColor: "#475569",
                     alignItems: "center",
                   }}
                 >

@@ -4,17 +4,17 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Calendar, Clock, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Pressable,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { CalendarPicker } from "react-native-nepali-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export type Priority = "URGENT" | "MEDIUM" | "NORMAL";
 
@@ -109,7 +109,9 @@ export default function TaskModal({
     setForm(nextForm);
     setErrors({});
     setSelectedTime(
-      initialData?.task_time ? parseTimeString(initialData.task_time) : new Date(),
+      initialData?.task_time
+        ? parseTimeString(initialData.task_time)
+        : new Date(),
     );
   }, [visible, initialData]);
 
@@ -156,7 +158,12 @@ export default function TaskModal({
   const showDateValue = form.task_date || t("todo_tasks.select_date");
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      onRequestClose={onClose}
+    >
       <SafeAreaView className="flex-1 bg-white pt-5">
         <View className="flex-row items-center justify-between px-5 py-4 bg-white border-b border-slate-100">
           <Text className="text-slate-900 text-[19px] font-bold">
@@ -199,7 +206,9 @@ export default function TaskModal({
                     onPress={() => setShowDatePicker(true)}
                     className={`bg-white border rounded-md px-4 py-3 h-[50px] flex-row items-center justify-between ${errors.date ? "border-rose-300" : "border-slate-200"}`}
                   >
-                    <Text className={`text-[15px] ${form.task_date ? "text-slate-800" : "text-slate-400"}`}>
+                    <Text
+                      className={`text-[15px] ${form.task_date ? "text-slate-800" : "text-slate-400"}`}
+                    >
                       {showDateValue}
                     </Text>
                     <Calendar size={18} color="#64748B" />
@@ -218,7 +227,9 @@ export default function TaskModal({
                     onPress={() => setShowTimePicker(true)}
                     className={`bg-white border rounded-md px-4 py-3 h-[50px] flex-row items-center justify-between ${errors.time ? "border-rose-300" : "border-slate-200"}`}
                   >
-                    <Text className={`text-[15px] ${form.task_time ? "text-slate-800" : "text-slate-400"}`}>
+                    <Text
+                      className={`text-[15px] ${form.task_time ? "text-slate-800" : "text-slate-400"}`}
+                    >
                       {showTimeValue}
                     </Text>
                     <Clock size={18} color="#64748B" />
@@ -269,7 +280,9 @@ export default function TaskModal({
                         onPress={() => handleChange("priority", p)}
                         className={`flex-1 items-center justify-center ${selected ? "bg-primary" : ""}`}
                       >
-                        <Text className={`text-[14px] font-semibold ${selected ? "text-white" : "text-slate-600"}`}>
+                        <Text
+                          className={`text-[14px] font-semibold ${selected ? "text-white" : "text-slate-600"}`}
+                        >
                           {t(`todo_tasks.priority_levels.${p}`)}
                         </Text>
                       </TouchableOpacity>
@@ -289,20 +302,19 @@ export default function TaskModal({
                 multiline
                 numberOfLines={4}
               />
-          <View className="bg-white border-t border-slate-100">
-            <TouchableOpacity
-              onPress={handleSubmit}
-              disabled={submitting}
-              className={`w-full py-4 flex-row items-center justify-center rounded-md ${submitting ? "bg-slate-300" : "bg-primary"}`}
-            >
-              <Text className="text-white font-bold text-[16px] tracking-wide">
-                {submitLabel || t("todo_tasks.create_task")}
-              </Text>
-            </TouchableOpacity>
-          </View>
+              <View className="bg-white border-t border-slate-100">
+                <TouchableOpacity
+                  onPress={handleSubmit}
+                  disabled={submitting}
+                  className={`w-full py-4 flex-row items-center justify-center rounded-md ${submitting ? "bg-slate-300" : "bg-primary"}`}
+                >
+                  <Text className="text-white font-bold text-[16px] tracking-wide">
+                    {submitLabel}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
-
         </KeyboardAvoidingView>
 
         <CalendarPicker

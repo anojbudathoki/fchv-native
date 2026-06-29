@@ -63,9 +63,12 @@
       "group_meeting": "Group Meeting",
       "death_report": "Death Report",
       "children": "Children",
-      "delivery": "Delivery"
+      "delivery": "Delivery",
+      "follow_up": "Follow-up"
     },
     "sections": {
+      "quick_forms": "Form Registration",
+      "quick_forms_subtitle": "Data entry for maternal and child health",
       "community_pulse": "Community Health Statistics",
       "community_pulse_subtitle": "Key health indicators at a glance",
       "recent_activity": "Recent Activity",
@@ -1167,8 +1170,8 @@
     "dob_label": "Birth Date"
   },
   "child_form": {
-    "edit_child": "Edit Child Monitoring",
-    "new_child": "New Child Monitoring",
+    "edit_child": "Edit Child",
+    "new_child": "Child Registration",
     "select_mother": "Select Mother",
     "select_mother_placeholder": "Select Mother",
     "baby_name": "Baby's Name",
@@ -1254,6 +1257,8 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "deleted_successfully": "Deleted successfully",
+    "updated_successfully": "Date updated successfully",
+    "update_date_failed": "Failed to update date",
     "delete_confirm_message": "Are you sure you want to delete the latest record?",
     "delete_confirm_yes": "Yes",
     "delete_confirm_no": "No",
@@ -1321,7 +1326,8 @@
     "empty_subtitle": "No group meeting records have been added yet. Click the New Record button above to add a new record.",
     "no_topics_recorded": "No topics recorded.",
     "no_decisions_recorded": "No decisions recorded.",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "update_record": "Update Record"
   },
   "newborn_death": {
     "title": "Newborn Death Record",

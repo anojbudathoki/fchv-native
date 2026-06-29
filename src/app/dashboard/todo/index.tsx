@@ -12,7 +12,7 @@ import {
   Edit2,
   MapPin,
   Plus,
-  Trash2
+  Trash2,
 } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,10 +23,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, {
-  FadeInDown,
-  Layout,
-} from "react-native-reanimated";
+import Animated, { FadeInDown, Layout } from "react-native-reanimated";
 import { useLanguage } from "../../../context/LanguageContext";
 import {
   createTodo,
@@ -135,7 +132,8 @@ export default function TasksScreen() {
   const scheduleMissingTaskNotifications = async (items: TodoItem[]) => {
     const nextTodos = [...items];
     let didUpdate = false;
-    const scheduledNotificationIds = await getScheduledTaskNotificationIdsAsync();
+    const scheduledNotificationIds =
+      await getScheduledTaskNotificationIdsAsync();
 
     for (const todo of items) {
       if (todo.is_completed === 1 || !todo.task_date) {
@@ -332,7 +330,10 @@ export default function TasksScreen() {
           await updateTodo(newItem.id, { notification_id: notificationId });
         }
 
-        setTodos((prev) => [{ ...newItem, notification_id: notificationId }, ...prev]);
+        setTodos((prev) => [
+          { ...newItem, notification_id: notificationId },
+          ...prev,
+        ]);
       }
 
       setTaskModalVisible(false);
@@ -366,7 +367,6 @@ export default function TasksScreen() {
 
   const renderTitleSection = () => (
     <View className="pb-4">
-
       <CustomHeader
         title={t("todo_tasks.title")}
         onBackPress={() => router.back()}
@@ -467,8 +467,9 @@ export default function TasksScreen() {
         key={todo.id}
         entering={FadeInDown.delay(100 + index * 50).duration(400)}
         layout={Layout.springify()}
-        className={`bg-white rounded-xl p-4 mb-4 border border-slate-200 flex-row ${isDone ? "opacity-60" : ""
-          }`}
+        className={`bg-white rounded-xl p-4 mb-4 border border-slate-200 flex-row ${
+          isDone ? "opacity-60" : ""
+        }`}
       >
         {/* Checkbox */}
         <TouchableOpacity
@@ -492,18 +493,31 @@ export default function TasksScreen() {
         >
           <View className="flex-row justify-between items-start">
             <Text
-              className={`text-[16px] font-bold flex-1 mr-2 ${isDone ? "text-slate-400 line-through" : "text-slate-800"
-                }`}
+              className={`text-[16px] font-bold flex-1 mr-2 ${
+                isDone ? "text-slate-400 line-through" : "text-slate-800"
+              }`}
             >
               {parsed.title}
             </Text>
 
-            {/* Priority Badge */}
-            {/* <View className={`px-2 py-0.5 rounded ${pStyle.bg}`}>
-              <Text className={`text-[10px] font-bold ${pStyle.text}`}>
-                {t(`todo_tasks.priority_levels.${parsed.priority}`)}
-              </Text>
-            </View> */}
+            {/* Edit Button */}
+            <View className="flex-row items-center ml-2 gap-x-2">
+              <TouchableOpacity
+                className="p-2 bg-slate-50 rounded-xl border border-slate-100"
+                onPress={() => handleEditPress(todo)}
+              >
+                <Edit2 size={16} color="#64748B" strokeWidth={2.5} />
+              </TouchableOpacity>
+
+              {isDone && (
+                <TouchableOpacity
+                  className="p-2.5 bg-rose-50 rounded-xl border border-rose-100"
+                  onPress={() => handleDeleteTodo(todo.id)}
+                >
+                  <Trash2 size={16} color="#EF4444" strokeWidth={2.5} />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
 
           {todo.description ? (
@@ -556,29 +570,9 @@ export default function TasksScreen() {
             </View>
           </View>
         </TouchableOpacity>
-
-        {/* Edit Button */}
-        <View className="flex-row items-center ml-2 gap-x-2">
-          <TouchableOpacity
-            className="p-2.5 bg-slate-50 rounded-xl border border-slate-100"
-            onPress={() => handleEditPress(todo)}
-          >
-            <Edit2 size={16} color="#64748B" strokeWidth={2.5} />
-          </TouchableOpacity>
-
-          {isDone && (
-            <TouchableOpacity
-              className="p-2.5 bg-rose-50 rounded-xl border border-rose-100"
-              onPress={() => handleDeleteTodo(todo.id)}
-            >
-              <Trash2 size={16} color="#EF4444" strokeWidth={2.5} />
-            </TouchableOpacity>
-          )}
-        </View>
       </Animated.View>
     );
   };
-
 
   const renderEmptyList = () => (
     <View className="px-6">
@@ -640,17 +634,31 @@ export default function TasksScreen() {
           setEditingTodo(null);
         }}
         onSubmit={handleTaskModalSubmit}
-        initialData={editingTodo ? {
-          title: parseTaskString(editingTodo.task).title || "",
-          description: editingTodo.description || null,
-          task_date: editingTodo.task_date || "",
-          task_time: editingTodo.task_time || parseTaskString(editingTodo.task).time || "",
-          patient: parseTaskString(editingTodo.task).patient || null,
-          location: parseTaskString(editingTodo.task).location || "",
-          priority: parseTaskString(editingTodo.task).priority || "NORMAL",
-        } : undefined}
-        submitLabel={editingTodo ? t("todo_tasks.save_changes") : t("todo_tasks.create_task")}
-        headerTitle={editingTodo ? t("todo_tasks.edit_task") : t("todo_tasks.add_task")}
+        initialData={
+          editingTodo
+            ? {
+                title: parseTaskString(editingTodo.task).title || "",
+                description: editingTodo.description || null,
+                task_date: editingTodo.task_date || "",
+                task_time:
+                  editingTodo.task_time ||
+                  parseTaskString(editingTodo.task).time ||
+                  "",
+                patient: parseTaskString(editingTodo.task).patient || null,
+                location: parseTaskString(editingTodo.task).location || "",
+                priority:
+                  parseTaskString(editingTodo.task).priority || "NORMAL",
+              }
+            : undefined
+        }
+        submitLabel={
+          editingTodo
+            ? t("todo_tasks.save_changes")
+            : t("todo_tasks.create_task")
+        }
+        headerTitle={
+          editingTodo ? t("todo_tasks.edit_task") : t("todo_tasks.add_task")
+        }
         submitting={isTaskSubmitting}
       />
 

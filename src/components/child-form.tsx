@@ -12,7 +12,10 @@ import {
   getAllMothersList,
   MotherListDbItem,
 } from "@/hooks/database/models/MotherModel";
-import { getPregnanciesByMotherId, updatePregnancy } from "@/hooks/database/models/PregnantWomenModal";
+import {
+  getPregnanciesByMotherId,
+  updatePregnancy,
+} from "@/hooks/database/models/PregnantWomenModal";
 import { PregnancyStoreType } from "@/hooks/database/types/pregnancyModal";
 import {
   BIRTH_PLACE_OPTIONS,
@@ -23,14 +26,26 @@ import * as Crypto from "expo-crypto";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Calendar as CalendarIcon, Check } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, StatusBar, Text, TouchableOpacity, View } from "react-native";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {
+  Alert,
+  Pressable,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "./button";
 
 export default function ChildRegistrationForm() {
-  const { id, motherId, pregnancyId, from } = useLocalSearchParams<{ id: string; motherId?: string; pregnancyId?: string; from?: string }>();
+  const { id, motherId, pregnancyId, from } = useLocalSearchParams<{
+    id: string;
+    motherId?: string;
+    pregnancyId?: string;
+    from?: string;
+  }>();
   const { showToast } = useToast();
   const router = useRouter();
   const { t, language } = useLanguage();
@@ -75,11 +90,16 @@ export default function ChildRegistrationForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Pregnancy linking: default YES when pregnancyId is passed in or from profile
-  const [linkToPregnancy, setLinkToPregnancy] = useState(!!pregnancyId || from === "profile");
+  const [linkToPregnancy, setLinkToPregnancy] = useState(
+    !!pregnancyId || from === "profile",
+  );
 
   // Suggestion states
-  const [motherPregnancies, setMotherPregnancies] = useState<PregnancyStoreType[]>([]);
-  const [suggestedPregnancy, setSuggestedPregnancy] = useState<PregnancyStoreType | null>(null);
+  const [motherPregnancies, setMotherPregnancies] = useState<
+    PregnancyStoreType[]
+  >([]);
+  const [suggestedPregnancy, setSuggestedPregnancy] =
+    useState<PregnancyStoreType | null>(null);
   const [hasCurrentPregnancy, setHasCurrentPregnancy] = useState(false);
 
   // Fetch mother's pregnancies when selectedMotherId changes
@@ -139,7 +159,6 @@ export default function ChildRegistrationForm() {
     }
   }, [birthDateAd, motherPregnancies, pregnancyId]);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -172,7 +191,7 @@ export default function ChildRegistrationForm() {
               setBirthDateAd(infant.date_of_birth);
               try {
                 setBirthDateBs(AdToBs(infant.date_of_birth));
-              } catch (e) { }
+              } catch (e) {}
             }
           }
         } else if (motherId) {
@@ -188,11 +207,20 @@ export default function ChildRegistrationForm() {
   const validate = () => {
     const e: Record<string, string> = {};
     if (!selectedMotherId)
-      e.motherId = t("child_form.validation.mother_required", "Mother is required");
+      e.motherId = t(
+        "child_form.validation.mother_required",
+        "Mother is required",
+      );
     if (!birthDateAd)
-      e.birthDate = t("child_form.validation.birth_date_required", "Birth date is required");
+      e.birthDate = t(
+        "child_form.validation.birth_date_required",
+        "Birth date is required",
+      );
     if (!gender)
-      e.gender = t("child_form.validation.gender_required", "Gender is required");
+      e.gender = t(
+        "child_form.validation.gender_required",
+        "Gender is required",
+      );
     return e;
   };
 
@@ -205,8 +233,10 @@ export default function ChildRegistrationForm() {
 
     setIsLoading(true);
     try {
-      const activePregnancyObj = motherPregnancies.find((p) => p.is_current === 1) || null;
-      const targetPregnancyId = pregnancyId || activePregnancyObj?.id || suggestedPregnancy?.id;
+      const activePregnancyObj =
+        motherPregnancies.find((p) => p.is_current === 1) || null;
+      const targetPregnancyId =
+        pregnancyId || activePregnancyObj?.id || suggestedPregnancy?.id;
 
       const payload = {
         id: id || Crypto.randomUUID(),
@@ -228,28 +258,37 @@ export default function ChildRegistrationForm() {
         gender: gender || undefined,
         remarks: remarks,
         // Pregnancy linkage
-        pregnancy_id: linkToPregnancy && targetPregnancyId ? targetPregnancyId : null,
+        pregnancy_id:
+          linkToPregnancy && targetPregnancyId ? targetPregnancyId : null,
         registration_source: (linkToPregnancy && targetPregnancyId
-          ? 'PREGNANCY'
-          : 'DIRECT_CHILD_REGISTRATION') as 'PREGNANCY' | 'DIRECT_CHILD_REGISTRATION',
+          ? "PREGNANCY"
+          : "DIRECT_CHILD_REGISTRATION") as
+          | "PREGNANCY"
+          | "DIRECT_CHILD_REGISTRATION",
       };
       await createInfantMonitoring(payload);
 
       // Deactivate current pregnancy and mark as delivered if child was linked to one
-      const linkedPregId = linkToPregnancy && targetPregnancyId ? targetPregnancyId : null;
+      const linkedPregId =
+        linkToPregnancy && targetPregnancyId ? targetPregnancyId : null;
       if (linkedPregId) {
         try {
-          await updatePregnancy(linkedPregId, { is_current: false, delivered: true });
+          await updatePregnancy(linkedPregId, {
+            is_current: false,
+            delivered: true,
+          });
         } catch (e) {
           console.error("Failed to deactivate pregnancy:", e);
         }
       }
 
-      showToast(t("child_form.messages.save_success", "Record saved successfully"));
+      showToast(
+        t("child_form.messages.save_success", "Record saved successfully"),
+      );
       if (!id && from === "profile" && selectedMotherId) {
         router.replace({
           pathname: "/dashboard/profile",
-          params: { id: selectedMotherId }
+          params: { id: selectedMotherId },
         } as any);
       } else {
         router.back();
@@ -294,19 +333,19 @@ export default function ChildRegistrationForm() {
     .map((m) => ({ label: m.name, value: m.id }));
 
   return (
-    <SafeAreaView className="flex-1 pb-5">
-      <StatusBar barStyle="dark-content" className="bg-white" />
+    <SafeAreaView className="flex-1 pb-5 bg-white">
+      <StatusBar
+        barStyle="dark-content"
+        className="bg-white"
+        backgroundColor="#fff"
+      />
       <CustomHeader
-        title={
-          id
-            ? t("child_form.edit_child", "Edit Child Monitoring")
-            : t("child_form.new_child", "New Child Monitoring")
-        }
+        title={id ? t("child_form.edit_child") : t("child_form.new_child")}
         onBackPress={() => {
           if (!id && from === "profile" && selectedMotherId) {
             router.replace({
               pathname: "/dashboard/profile",
-              params: { id: selectedMotherId }
+              params: { id: selectedMotherId },
             } as any);
           } else {
             router.back();
@@ -337,18 +376,22 @@ export default function ChildRegistrationForm() {
                   <TouchableOpacity
                     onPress={() => setLinkToPregnancy(true)}
                     activeOpacity={0.8}
-                    className={`flex-1 rounded-md py-3 items-center justify-center ${linkToPregnancy ? 'bg-slate-900' : 'bg-slate-100'}`}
+                    className={`flex-1 rounded-md py-3 items-center justify-center ${linkToPregnancy ? "bg-slate-900" : "bg-slate-100"}`}
                   >
-                    <Text className={`font-semibold ${linkToPregnancy ? 'text-white' : 'text-slate-900'}`}>
+                    <Text
+                      className={`font-semibold ${linkToPregnancy ? "text-white" : "text-slate-900"}`}
+                    >
                       {t("child_form.link_to_pregnancy.yes")}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => setLinkToPregnancy(false)}
                     activeOpacity={0.8}
-                    className={`flex-1 rounded-md py-3 items-center justify-center ${!linkToPregnancy ? 'bg-slate-900' : 'bg-slate-100'}`}
+                    className={`flex-1 rounded-md py-3 items-center justify-center ${!linkToPregnancy ? "bg-slate-900" : "bg-slate-100"}`}
                   >
-                    <Text className={`font-semibold ${!linkToPregnancy ? 'text-white' : 'text-slate-900'}`}>
+                    <Text
+                      className={`font-semibold ${!linkToPregnancy ? "text-white" : "text-slate-900"}`}
+                    >
                       {t("child_form.link_to_pregnancy.no")}
                     </Text>
                   </TouchableOpacity>
@@ -399,10 +442,11 @@ export default function ChildRegistrationForm() {
               </Text>
               <Pressable
                 onPress={() => setShowDatePicker(true)}
-                className={`h-14 flex-row items-center rounded-xl px-4 border ${errors.birthDate
-                  ? "border-rose-400 bg-rose-50"
-                  : "border-slate-200 bg-white"
-                  } justify-between`}
+                className={`h-14 flex-row items-center rounded-xl px-4 border ${
+                  errors.birthDate
+                    ? "border-rose-400 bg-rose-50"
+                    : "border-slate-200 bg-white"
+                } justify-between`}
               >
                 <View className="flex-row items-center">
                   <CalendarIcon size={18} color="#94a3b8" />
@@ -463,21 +507,29 @@ export default function ChildRegistrationForm() {
                 <View className="flex-row">
                   <TouchableOpacity
                     onPress={() => setLinkToPregnancy(true)}
-                    className={`flex-1 py-3 items-center border-r border-amber-100 ${linkToPregnancy ? 'bg-amber-600' : 'bg-white'
-                      }`}
+                    className={`flex-1 py-3 items-center border-r border-amber-100 ${
+                      linkToPregnancy ? "bg-amber-600" : "bg-white"
+                    }`}
                   >
-                    <Text className={`font-semibold text-[14px] ${linkToPregnancy ? 'text-white' : 'text-slate-500'
-                      }`}>
+                    <Text
+                      className={`font-semibold text-[14px] ${
+                        linkToPregnancy ? "text-white" : "text-slate-500"
+                      }`}
+                    >
                       {t("child_form.matching_pregnancy.yes")}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => setLinkToPregnancy(false)}
-                    className={`flex-1 py-3 items-center ${!linkToPregnancy ? 'bg-slate-600' : 'bg-white'
-                      }`}
+                    className={`flex-1 py-3 items-center ${
+                      !linkToPregnancy ? "bg-slate-600" : "bg-white"
+                    }`}
                   >
-                    <Text className={`font-semibold text-[14px] ${!linkToPregnancy ? 'text-white' : 'text-slate-500'
-                      }`}>
+                    <Text
+                      className={`font-semibold text-[14px] ${
+                        !linkToPregnancy ? "text-white" : "text-slate-500"
+                      }`}
+                    >
                       {t("child_form.matching_pregnancy.no")}
                     </Text>
                   </TouchableOpacity>
@@ -539,54 +591,8 @@ export default function ChildRegistrationForm() {
             onValueChange={(val: string) => setBirthPlace(val)}
           />
 
-          <View className="gap-y-3">
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() =>
-                setSkilledBirthAttended(skilledBirthAttended ? 0 : 1)
-              }
-              className={`flex-row items-center p-4 rounded-xl border ${skilledBirthAttended ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
-            >
-              <View
-                className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${skilledBirthAttended ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
-              >
-                {skilledBirthAttended ? (
-                  <Check color="#555" strokeWidth={3} size={15} />
-                ) : null}
-              </View>
-              <Text
-                className={`text-[16px] flex-1 ${skilledBirthAttended ? "text-black" : "text-slate-800"}`}
-              >
-                {t(
-                  "child_form.skilled_birth_attended"
-                )}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => setFchvPresent(fchvPresent ? 0 : 1)}
-              className={`flex-row items-center p-4 rounded-xl border ${fchvPresent ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
-            >
-              <View
-                className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${fchvPresent ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
-              >
-                {fchvPresent ? (
-                  <Check color="#555" strokeWidth={3} size={15} />
-                ) : null}
-              </View>
-              <Text
-                className={`text-[16px] flex-1 ${fchvPresent ? "text-black" : "text-slate-800"}`}
-              >
-                {t(
-                  "child_form.fchv_present"
-                )}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
           {/* Child Status */}
-          <View className="mt-6">
+          <View className="mb-7">
             <Text className="text-slate-800 text-[16px] mb-3 ml-1">
               {t("child_form.child_status")}
             </Text>
@@ -615,73 +621,117 @@ export default function ChildRegistrationForm() {
             </View>
           </View>
 
-          {/* Health Indicators */}
-          <View className="mt-6">
-            <ProfilePicker
-              label={t("child_form.baby_weight")}
-              placeholder={t("child_form.select_weight")}
-              options={BABY_WEIGHT_OPTIONS.map((opt) => ({
-                label: opt.label,
-                value: opt.value,
-              }))}
-              selectedValue={babyWeight}
-              onValueChange={(val: string) => setBabyWeight(val)}
-            />
-
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() =>
-                setAsphyxiatedNewborn(asphyxiatedNewborn ? 0 : 1)
-              }
-              className={`flex-row items-center p-4 mt-4 rounded-xl border ${asphyxiatedNewborn ? "bg-rose-50 border-rose-300" : "bg-white border-slate-200"}`}
-            >
-              <View
-                className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${asphyxiatedNewborn ? "bg-rose-500 border-rose-500" : "border-slate-300 bg-white"}`}
-              >
-                {asphyxiatedNewborn ? (
-                  <Check color="#fff" strokeWidth={3} size={15} />
-                ) : null}
-              </View>
-              <Text
-                className={`text-[16px] flex-1 ${asphyxiatedNewborn ? "text-rose-800" : "text-slate-800"}`}
-              >
-                {t("child_form.asphyxiated_newborn")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Newborn Care Options */}
-          <View className="mt-6">
-            <Text className="text-slate-800 text-[16px] mb-3 ml-1">
-              {t("child_form.newborn_care")}
-            </Text>
-            <View className="gap-y-3">
-              {NEWBORN_CARE_OPTIONS.map((option) => {
-                const isSelected = newbornCare.includes(option.value);
-                return (
-                  <TouchableOpacity
-                    key={option.value}
-                    activeOpacity={0.7}
-                    onPress={() => toggleNewbornCare(option.value)}
-                    className={`flex-row items-center p-4 rounded-xl border ${isSelected ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
+          {status !== "dead" && (
+            <>
+              {/* Indicators */}
+              <View className="gap-y-3">
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() =>
+                    setSkilledBirthAttended(skilledBirthAttended ? 0 : 1)
+                  }
+                  className={`flex-row items-center p-4 rounded-xl border ${skilledBirthAttended ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
+                >
+                  <View
+                    className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${skilledBirthAttended ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
                   >
-                    <View
-                      className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${isSelected ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
-                    >
-                      {isSelected ? (
-                        <Check color="#555" strokeWidth={3} size={15} />
-                      ) : null}
-                    </View>
-                    <Text
-                      className={`text-[16px] flex-1 ${isSelected ? "text-black" : "text-slate-800"}`}
-                    >
-                      {t(`child_form.options.${option.value}`)}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
+                    {skilledBirthAttended ? (
+                      <Check color="#555" strokeWidth={3} size={15} />
+                    ) : null}
+                  </View>
+                  <Text
+                    className={`text-[16px] flex-1 ${skilledBirthAttended ? "text-black" : "text-slate-800"}`}
+                  >
+                    {t("child_form.skilled_birth_attended")}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setFchvPresent(fchvPresent ? 0 : 1)}
+                  className={`flex-row items-center p-4 rounded-xl border ${fchvPresent ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
+                >
+                  <View
+                    className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${fchvPresent ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
+                  >
+                    {fchvPresent ? (
+                      <Check color="#555" strokeWidth={3} size={15} />
+                    ) : null}
+                  </View>
+                  <Text
+                    className={`text-[16px] flex-1 ${fchvPresent ? "text-black" : "text-slate-800"}`}
+                  >
+                    {t("child_form.fchv_present")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {/* Health Indicators */}
+              <View className="mt-6">
+                <ProfilePicker
+                  label={t("child_form.baby_weight")}
+                  placeholder={t("child_form.select_weight")}
+                  options={BABY_WEIGHT_OPTIONS.map((opt) => ({
+                    label: opt.label,
+                    value: opt.value,
+                  }))}
+                  selectedValue={babyWeight}
+                  onValueChange={(val: string) => setBabyWeight(val)}
+                />
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setAsphyxiatedNewborn(asphyxiatedNewborn ? 0 : 1)}
+                  className={`flex-row items-center p-4 mt-4 rounded-xl border ${asphyxiatedNewborn ? "bg-rose-50 border-rose-300" : "bg-white border-slate-200"}`}
+                >
+                  <View
+                    className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${asphyxiatedNewborn ? "bg-rose-500 border-rose-500" : "border-slate-300 bg-white"}`}
+                  >
+                    {asphyxiatedNewborn ? (
+                      <Check color="#fff" strokeWidth={3} size={15} />
+                    ) : null}
+                  </View>
+                  <Text
+                    className={`text-[16px] flex-1 ${asphyxiatedNewborn ? "text-rose-800" : "text-slate-800"}`}
+                  >
+                    {t("child_form.asphyxiated_newborn")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Newborn Care Options */}
+              <View className="mt-6">
+                <Text className="text-slate-800 text-[16px] mb-3 ml-1">
+                  {t("child_form.newborn_care")}
+                </Text>
+                <View className="gap-y-3">
+                  {NEWBORN_CARE_OPTIONS.map((option) => {
+                    const isSelected = newbornCare.includes(option.value);
+                    return (
+                      <TouchableOpacity
+                        key={option.value}
+                        activeOpacity={0.7}
+                        onPress={() => toggleNewbornCare(option.value)}
+                        className={`flex-row items-center p-4 rounded-xl border ${isSelected ? "bg-primary/5 border-primary" : "bg-white border-slate-200"}`}
+                      >
+                        <View
+                          className={`w-6 h-6 rounded-md border mr-3 items-center justify-center ${isSelected ? "bg-primary/5 border-primary" : "border-slate-300 bg-white"}`}
+                        >
+                          {isSelected ? (
+                            <Check color="#555" strokeWidth={3} size={15} />
+                          ) : null}
+                        </View>
+                        <Text
+                          className={`text-[16px] flex-1 ${isSelected ? "text-black" : "text-slate-800"}`}
+                        >
+                          {t(`child_form.options.${option.value}`)}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            </>
+          )}
 
           {/* Remarks & Save */}
           <View className="mt-6">
@@ -696,9 +746,7 @@ export default function ChildRegistrationForm() {
             <Button
               onPress={handleSave}
               isLoading={isLoading}
-              title={
-                t("child_form.save_record")
-              }
+              title={t("child_form.save_record")}
             />
           </View>
         </View>

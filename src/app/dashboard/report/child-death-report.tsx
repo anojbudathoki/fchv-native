@@ -124,12 +124,19 @@ export default function ChildDeathReportScreen() {
                 <TouchableOpacity
                   key={item.id}
                   activeOpacity={0.8}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/dashboard/child/child-profile",
-                      params: { id: item.id },
-                    })
-                  }
+                  onPress={() => {
+                    if (item.child_id) {
+                      router.push({
+                        pathname: "/dashboard/child/child-profile",
+                        params: { id: item.child_id },
+                      });
+                    } else if (item.mother) {
+                      router.push({
+                        pathname: "/dashboard/profile",
+                        params: { id: item.mother },
+                      });
+                    }
+                  }}
                   className="bg-white rounded-3xl p-5 mb-4 border border-slate-100"
                 >
                   {/* Header: Name and Delete */}

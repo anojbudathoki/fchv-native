@@ -1,3 +1,4 @@
+import CustomHeader from "@/components/CustomHeader";
 import { FieldLabel } from "@/components/FormElements";
 import { ProfilePicker } from "@/components/ProfilePicker";
 import TextArea from "@/components/TextArea";
@@ -6,18 +7,34 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/context/ToastContext";
 import { createDelivery } from "@/hooks/database/models/DeliveryModel";
 import { createInfantMonitoring } from "@/hooks/database/models/InfantMonitoringModel";
-import { getAllMothersList, MotherListDbItem } from "@/hooks/database/models/MotherModel";
-import { getPregnanciesByMotherId, getPregnantWomenList, updatePregnancy } from "@/hooks/database/models/PregnantWomenModal";
-import { BIRTH_PLACE_OPTIONS, CHILD_STATUS_OPTIONS, NEWBORN_CARE_OPTIONS } from "@/utils/data";
+import {
+  getAllMothersList,
+  MotherListDbItem,
+} from "@/hooks/database/models/MotherModel";
+import {
+  getPregnanciesByMotherId,
+  getPregnantWomenList,
+  updatePregnancy,
+} from "@/hooks/database/models/PregnantWomenModal";
+import {
+  BIRTH_PLACE_OPTIONS,
+  CHILD_STATUS_OPTIONS,
+  NEWBORN_CARE_OPTIONS,
+} from "@/utils/data";
 import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
 import { Calendar as CalendarIcon, Check } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Pressable, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import {
+  Pressable,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { AdToBs, BsToAd, CalendarPicker } from "react-native-nepali-picker";
+import { BsToAd, CalendarPicker } from "react-native-nepali-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomHeader from "@/components/CustomHeader";
 
 export default function DeliveryRegistrationForm() {
   const { showToast } = useToast();
@@ -31,7 +48,9 @@ export default function DeliveryRegistrationForm() {
   ];
 
   const [mothers, setMothers] = useState<MotherListDbItem[]>([]);
-  const [pregnantMotherIds, setPregnantMotherIds] = useState<Set<string>>(new Set());
+  const [pregnantMotherIds, setPregnantMotherIds] = useState<Set<string>>(
+    new Set(),
+  );
   const [selectedMotherId, setSelectedMotherId] = useState("");
   const [deliveryDateAd, setDeliveryDateAd] = useState("");
   const [deliveryDateBs, setDeliveryDateBs] = useState("");
@@ -88,9 +107,18 @@ export default function DeliveryRegistrationForm() {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!selectedMotherId) e.motherId = t("delivery.validation.mother_required", "Mother is required");
-    if (!deliveryDateAd) e.deliveryDate = t("delivery.validation.delivery_date_required", "Delivery date is required");
-    if (!gender) e.gender = t("delivery.validation.gender_required", "Gender is required");
+    if (!selectedMotherId)
+      e.motherId = t(
+        "delivery.validation.mother_required",
+        "Mother is required",
+      );
+    if (!deliveryDateAd)
+      e.deliveryDate = t(
+        "delivery.validation.delivery_date_required",
+        "Delivery date is required",
+      );
+    if (!gender)
+      e.gender = t("delivery.validation.gender_required", "Gender is required");
     return e;
   };
 
@@ -123,7 +151,7 @@ export default function DeliveryRegistrationForm() {
     setIsLoading(true);
     try {
       const deliveryId = Crypto.randomUUID();
-        const payload = {
+      const payload = {
         id: deliveryId,
         mother: selectedMotherId,
         delivery_date: deliveryDateBs,
@@ -133,7 +161,9 @@ export default function DeliveryRegistrationForm() {
         baby_weight: babyWeight,
         umbilical_ointment: newbornCare.includes("umbilical_ointment") ? 1 : 0,
         skin_to_skin: newbornCare.includes("skin_to_skin") ? 1 : 0,
-        early_breastfeeding: newbornCare.includes("early_breastfeeding") ? 1 : 0,
+        early_breastfeeding: newbornCare.includes("early_breastfeeding")
+          ? 1
+          : 0,
         asphyxiated_newborn: asphyxiatedNewborn,
         status: status,
         gender: gender || undefined,
@@ -155,30 +185,40 @@ export default function DeliveryRegistrationForm() {
         baby_weight: babyWeight,
         umbilical_ointment: newbornCare.includes("umbilical_ointment") ? 1 : 0,
         skin_to_skin: newbornCare.includes("skin_to_skin") ? 1 : 0,
-        early_breastfeeding: newbornCare.includes("early_breastfeeding") ? 1 : 0,
+        early_breastfeeding: newbornCare.includes("early_breastfeeding")
+          ? 1
+          : 0,
         asphyxiated_newborn: asphyxiatedNewborn,
         status: status,
         gender: gender || undefined,
         remarks: remarks,
         pregnancy_id: pregnancyId || null,
-        registration_source: pregnancyId ? "PREGNANCY" : "DIRECT_CHILD_REGISTRATION",
+        registration_source: pregnancyId
+          ? "PREGNANCY"
+          : "DIRECT_CHILD_REGISTRATION",
       } as any;
       await createInfantMonitoring(infantPayload);
 
       // Deactivate pregnancy and mark as delivered
       if (pregnancyId) {
         try {
-          await updatePregnancy(pregnancyId, { is_current: false, delivered: true });
+          await updatePregnancy(pregnancyId, {
+            is_current: false,
+            delivered: true,
+          });
         } catch (e) {
           console.error("Failed to deactivate pregnancy:", e);
         }
       }
+      router.push("/dashboard");
 
-      showToast(t("delivery.messages.save_success", "Delivery registered successfully"));
+      showToast(t("delivery.messages.save_success"));
       resetForm();
     } catch (error) {
       console.error(error);
-      showToast(t("delivery.messages.save_failed", "Failed to register delivery."));
+      showToast(
+        t("delivery.messages.save_failed", "Failed to register delivery."),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -219,7 +259,10 @@ export default function DeliveryRegistrationForm() {
               required
             />
             <ProfilePicker
-              placeholder={t("delivery.select_mother_placeholder", "Choose Mother")}
+              placeholder={t(
+                "delivery.select_mother_placeholder",
+                "Choose Mother",
+              )}
               options={motherOptions}
               selectedValue={selectedMotherId}
               onValueChange={(val: string) => {
@@ -233,21 +276,22 @@ export default function DeliveryRegistrationForm() {
 
           {/* Delivery Date */}
           <View className="gap-y-1.5 -mt-5">
-            <FieldLabel
-              label={t("delivery.delivery_date")}
-              required
-            />
+            <FieldLabel label={t("delivery.delivery_date")} required />
             <Pressable
               onPress={() => setShowDatePicker(true)}
               className={`h-14 flex-row items-center rounded-xl px-4 border ${errors.deliveryDate ? "border-rose-400 bg-rose-50" : "border-slate-200 bg-white"}`}
             >
               <CalendarIcon size={18} color="#94a3b8" />
-              <Text className={`text-[16px] ml-3 flex-1 ${deliveryDateBs ? "text-slate-800" : "text-slate-400"}`}>
+              <Text
+                className={`text-[16px] ml-3 flex-1 ${deliveryDateBs ? "text-slate-800" : "text-slate-400"}`}
+              >
                 {deliveryDateBs || t("delivery.select_date", "Select Date")}
               </Text>
             </Pressable>
             {errors.deliveryDate ? (
-              <Text className="text-rose-500 text-xs mt-0.5 ml-1 font-medium">{errors.deliveryDate}</Text>
+              <Text className="text-rose-500 text-xs mt-0.5 ml-1 font-medium">
+                {errors.deliveryDate}
+              </Text>
             ) : null}
 
             <CalendarPicker
@@ -273,14 +317,14 @@ export default function DeliveryRegistrationForm() {
 
           {/* Gender */}
           <View className="gap-y-1.5">
-            <FieldLabel
-              label={t("delivery.gender")}
-              required
-            />
+            <FieldLabel label={t("delivery.gender")} required />
             <View className="flex-row gap-x-3">
               {[
                 { value: "Male", label: t("delivery.options.male", "Male") },
-                { value: "Female", label: t("delivery.options.female", "Female") },
+                {
+                  value: "Female",
+                  label: t("delivery.options.female", "Female"),
+                },
               ].map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
@@ -288,23 +332,27 @@ export default function DeliveryRegistrationForm() {
                     setGender(opt.value as any);
                     if (errors.gender) setErrors({ ...errors, gender: "" });
                   }}
-                  className={`flex-1 flex-row items-center p-4 rounded-xl border ${gender === opt.value ? "bg-blue-50/70 border-blue-200" : "bg-white border-slate-200"}`}
+                  className={`flex-1 flex-row items-center p-4 rounded-xl border ${gender === opt.value ? "bg-gray-50/70 border-gray-200" : "bg-white border-slate-200"}`}
                 >
                   <View
-                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-2.5 ${gender === opt.value ? "border-blue-500" : "border-slate-300"}`}
+                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-2.5 ${gender === opt.value ? "border-gray-500" : "border-slate-300"}`}
                   >
                     {gender === opt.value && (
-                      <View className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                      <View className="w-2.5 h-2.5 rounded-full bg-gray-500" />
                     )}
                   </View>
-                  <Text className={`text-[15px] font-medium ${gender === opt.value ? "text-blue-700" : "text-slate-700"}`}>
+                  <Text
+                    className={`text-[15px] font-medium ${gender === opt.value ? "text-gray-700" : "text-slate-700"}`}
+                  >
                     {opt.label}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
             {errors.gender ? (
-              <Text className="text-rose-500 text-xs mt-0.5 ml-1 font-medium">{errors.gender}</Text>
+              <Text className="text-rose-500 text-xs mt-0.5 ml-1 font-medium">
+                {errors.gender}
+              </Text>
             ) : null}
           </View>
 
@@ -312,7 +360,10 @@ export default function DeliveryRegistrationForm() {
           <View className="gap-y-1.5">
             <FieldLabel label={t("delivery.birth_place", "Delivery Place")} />
             <ProfilePicker
-              placeholder={t("delivery.select_birth_place", "Select Delivery Place")}
+              placeholder={t(
+                "delivery.select_birth_place",
+                "Select Delivery Place",
+              )}
               options={BIRTH_PLACE_OPTIONS.map((opt) => ({
                 label: language === "en" ? opt.en_label : opt.np_label,
                 value: opt.value,
@@ -320,37 +371,6 @@ export default function DeliveryRegistrationForm() {
               selectedValue={deliveryPlace}
               onValueChange={(val: string) => setDeliveryPlace(val)}
             />
-          </View>
-
-          {/* Indicators */}
-          <View className="gap-y-3">
-            <TouchableOpacity
-              onPress={() => setSkilledBirthAttended(skilledBirthAttended ? 0 : 1)}
-              className={`flex-row items-center p-4 rounded-xl border ${skilledBirthAttended ? "bg-blue-50/70 border-blue-200" : "bg-white border-slate-200"}`}
-            >
-              <View
-                className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${skilledBirthAttended ? "bg-blue-500 border-blue-500" : "border-slate-300 bg-white"}`}
-              >
-                {skilledBirthAttended ? <Check color="#fff" strokeWidth={3} size={15} /> : null}
-              </View>
-              <Text className={`text-[15px] flex-1 ${skilledBirthAttended ? "text-slate-800 font-semibold" : "text-slate-600"}`}>
-                {t("delivery.skilled_birth_attended", "Skilled birth attendant present")}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setFchvPresent(fchvPresent ? 0 : 1)}
-              className={`flex-row items-center p-4 rounded-xl border ${fchvPresent ? "bg-blue-50/70 border-blue-200" : "bg-white border-slate-200"}`}
-            >
-              <View
-                className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${fchvPresent ? "bg-blue-500 border-blue-500" : "border-slate-300 bg-white"}`}
-              >
-                {fchvPresent ? <Check color="#fff" strokeWidth={3} size={15} /> : null}
-              </View>
-              <Text className={`text-[15px] flex-1 ${fchvPresent ? "text-slate-800 font-semibold" : "text-slate-600"}`}>
-                {t("delivery.fchv_present", "FCHV present at delivery")}
-              </Text>
-            </TouchableOpacity>
           </View>
 
           {/* Child Status */}
@@ -361,16 +381,18 @@ export default function DeliveryRegistrationForm() {
                 <TouchableOpacity
                   key={opt.value}
                   onPress={() => setStatus(opt.value)}
-                  className={`flex-1 flex-row items-center p-4 rounded-xl border ${status === opt.value ? "bg-blue-50/70 border-blue-200" : "bg-white border-slate-200"}`}
+                  className={`flex-1 flex-row items-center p-4 rounded-xl border ${status === opt.value ? "bg-gray-50/70 border-gray-200" : "bg-white border-slate-200"}`}
                 >
                   <View
-                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-2.5 ${status === opt.value ? "border-blue-500" : "border-slate-300"}`}
+                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-2.5 ${status === opt.value ? "border-gray-500" : "border-slate-300"}`}
                   >
                     {status === opt.value && (
-                      <View className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                      <View className="w-2.5 h-2.5 rounded-full bg-gray-500" />
                     )}
                   </View>
-                  <Text className={`text-[15px] ${status === opt.value ? "text-blue-700 font-medium" : "text-slate-600"}`}>
+                  <Text
+                    className={`text-[15px] ${status === opt.value ? "text-gray-700 font-medium" : "text-slate-600"}`}
+                  >
                     {language === "en" ? opt.en_label : opt.np_label}
                   </Text>
                 </TouchableOpacity>
@@ -378,57 +400,119 @@ export default function DeliveryRegistrationForm() {
             </View>
           </View>
 
-          {/* Baby Weight */}
-          <View className="gap-y-1.5">
-            <FieldLabel label={t("delivery.baby_weight", "Baby Weight")} />
-            <ProfilePicker
-              placeholder={t("delivery.select_weight", "Select Weight")}
-              options={BABY_WEIGHT_OPTIONS}
-              selectedValue={babyWeight}
-              onValueChange={(val: string) => setBabyWeight(val)}
-            />
-          </View>
-
-          {/* Asphyxiated */}
-          <TouchableOpacity
-            onPress={() => setAsphyxiatedNewborn(asphyxiatedNewborn ? 0 : 1)}
-            className={`flex-row items-center p-4 rounded-xl border ${asphyxiatedNewborn ? "bg-rose-50 border-rose-300" : "bg-white border-slate-200"}`}
-          >
-            <View
-              className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${asphyxiatedNewborn ? "bg-rose-500 border-rose-500" : "border-slate-300 bg-white"}`}
-            >
-              {asphyxiatedNewborn ? <Check color="#fff" strokeWidth={3} size={15} /> : null}
-            </View>
-            <Text className={`text-[15px] flex-1 ${asphyxiatedNewborn ? "text-rose-800 font-semibold" : "text-slate-600"}`}>
-              {t("delivery.asphyxiated_newborn", "Asphyxiated newborn")}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Newborn Care */}
-          <View className="gap-y-1.5">
-            <FieldLabel label={t("delivery.newborn_care", "Newborn Care Practices")} />
-            <View className="gap-y-2">
-              {NEWBORN_CARE_OPTIONS.map((option) => {
-                const isSelected = newbornCare.includes(option.value);
-                return (
-                  <TouchableOpacity
-                    key={option.value}
-                    onPress={() => toggleNewbornCare(option.value)}
-                    className={`flex-row items-center p-4 rounded-xl border ${isSelected ? "bg-blue-50/70 border-blue-200" : "bg-white border-slate-200"}`}
+          {status !== "dead" && (
+            <>
+              {/* Indicators */}
+              <View className="gap-y-3">
+                <TouchableOpacity
+                  onPress={() =>
+                    setSkilledBirthAttended(skilledBirthAttended ? 0 : 1)
+                  }
+                  className={`flex-row items-center p-4 rounded-xl border ${skilledBirthAttended ? "bg-gray-50/70 border-gray-200" : "bg-white border-slate-200"}`}
+                >
+                  <View
+                    className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${skilledBirthAttended ? "bg-gray-500 border-gray-500" : "border-slate-300 bg-white"}`}
                   >
-                    <View
-                      className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${isSelected ? "bg-blue-500 border-blue-500" : "border-slate-300 bg-white"}`}
-                    >
-                      {isSelected ? <Check color="#fff" strokeWidth={3} size={15} /> : null}
-                    </View>
-                    <Text className={`text-[15px] flex-1 ${isSelected ? "text-slate-800 font-semibold" : "text-slate-600"}`}>
-                      {language === "en" ? option.en_label : option.np_label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
+                    {skilledBirthAttended ? (
+                      <Check color="#fff" strokeWidth={3} size={15} />
+                    ) : null}
+                  </View>
+                  <Text
+                    className={`text-[15px] flex-1 ${skilledBirthAttended ? "text-slate-800 font-semibold" : "text-slate-600"}`}
+                  >
+                    {t(
+                      "delivery.skilled_birth_attended",
+                      "Skilled birth attendant present",
+                    )}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => setFchvPresent(fchvPresent ? 0 : 1)}
+                  className={`flex-row items-center p-4 rounded-xl border ${fchvPresent ? "bg-gray-50/70 border-gray-200" : "bg-white border-slate-200"}`}
+                >
+                  <View
+                    className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${fchvPresent ? "bg-gray-500 border-gray-500" : "border-slate-300 bg-white"}`}
+                  >
+                    {fchvPresent ? (
+                      <Check color="#fff" strokeWidth={3} size={15} />
+                    ) : null}
+                  </View>
+                  <Text
+                    className={`text-[15px] flex-1 ${fchvPresent ? "text-slate-800 font-semibold" : "text-slate-600"}`}
+                  >
+                    {t("delivery.fchv_present", "FCHV present at delivery")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Baby Weight */}
+              <View className="gap-y-1.5">
+                <FieldLabel label={t("delivery.baby_weight", "Baby Weight")} />
+                <ProfilePicker
+                  placeholder={t("delivery.select_weight", "Select Weight")}
+                  options={BABY_WEIGHT_OPTIONS}
+                  selectedValue={babyWeight}
+                  onValueChange={(val: string) => setBabyWeight(val)}
+                />
+              </View>
+
+              {/* Asphyxiated */}
+              <TouchableOpacity
+                onPress={() =>
+                  setAsphyxiatedNewborn(asphyxiatedNewborn ? 0 : 1)
+                }
+                className={`flex-row items-center p-4 rounded-xl border ${asphyxiatedNewborn ? "bg-rose-50 border-rose-300" : "bg-white border-slate-200"}`}
+              >
+                <View
+                  className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${asphyxiatedNewborn ? "bg-rose-500 border-rose-500" : "border-slate-300 bg-white"}`}
+                >
+                  {asphyxiatedNewborn ? (
+                    <Check color="#fff" strokeWidth={3} size={15} />
+                  ) : null}
+                </View>
+                <Text
+                  className={`text-[15px] flex-1 ${asphyxiatedNewborn ? "text-rose-800 font-semibold" : "text-slate-600"}`}
+                >
+                  {t("child_form.asphyxiated_newborn")}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Newborn Care */}
+              <View className="gap-y-1.5">
+                <FieldLabel
+                  label={t("delivery.newborn_care", "Newborn Care Practices")}
+                />
+                <View className="gap-y-2">
+                  {NEWBORN_CARE_OPTIONS.map((option) => {
+                    const isSelected = newbornCare.includes(option.value);
+                    return (
+                      <TouchableOpacity
+                        key={option.value}
+                        onPress={() => toggleNewbornCare(option.value)}
+                        className={`flex-row items-center p-4 rounded-xl border ${isSelected ? "bg-gray-50/70 border-gray-200" : "bg-white border-slate-200"}`}
+                      >
+                        <View
+                          className={`w-6 h-6 rounded-md border-2 mr-3.5 items-center justify-center ${isSelected ? "bg-gray-500 border-gray-500" : "border-slate-300 bg-white"}`}
+                        >
+                          {isSelected ? (
+                            <Check color="#fff" strokeWidth={3} size={15} />
+                          ) : null}
+                        </View>
+                        <Text
+                          className={`text-[15px] flex-1 ${isSelected ? "text-slate-800 font-semibold" : "text-slate-600"}`}
+                        >
+                          {language === "en"
+                            ? option.en_label
+                            : option.np_label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            </>
+          )}
 
           {/* Remarks */}
           <TextArea

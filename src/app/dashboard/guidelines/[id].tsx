@@ -29,16 +29,19 @@ const CONFIG: Record<string, any> = {
     icon: Heart,
     color: "#F43F5E",
     bg: "bg-rose-100",
+    image: require("@/assets/images/maternal_care.png"),
   },
   second_trimester_detailed: {
     icon: Heart,
     color: "#8B5CF6",
     bg: "bg-violet-100",
+    image: require("@/assets/images/maternal_care.png"),
   },
   third_trimester_detailed: {
     icon: Activity,
     color: "#EC4899",
     bg: "bg-pink-100",
+    image: require("@/assets/images/maternal_care.png"),
   },
   child_nutrition: {
     icon: FileText,

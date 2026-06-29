@@ -63,9 +63,12 @@
       "group_meeting": "समूह बैठक",
       "death_report": "मृत्यु विवरण",
       "children": "बालबालिका",
-      "delivery": "सुत्केरी दर्ता"
+      "delivery": "सुत्केरी दर्ता",
+      "follow_up": "फलो-अप"
     },
     "sections": {
+      "quick_forms": "फारम दर्ता",
+      "quick_forms_subtitle": "मातृ तथा बाल स्वास्थ्य विवरण दर्ता गर्नुहोस्",
       "community_pulse": "समुदाय स्वास्थ्य तथ्याङ्क",
       "community_pulse_subtitle": "एक नजरमा प्रमुख स्वास्थ्य सूचकहरू",
       "recent_activity": "हालैका गतिविधिहरू",
@@ -561,7 +564,7 @@
     "last_2_months": "२ महिना",
     "ward_no": "वडा नं.",
     "reg_date": "दर्ता:",
-    "unnamed_baby": "वजात शिशु",
+    "unnamed_baby": "नवजात शिशु",
     "unknown": "अज्ञात",
     "status": {
       "normal": "सामान्य",
@@ -746,7 +749,7 @@
     "select_mother_first": "कृपया पहिले आमा छान्नुहोस्।",
     "loading_children": "बच्चाहरू लोड हुँदै...",
     "no_children": "यस आमाको लागि कुनै बच्चा दर्ता गरिएको छैन।",
-    "unnamed_child": "वजात शिशु",
+    "unnamed_child": "नवजात शिशु",
     "gender": "बच्चाको लिङ्ग",
     "male": "छोरा",
     "female": "छोरी",
@@ -857,7 +860,7 @@
       "lmp_req": "LMP मिति आवश्यक छ",
       "caretaker_name_req": "श्रीमानको नाम आवश्यक छ",
       "caretaker_phone_req": "श्रीमानको फोन नम्बर आवश्यक छ",
-      "parity_invalid": "Parity, Gravida भन्दा बढी हुन सक्दैन",
+      "parity_invalid": "जन्म संख्या गर्भावस्था संख्या भन्दा बढी हुन सक्दैन",
       "phone_digits": "१० अंकको हुनुपर्छ",
       "phone_invalid": "कृपया ९८ वा ९७ बाट सुरु हुने मान्य फोन नम्बर प्रविष्ट गर्नुहोस्"
     },
@@ -983,9 +986,9 @@
     "location": "स्थान",
     "location_ph": "जस्तै: हेटौंडा",
     "priority": "प्राथमिकता",
-    "create_task": "कार्य सिर्जना गर्नुहोस्",
+    "create_task": "कार्य सेभ गर्नुहोस्",
     "edit_task": "कार्य सम्पादन गर्नुहोस्",
-    "save_changes": "परिवर्तनहरू बचत गर्नुहोस्",
+    "save_changes": "सेभ गर्नुहोस्",
     "priority_levels": {
       "NORMAL": "सामान्य",
       "MEDIUM": "मध्यम",
@@ -1106,7 +1109,7 @@
     "subtitle": "बालबालिकाहरूको स्वास्थ्य रेकर्ड व्यवस्थापन गर्नुहोस्",
     "add_new": "नयाँ थप्नुहोस्",
     "search_placeholder": "नामबाट खोज्नुहोस्...",
-    "unnamed_baby": "वजात शिशु",
+    "unnamed_baby": "नवजात शिशु",
     "mother": "आमा",
     "unknown": "अज्ञात",
     "bs": "(वि.सं.)",
@@ -1165,8 +1168,8 @@
     "dob_label": "जन्म मिति"
   },
   "child_form": {
-    "edit_child": "शिशु अनुगमन सम्पादन",
-    "new_child": "नयाँ शिशु अनुगमन",
+    "edit_child": "शिशु सम्पादन",
+    "new_child": "शिशु दर्ता",
     "select_mother": "आमा छनौट गर्नुहोस्",
     "select_mother_placeholder": "आमा छान्नुहोस्",
     "baby_name": "शिशुको नाम",
@@ -1252,6 +1255,8 @@
     "delete": "हटाउनुहोस्",
     "cancel": "रद्द गर्नुहोस्",
     "deleted_successfully": "सफलतापूर्वक हटाइयो",
+    "updated_successfully": "मिति सफलतापूर्वक अद्यावधिक गरियो",
+    "update_date_failed": "मिति अद्यावधिक गर्न असफल",
     "delete_confirm_message": "के तपाईं पछिल्लो रेकर्ड हटाउन चाहनुहुन्छ?",
     "delete_confirm_yes": "हो",
     "delete_confirm_no": "होइन",
@@ -1319,7 +1324,8 @@
     "empty_subtitle": "अहिलेसम्म कुनै समूह बैठकको विवरण थपिएको छैन। नयाँ रेकर्ड थप्न माथिको नयाँ रेकर्ड बटनमा क्लिक गर्नुहोस्",
     "no_topics_recorded": "कुनै विषय रेकर्ड गरिएको छैन।",
     "no_decisions_recorded": "कुनै निर्णय रेकर्ड गरिएको छैन।",
-    "loading": "लोड हुँदैछ..."
+    "loading": "लोड हुँदैछ...",
+    "update_record": "विवरण अपडेट गर्नुहोस्"
   },
   "newborn_death": {
     "title": "नवजात शिशुको मृत्यु दर्ता",

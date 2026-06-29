@@ -29,7 +29,6 @@ export interface CounselingQuestion {
 // ─── All Questions ───────────────────────────────────────────
 
 export const ALL_QUESTIONS: CounselingQuestion[] = [
-
   // ━━━ PREGNANT — Every Visit ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   {
     id: "pregnancy_test_referral",
@@ -39,21 +38,13 @@ export const ALL_QUESTIONS: CounselingQuestion[] = [
     category: "pregnant",
     frequency: "every_visit",
   },
-    {
+  {
     id: "hiv_transmission_counseling",
     en: "Provided HIV transmission counseling and referred for HIV testing?",
     ne: "आमाबाट बच्चामा सर्ने एचआईभीबारे परामर्श दिई रक्त परीक्षणका लागि रेफर गर्नुभयो?",
     type: "referral",
     category: "pregnant",
     frequency: "one_time",
-  },
-  {
-    id: "labor_starts_advice",
-    en: "Was the client advised to go to a health facility as soon as labor pains start?",
-    ne: "सुत्केरी व्यथा लाग्ने बित्तिकै स्वास्थ्य संस्था जान सल्लाह दिनुभयो?",
-    type: "counseling",
-    category: "pregnant",
-    frequency: "every_visit",
   },
 
   // ━━━ PREGNANT — One-Time (per pregnancy) ━━━━━━━━━━━━━━━━━
@@ -64,6 +55,14 @@ export const ALL_QUESTIONS: CounselingQuestion[] = [
     type: "counseling",
     category: "pregnant",
     frequency: "one_time",
+  },
+  {
+    id: "labor_starts_advice",
+    en: "Was the client advised to go to a health facility as soon as labor pains start?",
+    ne: "सुत्केरी व्यथा लाग्ने बित्तिकै स्वास्थ्य संस्था जान सल्लाह दिनुभयो?",
+    type: "counseling",
+    category: "pregnant",
+    frequency: "every_visit",
   },
   // {
   //   id: "iron_tablets_followup",
@@ -225,15 +224,15 @@ export const ALL_QUESTIONS: CounselingQuestion[] = [
   },
 ];
 
-
 /** Check if a question ID is a referral question */
 export const isReferralQuestion = (questionId: string): boolean =>
   ALL_QUESTIONS.some((q) => q.id === questionId && q.type === "referral");
 
 /** Get questions filtered by visit type */
-export function getQuestionsForVisitType(
-  visitType: "ANC" | "PNC" | "OTHER"
-): { counselingQuestions: CounselingQuestion[]; referralQuestions: CounselingQuestion[] } {
+export function getQuestionsForVisitType(visitType: "ANC" | "PNC" | "OTHER"): {
+  counselingQuestions: CounselingQuestion[];
+  referralQuestions: CounselingQuestion[];
+} {
   let filtered: CounselingQuestion[];
 
   switch (visitType) {
@@ -261,9 +260,9 @@ export function getQuestionsForVisitType(
 
 /** Get one-time question IDs for a specific category */
 export function getOneTimeQuestionIds(category: QuestionCategory): string[] {
-  return ALL_QUESTIONS
-    .filter((q) => q.category === category && q.frequency === "one_time")
-    .map((q) => q.id);
+  return ALL_QUESTIONS.filter(
+    (q) => q.category === category && q.frequency === "one_time",
+  ).map((q) => q.id);
 }
 
 /** Find a question by ID */
@@ -275,25 +274,36 @@ export function getQuestionById(id: string): CounselingQuestion | undefined {
 // These re-exports allow existing consumers (CounselingReferralSection, etc.)
 // to keep working without changes. Remove once those files are updated.
 
-export const COUNCELING_QUESTION_AFTER_PREGNANT =
-  ALL_QUESTIONS.filter((q) => q.category === "pregnant" && q.frequency === "every_visit");
+export const COUNCELING_QUESTION_AFTER_PREGNANT = ALL_QUESTIONS.filter(
+  (q) => q.category === "pregnant" && q.frequency === "every_visit",
+);
 
-export const COUNCELING_QUESTION_AFTER_PREGNANT_ONE_TIME =
-  ALL_QUESTIONS.filter((q) => q.category === "pregnant" && q.frequency === "one_time");
+export const COUNCELING_QUESTION_AFTER_PREGNANT_ONE_TIME = ALL_QUESTIONS.filter(
+  (q) => q.category === "pregnant" && q.frequency === "one_time",
+);
 
 export const COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN =
-  ALL_QUESTIONS.filter((q) => q.category === "postpartum" && q.frequency === "every_visit");
+  ALL_QUESTIONS.filter(
+    (q) => q.category === "postpartum" && q.frequency === "every_visit",
+  );
 
 export const COUNSELING_REFERRAL_QUESTIONS_AFTER_CHILD_BORN_ONE_TIME =
-  ALL_QUESTIONS.filter((q) => q.category === "postpartum" && q.frequency === "one_time");
+  ALL_QUESTIONS.filter(
+    (q) => q.category === "postpartum" && q.frequency === "one_time",
+  );
 
 export const COUNSELING_REFERRAL_QUESTIONS_ONE_TIME_MOTHER =
   ALL_QUESTIONS.filter((q) => q.category === "mother");
 
-export const REFERRAL_QUESTION_IDS =
-  ALL_QUESTIONS.filter((q) => q.type === "referral").map((q) => q.id);
+export const REFERRAL_QUESTION_IDS = ALL_QUESTIONS.filter(
+  (q) => q.type === "referral",
+).map((q) => q.id);
 
 // Questions shown at pregnancy registration time (PrenatalRegisterCounselingModal)
-const PRENATAL_REGISTER_IDS = ["pregnancy_test_referral", "hiv_transmission_counseling", "health_education_safe_motherhood"];
+const PRENATAL_REGISTER_IDS = [
+  "pregnancy_test_referral",
+  "hiv_transmission_counseling",
+  "health_education_safe_motherhood",
+];
 export const COUNSELING_QUESTIONS_ONE_TIME_PREGNANT_REGISTER_TIME =
   ALL_QUESTIONS.filter((q) => PRENATAL_REGISTER_IDS.includes(q.id));

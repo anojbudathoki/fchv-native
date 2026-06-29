@@ -123,12 +123,19 @@ export default function NewbornDeathReportScreen() {
                 <TouchableOpacity
                   key={item.id}
                   activeOpacity={0.7}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/dashboard/child/child-profile",
-                      params: { id: item.id },
-                    })
-                  }
+                  onPress={() => {
+                    if (item.child_id) {
+                      router.push({
+                        pathname: "/dashboard/child/child-profile",
+                        params: { id: item.child_id },
+                      });
+                    } else if (item.mother) {
+                      router.push({
+                        pathname: "/dashboard/profile",
+                        params: { id: item.mother },
+                      });
+                    }
+                  }}
                   className="bg-white rounded-2xl p-4 mb-3 border border-slate-100"
                 >
                   {/* Top Row: Baby info + Gender badge */}
